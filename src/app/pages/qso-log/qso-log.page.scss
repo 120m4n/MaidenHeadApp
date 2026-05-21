@@ -108,7 +108,7 @@
   ion-icon { font-size: 1rem; }
 
   &:active {
-    background:   rgba(184, 32, 32, 0.09);
+    background:   rgba(var(--ham-danger-rgb), 0.09);
     border-color: var(--ham-danger);
     color:        var(--ham-danger);
   }

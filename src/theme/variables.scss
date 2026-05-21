@@ -56,6 +56,7 @@
   --ham-text:      #1c2a22;   // texto principal — casi negro verdoso
   --ham-muted:     #5c7265;   // texto secundario / labels
   --ham-danger:    #b82020;
+  --ham-danger-rgb: 184, 32, 32;
   --ham-success:   #1b5f52;
   // Labels de mapa — claro: píldora crema sobre tiles OSM
   --map-label-bg:  rgba(250, 248, 243, 0.94);
@@ -125,6 +126,7 @@
   --ham-text:      #c0d8d0;   // texto principal — cian apagado
   --ham-muted:     #4a7068;   // texto secundario — teal oscuro
   --ham-danger:    #e05252;
+  --ham-danger-rgb: 224, 82, 82;
   --ham-success:   #34c9a0;
   // Labels de mapa — oscuro: píldora azul marino sobre tiles
   --map-label-bg:  rgba(13, 22, 36, 0.78);

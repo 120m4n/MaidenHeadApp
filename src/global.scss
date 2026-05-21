@@ -84,7 +84,7 @@ ion-header ion-toolbar {
   --border-color:  transparent;
   --padding-start: 16px;
   --padding-end:   8px;
-  border-bottom: 1px solid rgba(var(--ham-glow-rgb, 52, 201, 160), 0.12);
+  border-bottom: 1px solid rgba(var(--ham-glow-rgb, 27, 95, 82), 0.12);
 
   ion-title {
     font-family:    var(--app-font-ui);
@@ -405,8 +405,8 @@ ion-alert {
   animation:      fade-up 0.3s ease both;
 
   &.gps-pill--error {
-    background: rgba(184, 32, 32, 0.10);
-    border:     1px solid rgba(184, 32, 32, 0.28);
+    background: rgba(var(--ham-danger-rgb), 0.10);
+    border:     1px solid rgba(var(--ham-danger-rgb), 0.28);
     color:      var(--ham-danger);
   }
 
