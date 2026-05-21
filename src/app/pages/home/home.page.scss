@@ -1,9 +1,23 @@
+// ── Layout de página — columna flex que llena el viewport sin scroll ─────────
+.page-body {
+  display:        flex;
+  flex-direction: column;
+  height:         100%;
+  overflow:       hidden;
+}
+
+// ── Tarjeta de posición — altura fija, no se comprime ───────────────────────
+app-position-card {
+  flex-shrink: 0;
+}
+
 // ── Etiqueta de sección de mapa ─────────────────────────────────────────────
 .map-section-label {
-  padding: 10px 14px 5px;
-  display: flex;
+  flex-shrink: 0;
+  padding:     10px 14px 5px;
+  display:     flex;
   align-items: center;
-  gap: 8px;
+  gap:         8px;
 
   // Línea divisora que se extiende
   &::after {
@@ -14,12 +28,14 @@
   }
 }
 
-// ── Contenedor del mapa ─────────────────────────────────────────────────────
+// ── Mapa — ocupa todo el espacio vertical restante ───────────────────────────
 app-map-view {
-  display:       block;
-  margin:        0 12px 12px;
-  // Altura adaptada al viewport — suficiente para orientación cartográfica
-  --map-height:  clamp(300px, 42vh, 420px);
+  display:    block;
+  flex:       1;       // crece para llenar el espacio sobrante
+  min-height: 0;       // permite que flex reduzca por debajo del tamaño intrínseco
+  margin:     0 12px 12px;
+  // NO se sobreescribe --map-height → el fallback interno del componente es 100%
+  // (100% del :host que, como flex-item, tiene altura determinada por flexbox)
   border:        1px solid var(--ham-border);
   border-radius: var(--app-card-radius);
   overflow:      hidden;

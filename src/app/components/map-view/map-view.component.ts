@@ -32,10 +32,20 @@ export interface MapTapEvent {
   selector: 'app-map-view',
   template: `<div #mapContainer class="map-container"></div>`,
   styles: [`
-    :host { display: block; width: 100%; }
+    :host {
+      display: block;
+      width:   100%;
+      /* Sin height explícito: en layout normal (:host = display:block) su alto
+         viene determinado por el contenido (.map-container con --map-height fijo).
+         En home, al ser flex-item con flex:1, el algoritmo flexbox asigna
+         la altura y percentage height en .map-container resuelve contra ella. */
+    }
     .map-container {
       width:         100%;
-      height:        var(--map-height, 280px);
+      /* Fallback 100%: cuando el :host es un flex-item el browser puede resolver
+         height:100% contra la altura asignada por el flex-algorithm.
+         --map-height se puede sobreescribir desde el padre (ej: grid-lookup).  */
+      height:        var(--map-height, 100%);
       border-radius: var(--app-card-radius, 3px);
       overflow:      hidden;
     }

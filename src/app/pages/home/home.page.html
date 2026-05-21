@@ -7,50 +7,54 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [scrollY]="false">
 
-  <!-- GPS error / denied -->
-  @if (geo.status() === 'denied') {
-    <div class="gps-pill gps-pill--error">
-      <span class="gps-dot gps-dot--error"></span>
-      Permiso de ubicación denegado — actívalo en Ajustes
+  <div class="page-body">
+
+    <!-- GPS error / denied -->
+    @if (geo.status() === 'denied') {
+      <div class="gps-pill gps-pill--error">
+        <span class="gps-dot gps-dot--error"></span>
+        Permiso de ubicación denegado — actívalo en Ajustes
+      </div>
+    }
+
+    @if (geo.status() === 'error') {
+      <div class="gps-pill gps-pill--error">
+        <span class="gps-dot gps-dot--error"></span>
+        {{ geo.error() }}
+      </div>
+    }
+
+    <!-- GPS acquiring (no position yet) -->
+    @if (geo.status() === 'watching' && !geo.position()) {
+      <div class="gps-pill gps-pill--acquiring">
+        <span class="gps-dot gps-dot--acquiring"></span>
+        Buscando señal GPS…
+      </div>
+    }
+
+    <!-- Position card -->
+    <app-position-card [position]="geo.position()" />
+
+    <!-- Map label -->
+    <div class="map-section-label">
+      <span class="label-micro">MAPA · toca: leer grid · mantener: guardar pin</span>
     </div>
-  }
 
-  @if (geo.status() === 'error') {
-    <div class="gps-pill gps-pill--error">
-      <span class="gps-dot gps-dot--error"></span>
-      {{ geo.error() }}
-    </div>
-  }
+    <!-- Map — ocupa el espacio vertical restante -->
+    <app-map-view
+      [center]="center()"
+      [accuracy]="accuracy()"
+      [gridBounds]="gridBounds()"
+      [gridLabel]="gridLabel()"
+      [plusBounds]="plusBounds()"
+      [plusLabel]="plusLabel()"
+      [savedMarkers]="savedPins()"
+      (mapTap)="onMapTap($event)"
+      (mapLongPress)="onMapLongPress($event)" />
 
-  <!-- GPS acquiring (no position yet) -->
-  @if (geo.status() === 'watching' && !geo.position()) {
-    <div class="gps-pill gps-pill--acquiring">
-      <span class="gps-dot gps-dot--acquiring"></span>
-      Buscando señal GPS…
-    </div>
-  }
-
-  <!-- Position card -->
-  <app-position-card [position]="geo.position()" />
-
-  <!-- Map label -->
-  <div class="map-section-label">
-    <span class="label-micro">MAPA · toca: leer grid · mantener: guardar pin</span>
   </div>
-
-  <!-- Map -->
-  <app-map-view
-    [center]="center()"
-    [accuracy]="accuracy()"
-    [gridBounds]="gridBounds()"
-    [gridLabel]="gridLabel()"
-    [plusBounds]="plusBounds()"
-    [plusLabel]="plusLabel()"
-    [savedMarkers]="savedPins()"
-    (mapTap)="onMapTap($event)"
-    (mapLongPress)="onMapLongPress($event)" />
 
 </ion-content>
 
