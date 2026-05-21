@@ -1,9 +1,11 @@
+// ── Etiqueta de sección de mapa ─────────────────────────────────────────────
 .map-section-label {
-  padding: 10px 12px 4px;
+  padding: 10px 14px 5px;
   display: flex;
   align-items: center;
   gap: 8px;
 
+  // Línea divisora que se extiende
   &::after {
     content:    '';
     flex:       1;
@@ -12,11 +14,14 @@
   }
 }
 
+// ── Contenedor del mapa ─────────────────────────────────────────────────────
 app-map-view {
-  display:  block;
-  margin:   0 12px 12px;
-  --map-height: 280px;
-  border:       1px solid var(--ham-border);
+  display:       block;
+  margin:        0 12px 12px;
+  // Altura adaptada al viewport — suficiente para orientación cartográfica
+  --map-height:  clamp(300px, 42vh, 420px);
+  border:        1px solid var(--ham-border);
   border-radius: var(--app-card-radius);
-  overflow:     hidden;
+  overflow:      hidden;
+  box-shadow:    var(--app-shadow-card);
 }

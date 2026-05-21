@@ -129,48 +129,50 @@ import { SettingsService } from '../../services/settings.service';
 
     .qso-form { padding: 0 0 24px; }
 
-    // ── Hero callsign field ─────────────────────────────────────────────
+    // ── Campo hero: indicativo corresponsal ────────────────────────────
+    // Primer dato de un QSO — merece la máxima jerarquía visual
     .qso-form-hero {
-      padding: 16px 16px 14px;
+      padding:    15px 16px 13px;
       background: var(--ham-surface);
-      position: relative;
+      position:   relative;
 
+      // Acento de señal activa — el QSO se inicia con señal recibida
       &::after {
         content:    '';
         position:   absolute;
         top:        0; left: 0; right: 0;
         height:     2px;
         background: var(--ham-glow);
-        opacity:    0.6;
+        opacity:    0.55;
       }
     }
 
     .qso-form-hero__label {
       font-family:    var(--app-font-ui);
-      font-size:      0.65rem;
+      font-size:      0.62rem;
       font-weight:    700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color:          var(--ham-muted);
-      margin-bottom:  8px;
+      margin-bottom:  7px;
     }
 
+    // Input de indicativo — dato operativo principal
     .qso-form-hero__input {
-      font-family: var(--app-font-mono) !important;
-      font-size:   2.2rem !important;
-      color:       var(--ham-glow) !important;
+      font-family:         var(--app-font-mono) !important;
+      font-size:           2.1rem !important;
+      color:               var(--ham-glow) !important;
       --placeholder-color: var(--ham-border-hi) !important;
-      text-shadow: 0 0 20px rgba(var(--ham-glow-rgb), 0.35);
-      padding:     0 !important;
+      padding:             0 !important;
     }
 
-    // ── Divider ─────────────────────────────────────────────────────────
+    // ── Divisores de sección ──────────────────────────────────────────
     .qso-form__divider {
       height:     1px;
       background: var(--ham-border);
     }
 
-    // ── 2-col row ────────────────────────────────────────────────────────
+    // ── Filas de 2 columnas (banda/modo, RST sent/rcvd) ─────────────
     .qso-form__row2 {
       display:               grid;
       grid-template-columns: 1fr 1fr;
@@ -178,7 +180,7 @@ import { SettingsService } from '../../services/settings.service';
     }
 
     .qso-form__field {
-      padding: 12px 14px;
+      padding: 11px 14px;
 
       &:first-child {
         border-right: 1px solid var(--ham-border);
@@ -186,13 +188,14 @@ import { SettingsService } from '../../services/settings.service';
 
       &--full {
         background: var(--ham-surface);
-        padding:    12px 16px;
+        padding:    11px 16px;
       }
     }
 
+    // Label de campo del formulario
     .qso-form__label {
       font-family:    var(--app-font-ui);
-      font-size:      0.62rem;
+      font-size:      0.60rem;
       font-weight:    700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -200,42 +203,46 @@ import { SettingsService } from '../../services/settings.service';
       margin-bottom:  6px;
     }
 
+    // Select de banda/modo — ámbar (lectura de frecuencia)
     .qso-form__select {
       font-family: var(--app-font-mono) !important;
-      font-size:   1.15rem !important;
+      font-size:   1.1rem !important;
       color:       var(--ham-amber) !important;
       font-weight: 400;
       padding:     0;
     }
 
+    // Input de RST — valores de señal
     .qso-form__input--small {
-      font-family: var(--app-font-mono) !important;
-      font-size:   1.5rem !important;
-      color:       var(--ham-amber) !important;
-      padding:     0 !important;
+      font-family:         var(--app-font-mono) !important;
+      font-size:           1.45rem !important;
+      color:               var(--ham-amber) !important;
+      padding:             0 !important;
       --placeholder-color: var(--ham-border-hi) !important;
     }
 
+    // Input de grid corresponsal — teal marino (localización)
     .qso-form__input--grid {
-      font-family: var(--app-font-mono) !important;
-      font-size:   1.4rem !important;
-      color:       var(--ham-text) !important;
-      padding:     0 !important;
+      font-family:         var(--app-font-mono) !important;
+      font-size:           1.35rem !important;
+      color:               var(--ham-text) !important;
+      padding:             0 !important;
       --placeholder-color: var(--ham-border-hi) !important;
     }
 
+    // Input de comentario — fuente UI (texto libre, no datos operativos)
     .qso-form__input--comment {
-      font-family: var(--app-font-ui) !important;
-      font-size:   1rem !important;
-      color:       var(--ham-text) !important;
-      padding:     0 !important;
+      font-family:         var(--app-font-ui) !important;
+      font-size:           0.98rem !important;
+      color:               var(--ham-text) !important;
+      padding:             0 !important;
       --placeholder-color: var(--ham-border-hi) !important;
     }
 
-    // ── Save button ──────────────────────────────────────────────────────
+    // ── Botón guardar ────────────────────────────────────────────────
     .qso-form__save {
-      padding: 16px;
-      margin-top: 4px;
+      padding:    16px;
+      margin-top: 6px;
     }
   `],
   imports: [

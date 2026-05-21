@@ -1,35 +1,36 @@
-// ── Header count badge ────────────────────────────────────────────────────
+// ── Badge de conteo en header ─────────────────────────────────────────────────
 .log-count {
   display:        inline-block;
   font-family:    var(--app-font-mono);
-  font-size:      0.75rem;
+  font-size:      0.72rem;
   background:     var(--ham-glow-dim);
   color:          var(--ham-glow);
-  border:         1px solid rgba(var(--ham-glow-rgb), 0.3);
-  border-radius:  2px;
+  border:         1px solid rgba(var(--ham-glow-rgb), 0.28);
+  border-radius:  var(--app-radius-badge, 3px);
   padding:        1px 6px;
   margin-left:    6px;
   vertical-align: middle;
 }
 
-// ── QSO list ──────────────────────────────────────────────────────────────
+// ── Lista de QSOs ─────────────────────────────────────────────────────────────
 .qso-list {
-  padding: 12px 12px 0;
-  display: flex;
+  padding:        12px 12px 0;
+  display:        flex;
   flex-direction: column;
-  gap: 8px;
+  gap:            8px;
 }
 
-// ── QSO card ──────────────────────────────────────────────────────────────
+// ── Tarjeta de QSO — escaneo rápido, tono de bitácora ─────────────────────────
 .qso-card {
   background:    var(--ham-surface);
   border:        1px solid var(--ham-border);
   border-radius: var(--app-card-radius);
   overflow:      hidden;
-  animation:     fade-up 0.3s ease both;
+  animation:     fade-up 0.28s ease both;
   position:      relative;
+  box-shadow:    var(--app-shadow-card);
 
-  // Accent line — amber (each contact is a precious signal)
+  // Acento vertical izquierdo — ámbar (cada contacto es un QSO valioso)
   &::before {
     content:    '';
     position:   absolute;
@@ -38,25 +39,26 @@
     bottom:     0;
     width:      3px;
     background: var(--ham-amber);
-    opacity:    0.7;
+    opacity:    0.65;
   }
 }
 
+// ── Encabezado del QSO: indicativo + tags + borrar ─────────────────────────
 .qso-card__header {
-  display:         flex;
-  align-items:     center;
-  gap:             10px;
-  padding:         10px 12px 8px 14px;
-  border-bottom:   1px solid var(--ham-border);
+  display:       flex;
+  align-items:   center;
+  gap:           10px;
+  padding:       9px 12px 8px 14px;
+  border-bottom: 1px solid var(--ham-border);
 }
 
+// Indicativo — dato principal de lectura rápida
 .qso-card__call {
   font-family:    var(--app-font-mono);
-  font-size:      1.25rem;
+  font-size:      1.2rem;
   font-weight:    400;
   color:          var(--ham-glow);
   letter-spacing: 0.04em;
-  text-shadow:    0 0 12px rgba(var(--ham-glow-rgb), 0.35);
   flex:           1;
 }
 
@@ -65,28 +67,30 @@
   gap:     5px;
 }
 
+// Tags de banda y modo — clasificación operativa
 .qso-tag {
   font-family:    var(--app-font-ui);
-  font-size:      0.65rem;
+  font-size:      0.62rem;
   font-weight:    700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  border-radius:  2px;
+  border-radius:  var(--app-radius-badge, 3px);
   padding:        2px 6px;
 
   &--band {
     background: var(--ham-glow-dim);
     color:      var(--ham-glow);
-    border:     1px solid rgba(var(--ham-glow-rgb), 0.25);
+    border:     1px solid rgba(var(--ham-glow-rgb), 0.22);
   }
 
   &--mode {
-    background: rgba(var(--ham-sky), 0.08);
-    color:      var(--ham-sky);
-    border:     1px solid rgba(77, 184, 255, 0.25);
+    background: rgba(var(--ham-amber-rgb), 0.09);
+    color:      var(--ham-amber);
+    border:     1px solid rgba(var(--ham-amber-rgb), 0.22);
   }
 }
 
+// Botón de borrar QSO
 .qso-delete-btn {
   display:         flex;
   align-items:     center;
@@ -95,7 +99,7 @@
   height:          36px;
   background:      transparent;
   border:          1px solid transparent;
-  border-radius:   var(--app-card-radius);
+  border-radius:   var(--app-radius-ctrl, 4px);
   color:           var(--ham-muted);
   cursor:          pointer;
   transition:      all 0.15s ease;
@@ -104,24 +108,25 @@
   ion-icon { font-size: 1rem; }
 
   &:active {
-    background:   rgba(204, 32, 32, 0.1);
+    background:   rgba(184, 32, 32, 0.09);
     border-color: var(--ham-danger);
     color:        var(--ham-danger);
   }
 }
 
-// ── Card body ─────────────────────────────────────────────────────────────
+// ── Cuerpo del QSO — metadatos operativos ─────────────────────────────────
 .qso-card__body {
-  padding: 8px 12px 10px 14px;
-  display: flex;
+  padding:        7px 12px 9px 14px;
+  display:        flex;
   flex-direction: column;
-  gap: 6px;
+  gap:            5px;
 }
 
+// Fila de metadatos: fecha, hora, RST
 .qso-meta-row {
   display:     flex;
   align-items: center;
-  gap:         14px;
+  gap:         12px;
   flex-wrap:   wrap;
 }
 
@@ -130,21 +135,22 @@
   align-items:    center;
   gap:            4px;
   font-family:    var(--app-font-ui);
-  font-size:      0.8rem;
+  font-size:      0.78rem;
   color:          var(--ham-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 
-  ion-icon { font-size: 0.85rem; }
+  ion-icon { font-size: 0.82rem; }
 
+  // RST — valor de señal, color ámbar
   &--rst {
-    font-family:    var(--app-font-mono);
-    font-size:      0.82rem;
-    color:          var(--ham-amber);
-    margin-left:    auto;
+    font-family: var(--app-font-mono);
+    font-size:   0.80rem;
+    color:       var(--ham-amber);
+    margin-left: auto;
   }
 }
 
-// ── Grid row ──────────────────────────────────────────────────────────────
+// ── Fila de grids — localización cartográfica ──────────────────────────────
 .qso-grid-row {
   display:     flex;
   align-items: center;
@@ -155,11 +161,11 @@
 .qso-grid {
   display:     flex;
   align-items: baseline;
-  gap:         5px;
+  gap:         4px;
 
   &__label {
     font-family:    var(--app-font-ui);
-    font-size:      0.6rem;
+    font-size:      0.58rem;
     font-weight:    700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -168,33 +174,35 @@
 
   &__value {
     font-family:    var(--app-font-mono);
-    font-size:      0.95rem;
+    font-size:      0.92rem;
     color:          var(--ham-text);
     letter-spacing: 0.03em;
   }
 }
 
+// Distancia — color celeste (onda de cielo / DX)
 .qso-distance {
   font-family:    var(--app-font-ui);
-  font-size:      0.8rem;
+  font-size:      0.78rem;
   color:          var(--ham-sky);
   letter-spacing: 0.06em;
   margin-left:    auto;
   font-weight:    600;
 }
 
+// Comentario libre — tono de nota de campo
 .qso-comment {
-  font-family:    var(--app-font-ui);
-  font-size:      0.82rem;
-  color:          var(--ham-muted);
-  font-style:     italic;
+  font-family:  var(--app-font-ui);
+  font-size:    0.80rem;
+  color:        var(--ham-muted);
+  font-style:   italic;
   letter-spacing: 0.02em;
-  padding-top:    2px;
-  border-top:     1px dashed var(--ham-border);
-  margin-top:     2px;
+  padding-top:  3px;
+  border-top:   1px dashed var(--ham-border);
+  margin-top:   2px;
 }
 
-// ── Export button ─────────────────────────────────────────────────────────
+// ── Botón de exportar ADIF ────────────────────────────────────────────────────
 .export-btn {
   margin: 16px 12px 24px;
 }

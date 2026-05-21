@@ -88,15 +88,16 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
   styles: [`
     // ── Card container ──────────────────────────────────────────────────
     .pos-card {
-      margin: 12px 12px 0;
+      margin:        12px 12px 0;
       background:    var(--ham-surface);
       border:        1px solid var(--ham-border);
       border-radius: var(--app-card-radius);
       overflow:      hidden;
       animation:     fade-up 0.35s ease both;
       position:      relative;
+      box-shadow:    var(--app-shadow-card);
 
-      // Phosphor top accent
+      // Acento de estado en borde superior — cartographic ruleset
       &::before {
         content:    '';
         position:   absolute;
@@ -105,11 +106,12 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
         right:      0;
         height:     2px;
         background: var(--ham-glow);
-        opacity:    0.7;
+        opacity:    0.55;
       }
 
       &--acquiring::before {
         background: var(--ham-amber);
+        opacity:    0.7;
         animation:  gps-acquire 1.4s ease-in-out infinite;
       }
     }
@@ -119,46 +121,47 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       display:         flex;
       align-items:     center;
       justify-content: space-between;
-      padding:         10px 14px 9px;
+      padding:         9px 14px 8px;
     }
 
     .pos-card__status-left {
       display:     flex;
       align-items: center;
-      gap:         8px;
+      gap:         7px;
     }
 
     .pos-card__status-label {
       font-family:    var(--app-font-ui);
-      font-size:      0.68rem;
+      font-size:      0.66rem;
       font-weight:    700;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
       color:          var(--ham-muted);
     }
 
+    // Punto de estado GPS — sin glow agresivo
     .pos-lock-dot {
-      width:         8px;
-      height:        8px;
+      width:         7px;
+      height:        7px;
       border-radius: 50%;
       background:    var(--ham-glow);
-      box-shadow:    0 0 6px var(--ham-glow), 0 0 12px rgba(var(--ham-glow-rgb), 0.4);
       flex-shrink:   0;
+      // Sombra selectiva — solo en el punto de datos, no en UI chrome
+      box-shadow:    0 0 5px rgba(var(--ham-glow-rgb), 0.55);
     }
 
     .pos-acquire-dot {
-      width:         8px;
-      height:        8px;
+      width:         7px;
+      height:        7px;
       border-radius: 50%;
       background:    var(--ham-amber);
-      box-shadow:    0 0 6px var(--ham-amber);
       flex-shrink:   0;
       animation:     gps-acquire 1.4s ease-in-out infinite;
     }
 
     .pos-card__accuracy {
       font-family:    var(--app-font-mono);
-      font-size:      0.72rem;
+      font-size:      0.70rem;
       color:          var(--ham-muted);
       letter-spacing: 0.05em;
     }
@@ -171,20 +174,20 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     // ── Section ─────────────────────────────────────────────────────────
     .pos-card__section {
-      padding: 12px 14px 10px;
+      padding: 11px 14px 9px;
     }
 
     .pos-card__section-label {
       font-family:    var(--app-font-ui);
-      font-size:      0.65rem;
+      font-size:      0.62rem;
       font-weight:    700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color:          var(--ham-muted);
-      margin-bottom:  4px;
+      margin-bottom:  5px;
     }
 
-    // ── Grid value (hero) ────────────────────────────────────────────────
+    // ── Valor de grid (hero) — lectura operativa principal ───────────────
     .pos-card__grid-wrap {
       display:         flex;
       align-items:     center;
@@ -193,25 +196,26 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
     }
 
     .pos-card__grid-value {
-      font-family:  var(--app-font-mono);
-      font-size:    clamp(2rem, 8vw, 2.8rem);
-      font-weight:  400;
-      color:        var(--ham-glow);
-      line-height:  1.0;
+      font-family:    var(--app-font-mono);
+      font-size:      clamp(2rem, 8vw, 2.6rem);
+      font-weight:    400;
+      color:          var(--ham-glow);
+      line-height:    1.0;
       letter-spacing: 0.04em;
-      text-shadow:  0 0 24px rgba(var(--ham-glow-rgb), 0.5);
-      flex:         1;
-      min-width:    0;
-      overflow:     hidden;
-      text-overflow: ellipsis;
-      white-space:  nowrap;
+      // Glow selectivo en el dato operativo — no en UI chrome
+      text-shadow:    0 0 18px rgba(var(--ham-glow-rgb), 0.30);
+      flex:           1;
+      min-width:      0;
+      overflow:       hidden;
+      text-overflow:  ellipsis;
+      white-space:    nowrap;
     }
 
     .pos-card__grid-sub {
       font-family:    var(--app-font-ui);
-      font-size:      0.7rem;
+      font-size:      0.68rem;
       color:          var(--ham-muted);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.07em;
       margin-top:     3px;
     }
 
@@ -225,15 +229,14 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     .pos-card__plus-value {
       font-family:    var(--app-font-mono);
-      font-size:      clamp(1.15rem, 4.5vw, 1.5rem);
+      font-size:      clamp(1.1rem, 4.2vw, 1.45rem);
       font-weight:    400;
       color:          var(--ham-amber);
       letter-spacing: 0.04em;
-      text-shadow:    0 0 16px rgba(var(--ham-amber-rgb), 0.4);
       flex:           1;
     }
 
-    // ── Action buttons ────────────────────────────────────────────────────
+    // ── Botones de acción ──────────────────────────────────────────────
     .pos-card__actions {
       display:     flex;
       align-items: center;
@@ -245,43 +248,43 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       display:         flex;
       align-items:     center;
       justify-content: center;
-      width:           44px;
-      height:          44px;
+      width:           42px;
+      height:          42px;
       background:      transparent;
       border:          1px solid var(--ham-border);
-      border-radius:   var(--app-card-radius);
+      border-radius:   var(--app-radius-ctrl, 4px);
       color:           var(--ham-muted);
       cursor:          pointer;
       transition:      all 0.15s ease;
       -webkit-tap-highlight-color: transparent;
 
-      ion-icon { font-size: 1.2rem; }
+      ion-icon { font-size: 1.15rem; }
 
       &:active {
-        background: var(--ham-glow-dim);
-        border-color: var(--ham-glow);
-        color: var(--ham-glow);
-        transform: scale(0.95);
+        background:   var(--ham-glow-dim);
+        border-color: var(--ham-border-hi);
+        color:        var(--ham-glow);
+        transform:    scale(0.95);
       }
     }
 
-    // ── Coordinates ───────────────────────────────────────────────────────
+    // ── Coordenadas ───────────────────────────────────────────────────────
     .pos-card__coords {
       display:     flex;
       align-items: center;
       gap:         8px;
-      padding:     8px 14px 10px;
+      padding:     7px 14px 10px;
     }
 
     .pos-card__coord-icon {
-      font-size:   0.9rem;
+      font-size:   0.88rem;
       color:       var(--ham-muted);
       flex-shrink: 0;
     }
 
     .pos-card__coord-value {
       font-family:    var(--app-font-mono);
-      font-size:      0.82rem;
+      font-size:      0.80rem;
       color:          var(--ham-muted);
       letter-spacing: 0.03em;
       overflow:       hidden;
@@ -289,9 +292,9 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       text-overflow:  ellipsis;
     }
 
-    // ── No-fix state ─────────────────────────────────────────────────────
+    // ── Sin fix GPS ──────────────────────────────────────────────────────
     .pos-card__no-fix {
-      padding:    24px 14px 20px;
+      padding:    22px 14px 18px;
       text-align: center;
     }
 
@@ -299,13 +302,13 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       font-family:    var(--app-font-mono);
       font-size:      2.4rem;
       color:          var(--ham-border-hi);
-      letter-spacing: 0.1em;
-      animation:      value-flash 2s ease-in-out infinite;
+      letter-spacing: 0.10em;
+      animation:      value-flash 2.2s ease-in-out infinite;
     }
 
     .pos-card__no-fix-hint {
       font-family:    var(--app-font-ui);
-      font-size:      0.78rem;
+      font-size:      0.76rem;
       color:          var(--ham-muted);
       letter-spacing: 0.08em;
       text-transform: uppercase;

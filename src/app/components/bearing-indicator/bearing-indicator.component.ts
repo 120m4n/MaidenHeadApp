@@ -45,65 +45,70 @@ import { BearingResult } from '../../services/bearing.service';
     }
   `,
   styles: [`
+    // ── Contenedor principal ────────────────────────────────────────────
     .bearing-wrap {
-      display:         flex;
-      align-items:     center;
-      gap:             20px;
-      padding:         14px 0 10px;
-      animation:       fade-up 0.3s ease both;
+      display:     flex;
+      align-items: center;
+      gap:         18px;
+      padding:     13px 0 10px;
+      animation:   fade-up 0.3s ease both;
     }
 
-    // ── Compass ──────────────────────────────────────────────────────────
+    // ── Rosa de los vientos — instrumento cartográfico ──────────────────
     .compass-ring {
       position:      relative;
-      width:         68px;
-      height:        68px;
+      width:         66px;
+      height:        66px;
       border-radius: 50%;
-      border:        2px solid var(--ham-border);
+      border:        1.5px solid var(--ham-border);
       flex-shrink:   0;
       background:    var(--ham-surface2, var(--ham-surface));
 
+      // Anillo interior — graduación visual
       &::before {
-        content:    '';
-        position:   absolute;
-        inset:      6px;
+        content:       '';
+        position:      absolute;
+        inset:         7px;
         border-radius: 50%;
-        border:     1px solid var(--ham-border);
-        opacity:    0.5;
+        border:        1px solid var(--ham-border);
+        opacity:       0.45;
       }
     }
 
     .compass-arrow {
-      position:   absolute;
-      inset:      0;
-      display:    flex;
-      align-items: center;
+      position:        absolute;
+      inset:           0;
+      display:         flex;
+      align-items:     center;
       justify-content: center;
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      // Movimiento fluido con leve bounce — comportamiento de aguja de brújula
+      transition:      transform 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
 
       ion-icon {
-        font-size: 1.7rem;
+        font-size: 1.65rem;
         color:     var(--ham-glow);
-        filter:    drop-shadow(0 0 4px rgba(var(--ham-glow-rgb), 0.6));
+        // Sin glow filter — la lectura operativa no necesita ornamento CRT
       }
     }
 
+    // Cardinales — micro-labels de orientación
     .compass-cardinal {
       position:       absolute;
       font-family:    var(--app-font-ui);
-      font-size:      0.55rem;
+      font-size:      0.53rem;
       font-weight:    700;
       letter-spacing: 0;
       color:          var(--ham-muted);
       line-height:    1;
     }
 
-    .compass-N { top: 3px;  left: 50%; transform: translateX(-50%); color: var(--ham-glow); }
+    // Norte — resaltado por convención cartográfica
+    .compass-N { top: 3px;    left: 50%; transform: translateX(-50%); color: var(--ham-glow); }
     .compass-S { bottom: 3px; left: 50%; transform: translateX(-50%); }
-    .compass-E { right: 4px; top: 50%; transform: translateY(-50%); }
-    .compass-W { left: 4px;  top: 50%; transform: translateY(-50%); }
+    .compass-E { right: 4px;  top: 50%;  transform: translateY(-50%); }
+    .compass-W { left: 4px;   top: 50%;  transform: translateY(-50%); }
 
-    // ── Data ─────────────────────────────────────────────────────────────
+    // ── Lecturas de datos — rumbo y distancia ───────────────────────────
     .bearing-data {
       display:        flex;
       flex-direction: column;
@@ -117,42 +122,43 @@ import { BearingResult } from '../../services/bearing.service';
       gap:            2px;
     }
 
+    // Label de campo operativo
     .bearing-label {
       font-family:    var(--app-font-ui);
-      font-size:      0.62rem;
+      font-size:      0.60rem;
       font-weight:    700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color:          var(--ham-muted);
     }
 
+    // Valor de rumbo — teal marino
     .bearing-value {
       font-family:    var(--app-font-mono);
       font-size:      1.4rem;
       font-weight:    400;
       color:          var(--ham-glow);
       letter-spacing: 0.04em;
-      text-shadow:    0 0 16px rgba(var(--ham-glow-rgb), 0.4);
       line-height:    1;
     }
 
+    // Valor de distancia — ámbar (análogo a distancia en ploter náutico)
     .distance-value {
       font-family:    var(--app-font-mono);
       font-size:      1.25rem;
       font-weight:    400;
       color:          var(--ham-amber);
       letter-spacing: 0.04em;
-      text-shadow:    0 0 12px rgba(var(--ham-amber-rgb), 0.35);
       line-height:    1;
     }
 
     .bearing-unit {
-      font-size:      0.8rem;
+      font-size:      0.76rem;
       font-family:    var(--app-font-ui);
       font-weight:    600;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      opacity:        0.8;
+      opacity:        0.75;
     }
   `],
   imports: [CommonModule, IonIcon],

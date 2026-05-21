@@ -1,155 +1,170 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  SDR COCKPIT — Design Tokens
+//  TERRAIN & SIGNAL — Design Tokens
+//  MaidenHead Ham Radio App
 //
-//  El tema se controla con el atributo data-theme en <html>:
-//    data-theme="dark"   → oscuro explícito (usuario eligió "Oscuro")
-//    data-theme="light"  → claro explícito  (usuario eligió "Claro")
-//    (sin atributo)      → auto: la @media query del sistema decide
+//  Identidad cartográfica de campo: técnica, amigable, orientada a datos.
+//  Evita estética de terminal fosforescente. No es un clon de Waze.
 //
-//  ThemeService.apply() setea este atributo; nada más toca clases Ionic.
+//  Metáfora visual: ploter de cartas náuticas, instrumento de campo GPS,
+//  receptor de radio de aviación. Datos claros, superficie con carácter.
+//
+//  Control de tema via data-theme en <html>:
+//    data-theme="dark"  → oscuro explícito
+//    data-theme="light" → claro explícito
+//    (sin atributo)     → auto: el sistema operativo decide
 // ═══════════════════════════════════════════════════════════════════════════
 
-// ─── Tokens invariantes (fuente, radio, tamaños) ─────────────────────────
+// ─── Tokens invariantes ────────────────────────────────────────────────────
 :root {
-  --app-font-mono:      'Share Tech Mono', 'Courier New', monospace;
-  --app-font-ui:        'Barlow Condensed', 'Arial Narrow', sans-serif;
-  --app-grid-font-size: 2.8rem;
-  --app-cta-min-size:   52px;
-  --app-card-radius:    3px;
+  --app-font-mono:       'Share Tech Mono', 'Courier New', monospace;
+  --app-font-ui:         'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --app-grid-font-size:  2.6rem;
+  --app-cta-min-size:    52px;
+  --app-card-radius:     6px;   // más amigable; 3px era demasiado industrial
+  --app-radius-ctrl:     4px;   // controles del mapa, botones secundarios
+  --app-radius-badge:    3px;   // badges y tags
 
-  // Toolbar siempre oscura en ambos temas — SDR control panel feel
-  --ion-toolbar-background:   #0a1a0b;
-  --ion-toolbar-color:        #c0d4c2;
-  --ion-tab-bar-background:   #080e09;
-  --ion-tab-bar-border-color: #1a2b1c;
+  // Panel de instrumento — oscuro en ambos temas (como bisel de ploter)
+  --ion-toolbar-background:   #0f1a22;
+  --ion-toolbar-color:        #a8c4bc;
+  --ion-tab-bar-background:   #0b141c;
+  --ion-tab-bar-border-color: #1e3040;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  TEMA CLARO
+//  TEMA CLARO — Papel de carta náutica cálida
 // ═══════════════════════════════════════════════════════════════════════════
 
 :root,
 :root[data-theme="light"] {
-  // ── Ham palette ───────────────────────────────────────────────────────
-  --ham-bg:        #f0f5f0;
-  --ham-surface:   #ffffff;
-  --ham-surface2:  #f5faf5;
-  --ham-border:    #c4d4c5;
-  --ham-border-hi: #7aaa7b;
-  --ham-glow:      #1a6b1c;
-  --ham-glow-rgb:  26, 107, 28;
-  --ham-glow-dim:  rgba(26, 107, 28, 0.12);
-  --ham-amber:     #9a5400;
-  --ham-amber-rgb: 154, 84, 0;
-  --ham-sky:       #1060a0;
-  --ham-text:      #0a1a0b;
-  --ham-muted:     #56745a;
-  --ham-danger:    #cc2020;
-  --ham-success:   #1a6b1c;
-  // Fondo para labels de grids en el mapa — claro: píldora blanca sobre tiles OSM
-  --map-label-bg:  rgba(255, 255, 255, 0.92);
+  // ── Ham palette — carta topográfica ──────────────────────────────────
+  --ham-bg:        #efeade;   // papel náutico cálido — evita blanco clínico
+  --ham-surface:   #faf8f3;   // superficie principal — crema limpia
+  --ham-surface2:  #f2ede3;   // superficie secundaria / segmento
+  --ham-border:    #c4d2b8;   // borde sutil — neutro verdoso
+  --ham-border-hi: #8aab94;   // borde activo / foco
+  --ham-glow:      #1b5f52;   // teal marino — señal / grid activo (primary)
+  --ham-glow-rgb:  27, 95, 82;
+  --ham-glow-dim:  rgba(27, 95, 82, 0.10);
+  --ham-amber:     #a96820;   // cobre-ámbar — frecuencia, RST, Plus Code
+  --ham-amber-rgb: 169, 104, 32;
+  --ham-sky:       #1a5894;   // azul naval — onda celeste, DX, bearing
+  --ham-text:      #1c2a22;   // texto principal — casi negro verdoso
+  --ham-muted:     #5c7265;   // texto secundario / labels
+  --ham-danger:    #b82020;
+  --ham-success:   #1b5f52;
+  // Labels de mapa — claro: píldora crema sobre tiles OSM
+  --map-label-bg:  rgba(250, 248, 243, 0.94);
 
-  // ── Ionic component tokens ────────────────────────────────────────────
-  --ion-color-primary:              #1a6b1c;
-  --ion-color-primary-rgb:          26, 107, 28;
+  // Sombras — sutil elevación en tema claro
+  --app-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 8px rgba(0, 0, 0, 0.04);
+  --app-shadow-ctrl: 0 1px 4px rgba(0, 0, 0, 0.12);
+
+  // ── Ionic component tokens — claro ────────────────────────────────────
+  --ion-color-primary:              #1b5f52;
+  --ion-color-primary-rgb:          27, 95, 82;
   --ion-color-primary-contrast:     #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade:        #175f18;
-  --ion-color-primary-tint:         #317a33;
+  --ion-color-primary-shade:        #175448;
+  --ion-color-primary-tint:         #32706a;
 
-  --ion-color-secondary:              #9a5400;
-  --ion-color-secondary-rgb:          154, 84, 0;
+  --ion-color-secondary:              #a96820;
+  --ion-color-secondary-rgb:          169, 104, 32;
   --ion-color-secondary-contrast:     #ffffff;
   --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade:        #884a00;
-  --ion-color-secondary-tint:         #a8641a;
+  --ion-color-secondary-shade:        #945c1c;
+  --ion-color-secondary-tint:         #b87836;
 
-  --ion-color-tertiary:              #1060a0;
-  --ion-color-tertiary-rgb:          16, 96, 160;
+  --ion-color-tertiary:              #1a5894;
+  --ion-color-tertiary-rgb:          26, 88, 148;
   --ion-color-tertiary-contrast:     #ffffff;
   --ion-color-tertiary-contrast-rgb: 255, 255, 255;
-  --ion-color-tertiary-shade:        #0e548e;
-  --ion-color-tertiary-tint:         #2870aa;
+  --ion-color-tertiary-shade:        #174e82;
+  --ion-color-tertiary-tint:         #2a689e;
 
-  --ion-color-success:     #1a7b1e;
-  --ion-color-warning:     #9a5400;
-  --ion-color-danger:      #cc2020;
-  --ion-color-medium:      #56745a;
-  --ion-color-light:       #e0eae0;
-  --ion-color-dark:        #0a1a0b;
+  --ion-color-success:     #1b6b58;
+  --ion-color-warning:     #a96820;
+  --ion-color-danger:      #b82020;
+  --ion-color-medium:      #5c7265;
+  --ion-color-light:       #dde8d8;
+  --ion-color-dark:        #1c2a22;
 
-  --ion-background-color:     #f0f5f0;
-  --ion-background-color-rgb: 240, 245, 240;
-  --ion-item-background:      #ffffff;
-  --ion-text-color:           #0a1a0b;
-  --ion-text-color-rgb:       10, 26, 11;
-  --ion-placeholder-color:    #7aaa7b;
+  --ion-background-color:     #efeade;
+  --ion-background-color-rgb: 239, 234, 222;
+  --ion-item-background:      #faf8f3;
+  --ion-text-color:           #1c2a22;
+  --ion-text-color-rgb:       28, 42, 34;
+  --ion-placeholder-color:    #8aab94;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  TEMA OSCURO — mixin para reusar en selector explícito Y media query
+//  TEMA OSCURO — Carta náutica nocturna (mixin reutilizable)
 // ═══════════════════════════════════════════════════════════════════════════
 
 @mixin dark-theme-vars {
-  // ── Ham palette — phosphor terminal ───────────────────────────────────
-  --ham-bg:        #07090a;
-  --ham-surface:   #0c1210;
-  --ham-surface2:  #121a13;
-  --ham-border:    #1a2b1c;
-  --ham-border-hi: #2d4a2f;
-  --ham-glow:      #39ff14;
-  --ham-glow-rgb:  57, 255, 20;
-  --ham-glow-dim:  rgba(57, 255, 20, 0.10);
-  --ham-amber:     #f0a500;
-  --ham-amber-rgb: 240, 165, 0;
-  --ham-sky:       #4db8ff;
-  --ham-text:      #b8d4b9;
-  --ham-muted:     #4a6a4c;
-  --ham-danger:    #ff4444;
-  --ham-success:   #39ff14;
-  // Fondo para labels de grids en el mapa — oscuro: píldora negra semi-transparente
-  --map-label-bg:  rgba(0, 0, 0, 0.62);
+  // ── Ham palette — ploter nocturno ─────────────────────────────────────
+  --ham-bg:        #0d1520;   // azul marino profundo — no negro puro
+  --ham-surface:   #141d26;   // superficie — ligeramente elevada
+  --ham-surface2:  #1a2432;   // segunda superficie — segmento, fondo input
+  --ham-border:    #1e3040;   // borde — marino oscuro
+  --ham-border-hi: #2e4a60;   // borde activo / foco
+  --ham-glow:      #34c9a0;   // teal-cian — señal activa (NO es verde fósforo)
+  --ham-glow-rgb:  52, 201, 160;
+  --ham-glow-dim:  rgba(52, 201, 160, 0.10);
+  --ham-amber:     #d4923e;   // ámbar cálido — frecuencia, RST
+  --ham-amber-rgb: 212, 146, 62;
+  --ham-sky:       #5ab0e8;   // azul celeste — DX, bearing, onda de cielo
+  --ham-text:      #c0d8d0;   // texto principal — cian apagado
+  --ham-muted:     #4a7068;   // texto secundario — teal oscuro
+  --ham-danger:    #e05252;
+  --ham-success:   #34c9a0;
+  // Labels de mapa — oscuro: píldora azul marino sobre tiles
+  --map-label-bg:  rgba(13, 22, 36, 0.78);
 
-  // ── Ionic component tokens — oscuro ───────────────────────────────────
-  --ion-color-primary:              #39ff14;
-  --ion-color-primary-rgb:          57, 255, 20;
-  --ion-color-primary-contrast:     #000000;
-  --ion-color-primary-contrast-rgb: 0, 0, 0;
-  --ion-color-primary-shade:        #32e012;
-  --ion-color-primary-tint:         #4dff2c;
+  // Sombras — sin elevación en oscuro (el contraste es suficiente)
+  --app-shadow-card: none;
+  --app-shadow-ctrl: 0 1px 4px rgba(0, 0, 0, 0.4);
 
-  --ion-color-secondary:              #f0a500;
-  --ion-color-secondary-rgb:          240, 165, 0;
-  --ion-color-secondary-contrast:     #000000;
-  --ion-color-secondary-contrast-rgb: 0, 0, 0;
-  --ion-color-secondary-shade:        #d29200;
-  --ion-color-secondary-tint:         #f2ae1a;
+  // ── Ionic component tokens — oscuro ────────────────────────────────────
+  --ion-color-primary:              #34c9a0;
+  --ion-color-primary-rgb:          52, 201, 160;
+  --ion-color-primary-contrast:     #0d1520;
+  --ion-color-primary-contrast-rgb: 13, 21, 32;
+  --ion-color-primary-shade:        #2db38d;
+  --ion-color-primary-tint:         #48d4ac;
 
-  --ion-color-tertiary:              #4db8ff;
-  --ion-color-tertiary-rgb:          77, 184, 255;
-  --ion-color-tertiary-contrast:     #000000;
-  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
-  --ion-color-tertiary-shade:        #44a2e0;
-  --ion-color-tertiary-tint:         #5fc0ff;
+  --ion-color-secondary:              #d4923e;
+  --ion-color-secondary-rgb:          212, 146, 62;
+  --ion-color-secondary-contrast:     #0d1520;
+  --ion-color-secondary-contrast-rgb: 13, 21, 32;
+  --ion-color-secondary-shade:        #ba8036;
+  --ion-color-secondary-tint:         #dca052;
 
-  --ion-color-success:     #39ff14;
-  --ion-color-warning:     #f0a500;
-  --ion-color-danger:      #ff4444;
-  --ion-color-medium:      #4a6a4c;
-  --ion-color-light:       #1a2b1c;
-  --ion-color-dark:        #d4e8d5;
+  --ion-color-tertiary:              #5ab0e8;
+  --ion-color-tertiary-rgb:          90, 176, 232;
+  --ion-color-tertiary-contrast:     #0d1520;
+  --ion-color-tertiary-contrast-rgb: 13, 21, 32;
+  --ion-color-tertiary-shade:        #4f9ccf;
+  --ion-color-tertiary-tint:         #6cbbec;
 
-  --ion-background-color:     #07090a;
-  --ion-background-color-rgb: 7, 9, 10;
-  --ion-item-background:      #0c1210;
-  --ion-text-color:           #b8d4b9;
-  --ion-text-color-rgb:       184, 212, 185;
-  --ion-placeholder-color:    #2d4a2f;
+  --ion-color-success:     #34c9a0;
+  --ion-color-warning:     #d4923e;
+  --ion-color-danger:      #e05252;
+  --ion-color-medium:      #4a7068;
+  --ion-color-light:       #1a2432;
+  --ion-color-dark:        #c0d8d0;
 
-  --ion-toolbar-background:   #080b09;
-  --ion-toolbar-color:        #b8d4b9;
-  --ion-tab-bar-background:   #06080a;
-  --ion-tab-bar-border-color: #1a2b1c;
+  --ion-background-color:     #0d1520;
+  --ion-background-color-rgb: 13, 21, 32;
+  --ion-item-background:      #141d26;
+  --ion-text-color:           #c0d8d0;
+  --ion-text-color-rgb:       192, 216, 208;
+  --ion-placeholder-color:    #2e4a60;
+
+  --ion-toolbar-background:   #0a1018;
+  --ion-toolbar-color:        #a8c4bc;
+  --ion-tab-bar-background:   #080e16;
+  --ion-tab-bar-border-color: #1e3040;
 }
 
 // Oscuro explícito — ThemeService pone data-theme="dark"
@@ -157,7 +172,7 @@
   @include dark-theme-vars;
 }
 
-// Oscuro automático — sistema en dark y sin preferencia explícita de claro
+// Oscuro automático — sistema en dark, sin preferencia explícita de claro
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     @include dark-theme-vars;

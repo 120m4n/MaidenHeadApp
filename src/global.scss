@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   SDR COCKPIT — Global Styles
-   MaidenHead Ham Radio App · Phosphor Terminal Aesthetic
+   TERRAIN & SIGNAL — Global Styles
+   MaidenHead Ham Radio App · Cartographic Field Instrument
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* Core CSS required for Ionic components to work properly */
@@ -15,41 +15,43 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/* Dark mode: gestionado por ThemeService + data-theme en variables.scss.
-   Las paletas de Ionic se omiten — nuestros tokens --ion-* y --ham-* las reemplazan. */
-
 /* Leaflet */
 @import 'leaflet/dist/leaflet.css';
 
 // ─── Keyframes ────────────────────────────────────────────────────────────
 
+// Adquisición GPS — pulso sobrio para el punto de espera
 @keyframes gps-acquire {
-  0%, 100% { opacity: 1; transform: scale(1); }
+  0%, 100% { opacity: 1;   transform: scale(1); }
   50%       { opacity: 0.4; transform: scale(0.85); }
 }
 
+// Beacon GPS lock — 3 iteraciones al inicio (no continuo = no repaint permanente)
 @keyframes gps-lock {
-  0%   { box-shadow: 0 0 0 0 rgba(var(--ham-glow-rgb), 0.7); }
-  70%  { box-shadow: 0 0 0 10px rgba(var(--ham-glow-rgb), 0); }
-  100% { box-shadow: 0 0 0 0   rgba(var(--ham-glow-rgb), 0); }
+  0%   { box-shadow: 0 0 0 0  rgba(var(--ham-glow-rgb), 0.45); }
+  70%  { box-shadow: 0 0 0 8px rgba(var(--ham-glow-rgb), 0); }
+  100% { box-shadow: 0 0 0 0  rgba(var(--ham-glow-rgb), 0); }
 }
 
-@keyframes scanline {
-  0%   { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
-
+// Entrada de elementos — subtle y rápida
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+// Flash de valor en adquisición
 @keyframes value-flash {
   0%, 100% { opacity: 1; }
-  50%      { opacity: 0.6; }
+  50%      { opacity: 0.5; }
 }
 
-// ─── Global typography ───────────────────────────────────────────────────
+// Respiración del anillo de precisión — GPU-composited (opacity only)
+@keyframes ring-breathe {
+  0%, 100% { opacity: 0.65; }
+  50%       { opacity: 0.3; }
+}
+
+// ─── Tipografía global ───────────────────────────────────────────────────
 
 html, body {
   font-family: var(--app-font-ui) !important;
@@ -57,7 +59,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-// Monospace for all data values
+// Monospace para todos los valores de datos operativos
 .grid-value,
 .coord-value,
 .mono {
@@ -66,30 +68,31 @@ html, body {
   letter-spacing: 0.03em;
 }
 
+// Grid principal — hero display
 .grid-value {
   font-size: var(--app-grid-font-size);
   color: var(--ham-glow);
   line-height: 1.1;
 }
 
-// ─── Ionic component overrides ────────────────────────────────────────────
+// ─── Ionic — Panel de instrumento ─────────────────────────────────────────
 
-// Toolbar — always dark SDR panel
+// Toolbar — panel oscuro en ambos temas (como bisel de instrumento de campo)
 ion-header ion-toolbar {
-  --background:    var(--ion-toolbar-background, #0a1a0b);
-  --color:         var(--ion-toolbar-color, #c0d4c2);
+  --background:    var(--ion-toolbar-background, #0f1a22);
+  --color:         var(--ion-toolbar-color, #a8c4bc);
   --border-color:  transparent;
   --padding-start: 16px;
   --padding-end:   8px;
-  border-bottom: 1px solid var(--ham-border, #1a2b1c);
+  border-bottom: 1px solid rgba(var(--ham-glow-rgb, 52, 201, 160), 0.12);
 
   ion-title {
-    font-family: var(--app-font-ui);
-    font-weight: 600;
-    font-size: 1.15rem;
-    letter-spacing: 0.08em;
+    font-family:    var(--app-font-ui);
+    font-weight:    600;
+    font-size:      1.1rem;
+    letter-spacing: 0.10em;
     text-transform: uppercase;
-    color: var(--ham-glow);
+    color:          var(--ham-glow);
   }
 
   ion-button {
@@ -98,34 +101,40 @@ ion-header ion-toolbar {
   }
 }
 
-// Tab bar — minimal phosphor strip
+// Tab bar — barra de navegación de instrumento
 ion-tab-bar {
-  --background:    var(--ion-tab-bar-background, #080e09);
-  --border:        1px solid var(--ion-tab-bar-border-color, #1a2b1c);
-  --color:         var(--ham-muted);
-  --color-selected: var(--ham-glow);
+  --background:      var(--ion-tab-bar-background, #0b141c);
+  --border:          1px solid var(--ion-tab-bar-border-color, #1e3040);
+  --color:           var(--ham-muted);
+  --color-selected:  var(--ham-glow);
   height: 56px;
 }
 
 ion-tab-button {
-  font-family: var(--app-font-ui);
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-family:    var(--app-font-ui);
+  font-size:      0.65rem;
+  font-weight:    600;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
-  transition: color 0.2s ease;
+  transition:     color 0.2s ease;
+  position:       relative;
 
   ion-icon {
-    font-size: 1.3rem;
+    font-size:    1.25rem;
     margin-bottom: 2px;
-    transition: filter 0.2s ease, transform 0.2s ease;
+    transition:   color 0.2s ease;
   }
 
-  &.tab-selected {
-    ion-icon {
-      filter: drop-shadow(0 0 6px var(--ham-glow));
-      transform: translateY(-1px);
-    }
+  // Indicador de tab activo — línea en el borde superior (cartographic feel)
+  &.tab-selected::after {
+    content:       '';
+    position:      absolute;
+    top:           0;
+    left:          22%;
+    right:         22%;
+    height:        2px;
+    background:    var(--ham-glow);
+    border-radius: 0 0 2px 2px;
   }
 }
 
@@ -135,12 +144,12 @@ ion-content {
   --color:      var(--ham-text);
 }
 
-// Cards — sharp, no shadow
+// Cards — con elevación en claro, sin sombra en oscuro
 ion-card {
   --background:     var(--ham-surface);
   --color:          var(--ham-text);
   border-radius:    var(--app-card-radius) !important;
-  box-shadow:       none !important;
+  box-shadow:       var(--app-shadow-card) !important;
   border:           1px solid var(--ham-border);
   margin:           0 12px 12px;
   animation:        fade-up 0.3s ease both;
@@ -151,29 +160,29 @@ ion-card-header {
 }
 
 ion-card-title {
-  font-family: var(--app-font-ui);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-family:    var(--app-font-ui);
+  font-size:      0.75rem;
+  font-weight:    600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ham-muted);
+  color:          var(--ham-muted);
 }
 
 // List items
 ion-item {
-  --background:      var(--ham-surface);
-  --color:           var(--ham-text);
-  --border-color:    var(--ham-border);
+  --background:        var(--ham-surface);
+  --color:             var(--ham-text);
+  --border-color:      var(--ham-border);
   --inner-padding-end: 12px;
-  font-family:       var(--app-font-ui);
-  font-size:         1rem;
+  font-family:         var(--app-font-ui);
+  font-size:           1rem;
 }
 
 ion-list-header {
   font-family:    var(--app-font-ui);
   font-weight:    700;
-  font-size:      0.72rem;
-  letter-spacing: 0.12em;
+  font-size:      0.70rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color:          var(--ham-glow);
   padding-top:    12px;
@@ -183,19 +192,19 @@ ion-list-header {
 ion-label {
   font-family: var(--app-font-ui) !important;
   &[position="stacked"] {
-    font-size: 0.72rem !important;
-    letter-spacing: 0.1em;
+    font-size:      0.70rem !important;
+    letter-spacing: 0.10em;
     text-transform: uppercase;
-    color: var(--ham-muted) !important;
-    margin-bottom: 4px;
+    color:          var(--ham-muted) !important;
+    margin-bottom:  4px;
   }
 }
 
 ion-input {
-  --color:            var(--ham-text);
+  --color:             var(--ham-text);
   --placeholder-color: var(--ham-muted);
-  font-family:        var(--app-font-mono) !important;
-  font-size:          1.05rem !important;
+  font-family:         var(--app-font-mono) !important;
+  font-size:           1.05rem !important;
 }
 
 ion-select {
@@ -204,6 +213,7 @@ ion-select {
   color:       var(--ham-text);
 }
 
+// Segment — control de modo analítico
 ion-segment {
   --background: var(--ham-surface2);
   border:       1px solid var(--ham-border);
@@ -212,23 +222,18 @@ ion-segment {
 }
 
 ion-segment-button {
-  --color:          var(--ham-muted);
-  --color-checked:  var(--ham-text);
+  --color:              var(--ham-muted);
+  --color-checked:      var(--ham-surface);
   --background-checked: var(--ham-glow);
   --indicator-color:    transparent;
-  --border-radius:      2px;
+  --border-radius:      calc(var(--app-card-radius) - 2px);
   font-family:    var(--app-font-ui);
-  font-size:      0.8rem;
+  font-size:      0.78rem;
   font-weight:    600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   min-height:     36px;
-  transition:     all 0.2s ease;
-
-  &.segment-button-checked {
-    color: #000 !important;
-    font-weight: 700;
-  }
+  transition:     all 0.18s ease;
 }
 
 // Buttons
@@ -248,35 +253,30 @@ ion-button.cta-large {
 }
 
 ion-button:active {
-  opacity: 0.8;
+  opacity:   0.82;
   transform: scale(0.97);
 }
 
-// FAB — glowing signal beacon
+// FAB — baliza de operación
 ion-fab-button {
-  --background:      var(--ham-glow);
-  --color:           #000000;
-  --box-shadow:      0 0 16px rgba(var(--ham-glow-rgb), 0.5),
-                     0 4px 12px rgba(0,0,0,0.4);
-  --border-radius:   12px;
+  --background:    var(--ham-glow);
+  --color:         var(--ion-color-primary-contrast, #ffffff);
+  --box-shadow:    var(--app-shadow-ctrl), 0 0 12px rgba(var(--ham-glow-rgb), 0.30);
+  --border-radius: 14px;
   width:  60px;
   height: 60px;
-  // PERF: era "infinite" — box-shadow no es GPU-composited y forzaba repaints
-  // continuos sobre el layer del mapa. Se cambia a 3 iteraciones (efecto "beacon"
-  // al abrir la app) sin coste de repaint permanente.
-  animation: gps-lock 2.5s ease-out 3;
+  // 3 iteraciones — efecto "beacon" al entrar, sin repaint continuo
+  animation: gps-lock 2.2s ease-out 3;
 
-  ion-icon {
-    font-size: 1.6rem;
-  }
+  ion-icon { font-size: 1.55rem; }
 }
 
 // Badge
 ion-badge {
-  font-family:    var(--app-font-mono);
-  font-size:      0.72rem;
-  border-radius:  2px;
-  padding:        2px 6px;
+  font-family:   var(--app-font-mono);
+  font-size:     0.70rem;
+  border-radius: var(--app-radius-badge, 3px);
+  padding:       2px 6px;
 }
 
 // Note
@@ -286,66 +286,53 @@ ion-note {
   color:       var(--ham-muted);
 }
 
-// Spinner — phosphor pulse
+// Spinner
 ion-spinner {
   color: var(--ham-glow);
 }
 
-// Toast — tactical notification
+// Toast — notificación operativa
 ion-toast {
-  --background:   var(--ham-surface2);
-  --color:        var(--ham-text);
+  --background:    var(--ham-surface2);
+  --color:         var(--ham-text);
   --border-radius: var(--app-card-radius);
-  --box-shadow:   0 4px 20px rgba(0,0,0,0.5);
-  font-family:    var(--app-font-ui);
-  font-size:      0.9rem;
-  letter-spacing: 0.04em;
+  --box-shadow:    0 4px 20px rgba(0, 0, 0, 0.4);
+  font-family:     var(--app-font-ui);
+  font-size:       0.9rem;
+  letter-spacing:  0.04em;
 }
 
 // Alert
 ion-alert {
-  --background:    var(--ham-surface);
-  --backdrop-opacity: 0.6;
-  font-family:     var(--app-font-ui);
+  --background:        var(--ham-surface);
+  --backdrop-opacity:  0.55;
+  font-family:         var(--app-font-ui);
 }
 
-// ─── Utility classes ──────────────────────────────────────────────────────
+// ─── Clases de utilidad ──────────────────────────────────────────────────
 
+// Micro-label — etiqueta de campo o sección
 .label-micro {
   font-family:    var(--app-font-ui);
-  font-size:      0.68rem;
+  font-size:      0.66rem;
   font-weight:    600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color:          var(--ham-muted);
 }
 
+// Valores con color semántico
 .value-amber {
-  color: var(--ham-amber) !important;
+  color:       var(--ham-amber) !important;
   font-family: var(--app-font-mono);
 }
 
 .value-sky {
-  color: var(--ham-sky) !important;
+  color:       var(--ham-sky) !important;
   font-family: var(--app-font-mono);
 }
 
-// Screen scanline overlay — subtle CRT texture
-.scanline-overlay {
-  pointer-events: none;
-  position:  fixed;
-  inset:     0;
-  z-index:   9999;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    var(--ham-scan) 2px,
-    var(--ham-scan) 4px
-  );
-}
-
-// Section divider — phosphor hair line
+// Divisor de sección — línea con acento cartográfico
 .ham-divider {
   height:     1px;
   background: var(--ham-border);
@@ -357,35 +344,36 @@ ion-alert {
     position:   absolute;
     left:       0;
     top:        0;
-    width:      40px;
+    width:      32px;
     height:     1px;
     background: var(--ham-glow);
-    opacity:    0.6;
+    opacity:    0.5;
   }
 }
 
-// Empty state
+// Estado vacío — pantalla sin datos
 .empty-state {
-  display:         flex;
-  flex-direction:  column;
-  align-items:     center;
-  padding:         60px 32px;
-  color:           var(--ham-muted);
-  text-align:      center;
-  animation:       fade-up 0.4s ease both;
-  font-family:     var(--app-font-ui);
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  padding:        60px 32px;
+  color:          var(--ham-muted);
+  text-align:     center;
+  animation:      fade-up 0.4s ease both;
+  font-family:    var(--app-font-ui);
 
   .empty-icon {
     font-size:     3rem;
     color:         var(--ham-border-hi);
     margin-bottom: 16px;
     display:       block;
+    opacity:       0.7;
   }
 
   h3 {
-    font-size:      1rem;
+    font-size:      0.95rem;
     font-weight:    600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.10em;
     text-transform: uppercase;
     color:          var(--ham-muted);
     margin:         0 0 8px;
@@ -393,44 +381,44 @@ ion-alert {
 
   p {
     font-size:   0.88rem;
-    line-height: 1.5;
+    line-height: 1.55;
     margin:      0;
     max-width:   260px;
   }
 }
 
-// GPS status pill
+// Píldora de estado GPS
 .gps-pill {
-  display:         inline-flex;
-  align-items:     center;
-  gap:             6px;
-  padding:         6px 12px;
-  border-radius:   2px;
-  font-family:     var(--app-font-ui);
-  font-size:       0.75rem;
-  font-weight:     600;
-  letter-spacing:  0.1em;
-  text-transform:  uppercase;
-  margin:          8px 12px 0;
-  width:           calc(100% - 24px);
-  box-sizing:      border-box;
-  animation:       fade-up 0.3s ease both;
+  display:        inline-flex;
+  align-items:    center;
+  gap:            6px;
+  padding:        7px 12px;
+  border-radius:  var(--app-card-radius);
+  font-family:    var(--app-font-ui);
+  font-size:      0.73rem;
+  font-weight:    600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin:         8px 12px 0;
+  width:          calc(100% - 24px);
+  box-sizing:     border-box;
+  animation:      fade-up 0.3s ease both;
 
   &.gps-pill--error {
-    background: rgba(204, 32, 32, 0.12);
-    border:     1px solid rgba(204, 32, 32, 0.3);
+    background: rgba(184, 32, 32, 0.10);
+    border:     1px solid rgba(184, 32, 32, 0.28);
     color:      var(--ham-danger);
   }
 
   &.gps-pill--acquiring {
-    background: rgba(var(--ham-amber-rgb), 0.1);
-    border:     1px solid rgba(var(--ham-amber-rgb), 0.3);
+    background: rgba(var(--ham-amber-rgb), 0.09);
+    border:     1px solid rgba(var(--ham-amber-rgb), 0.28);
     color:      var(--ham-amber);
   }
 
   .gps-dot {
-    width:         8px;
-    height:        8px;
+    width:         7px;
+    height:        7px;
     border-radius: 50%;
     flex-shrink:   0;
 
@@ -442,99 +430,81 @@ ion-alert {
   }
 }
 
-// ─── Leaflet map overrides ─────────────────────────────────────────────────
+// ─── Leaflet — anillo de precisión ────────────────────────────────────────
 
-// Accuracy ring — subtle breathing
-// PERF: will-change: opacity permite al browser elevar el elemento a su propio
-// compositor layer → la animación es 100% GPU (no fuerza repaint del canvas Leaflet).
+// GPU-composited: opacity no fuerza repaint del canvas Leaflet
 .accuracy-ring {
-  animation:    ring-breathe 3s ease-in-out infinite;
-  will-change:  opacity;
+  animation:   ring-breathe 3s ease-in-out infinite;
+  will-change: opacity;
 }
 
-@keyframes ring-breathe {
-  0%, 100% { opacity: 0.7; }
-  50%       { opacity: 0.35; }
-}
-
-// ─── Grid tooltips (label permanente dentro del rectángulo) ─────────────────
+// ─── Tooltips de grid (label permanente en rectángulo) ────────────────────
 //
-// ESTRUCTURA DOM de Leaflet tooltip:
-//   <div class="leaflet-tooltip map-grid-label map-grid-label--mh">FN20XR</div>
-//
-// El texto va DIRECTAMENTE en el contenedor <div> como nodo de texto.
-// NO existe un <span> ni .leaflet-tooltip-content hijo.
-// Por eso todos los estilos se aplican al propio contenedor (no a hijos).
-// El color por defecto de Leaflet (color: #222) se sobreescribe aquí con !important.
-// ─────────────────────────────────────────────────────────────────────────────
+// DOM: <div class="leaflet-tooltip map-grid-label map-grid-label--mh">FN20XR</div>
+// El texto va directamente como nodo de texto, sin hijos intermedios.
+// Todos los estilos se aplican al contenedor; color se sobreescribe con !important.
+// ─────────────────────────────────────────────────────────────────────────
 .map-grid-label {
-  // Reset Leaflet defaults
   box-shadow:     none !important;
   white-space:    nowrap;
   pointer-events: none;
-
-  // Tipografía — misma fuente mono que el resto de la app
   font-family:    var(--app-font-mono, 'Share Tech Mono', monospace) !important;
-  font-size:      0.72rem !important;
+  font-size:      0.70rem !important;
   font-weight:    400 !important;
   letter-spacing: 0.06em !important;
 
-  // Ocultar flecha/triángulo del tooltip (::before Y ::after por seguridad)
   &::before,
   &::after { display: none !important; }
 
-  // ── QTH Locator / Maidenhead — verde (ham-glow) ───────────────────────
-  //    light: #1a6b1c sobre fondo blanco  ·  dark: #39ff14 sobre fondo negro
+  // QTH Locator / Maidenhead — teal marino
   &--mh {
-    color:         var(--ham-glow, #39ff14) !important;
-    background:    var(--map-label-bg, rgba(0, 0, 0, 0.62)) !important;
-    border:        1px solid rgba(var(--ham-glow-rgb, 57, 255, 20), 0.45) !important;
+    color:         var(--ham-glow) !important;
+    background:    var(--map-label-bg) !important;
+    border:        1px solid rgba(var(--ham-glow-rgb), 0.40) !important;
     padding:       2px 5px !important;
-    border-radius: 2px !important;
+    border-radius: var(--app-radius-badge, 3px) !important;
   }
 
-  // ── Plus Code / OLC — café (ham-amber) ───────────────────────────────
-  //    light: #9a5400 sobre fondo blanco  ·  dark: #f0a500 sobre fondo negro
+  // Plus Code / OLC — ámbar cobre
   &--olc {
-    color:         var(--ham-amber, #f0a500) !important;
-    background:    var(--map-label-bg, rgba(0, 0, 0, 0.62)) !important;
-    border:        1px solid rgba(var(--ham-amber-rgb, 240, 165, 0), 0.45) !important;
+    color:         var(--ham-amber) !important;
+    background:    var(--map-label-bg) !important;
+    border:        1px solid rgba(var(--ham-amber-rgb), 0.40) !important;
     padding:       2px 5px !important;
-    border-radius: 2px !important;
+    border-radius: var(--app-radius-badge, 3px) !important;
   }
 }
 
-// ─── Layer toggle control ─────────────────────────────────────────────────────
+// ─── Control de capas del mapa ────────────────────────────────────────────
 .map-layer-ctrl {
-  display:       flex;
+  display:        flex;
   flex-direction: column;
-  gap:           4px;
-  margin-top:    8px;
-  margin-left:   8px;
+  gap:            4px;
+  margin-top:     8px;
+  margin-left:    8px;
 }
 
 .mlc-btn {
   display:         flex;
   align-items:     center;
   gap:             5px;
-  padding:         0 8px;
+  padding:         0 9px;
   height:          30px;
-  background:      var(--ham-surface, #0c1210);
-  border:          1px solid var(--ham-border, #1a2b1c);
-  border-radius:   3px;
-  color:           var(--ham-muted, #4a6a4c);
-  font-family:     var(--app-font-ui, sans-serif);
-  font-size:       0.65rem;
+  background:      var(--ham-surface);
+  border:          1px solid var(--ham-border);
+  border-radius:   var(--app-radius-ctrl, 4px);
+  color:           var(--ham-muted);
+  font-family:     var(--app-font-ui);
+  font-size:       0.64rem;
   font-weight:     700;
-  letter-spacing:  0.1em;
+  letter-spacing:  0.10em;
   text-transform:  uppercase;
   cursor:          pointer;
   white-space:     nowrap;
-  box-shadow:      0 1px 4px rgba(0,0,0,0.4);
+  box-shadow:      var(--app-shadow-ctrl);
   transition:      all 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 
-  // Dot(s) de color
   .mlc-dot {
     width:         7px;
     height:        7px;
@@ -545,94 +515,87 @@ ion-alert {
 
   &:active { transform: scale(0.94); }
 
-  // Estado activo
   &--active {
-    color:        var(--ham-text, #b8d4b9);
-    border-color: var(--ham-border-hi, #2d4a2f);
-    background:   var(--ham-surface2, #121a13);
+    color:        var(--ham-text);
+    border-color: var(--ham-border-hi);
+    background:   var(--ham-surface2);
   }
 
-  // Resaltado específico por tipo
-  &[data-layer="mh"].mlc-btn--active   { border-left: 3px solid #39ff14; }
-  &[data-layer="olc"].mlc-btn--active  { border-left: 3px solid #ff4444; }
-  &[data-layer="both"].mlc-btn--active { border-left: 3px solid #4db8ff; }
+  // Acento izquierdo por tipo de capa
+  &[data-layer="mh"].mlc-btn--active  { border-left: 3px solid var(--ham-glow); }
+  &[data-layer="olc"].mlc-btn--active { border-left: 3px solid var(--ham-amber); }
+  &[data-layer="both"].mlc-btn--active { border-left: 3px solid var(--ham-sky); }
 }
 
-// Espaciado del control topleft
+// Posicionamiento del control topleft
 .leaflet-top.leaflet-left {
   margin-top:  8px;
   margin-left: 8px;
 }
 
-// ─── Leaflet locate button (custom control) ─────────────────────────────────
+// ─── Botón de localización del mapa ─────────────────────────────────────────
 .map-locate-btn {
   display:         flex;
   align-items:     center;
   justify-content: center;
   width:           36px;
   height:          36px;
-  background:      var(--ham-surface, #0c1210);
-  border:          2px solid var(--ham-border, #1a2b1c);
-  border-radius:   4px;
-  color:           var(--ham-sky, #4db8ff);
+  background:      var(--ham-surface);
+  border:          1px solid var(--ham-border);
+  border-radius:   var(--app-radius-ctrl, 4px);
+  color:           var(--ham-sky);
   cursor:          pointer;
-  box-shadow:      0 2px 8px rgba(0, 0, 0, 0.45),
-                   0 0 0 1px rgba(77, 184, 255, 0.05);
+  box-shadow:      var(--app-shadow-ctrl);
   transition:      all 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   padding:         0;
-  margin-bottom:   8px; // separación del borde del mapa
+  margin-bottom:   8px;
 
-  svg {
-    display:    block;
-    flex-shrink: 0;
-  }
+  svg { display: block; flex-shrink: 0; }
 
   &:hover:not(:disabled) {
-    background:  rgba(77, 184, 255, 0.12);
-    border-color: var(--ham-sky, #4db8ff);
-    box-shadow:  0 2px 12px rgba(77, 184, 255, 0.3);
+    background:   rgba(var(--ham-glow-rgb), 0.08);
+    border-color: var(--ham-glow);
   }
 
   &:active:not(:disabled) {
     transform:   scale(0.92);
-    background:  rgba(77, 184, 255, 0.2);
-    border-color: var(--ham-sky, #4db8ff);
+    background:  rgba(var(--ham-glow-rgb), 0.14);
+    border-color: var(--ham-glow);
   }
 
   &:disabled {
-    opacity:  0.35;
-    cursor:   not-allowed;
-    color:    var(--ham-muted, #4a6a4c);
+    opacity: 0.35;
+    cursor:  not-allowed;
+    color:   var(--ham-muted);
   }
 }
 
-// Leaflet control container spacing
+// Leaflet control container — bottom-right
 .leaflet-bottom.leaflet-right {
-  margin-right: 8px;
+  margin-right:  8px;
   margin-bottom: 8px;
 }
 
-// Leaflet attribution — make it fit the dark theme
+// Leaflet attribution — adaptada al tema
 .leaflet-control-attribution {
-  background: rgba(var(--ham-surface, #0c1210), 0.85) !important;
-  color:      var(--ham-muted, #4a6a4c) !important;
-  font-size:  0.65rem !important;
-  font-family: var(--app-font-ui, sans-serif) !important;
+  background:  rgba(var(--ion-background-color-rgb, 239, 234, 222), 0.88) !important;
+  color:       var(--ham-muted) !important;
+  font-size:   0.62rem !important;
+  font-family: var(--app-font-ui) !important;
 
-  a { color: var(--ham-sky, #4db8ff) !important; }
+  a { color: var(--ham-sky) !important; }
 }
 
-// Leaflet zoom buttons — match SDR theme
+// Leaflet zoom — tema instrumento
 .leaflet-control-zoom a {
-  background:  var(--ham-surface, #0c1210) !important;
-  border-color: var(--ham-border, #1a2b1c) !important;
-  color:       var(--ham-text, #b8d4b9) !important;
-  font-family: var(--app-font-ui, sans-serif) !important;
+  background:   var(--ham-surface) !important;
+  border-color: var(--ham-border) !important;
+  color:        var(--ham-text) !important;
+  font-family:  var(--app-font-ui) !important;
 
   &:hover {
-    background:  var(--ham-surface2, #121a13) !important;
-    color:       var(--ham-glow, #39ff14) !important;
+    background: var(--ham-surface2) !important;
+    color:      var(--ham-glow) !important;
   }
 }
-

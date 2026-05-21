@@ -1,142 +1,152 @@
-// ── Settings section ─────────────────────────────────────────────────────
+// ── Sección de ajustes — aspecto de configuración de equipo ──────────────────
 .settings-section {
-  margin: 16px 12px 0;
+  margin:    16px 12px 0;
   animation: fade-up 0.3s ease both;
 }
 
+// Encabezado de grupo — identidad de sub-panel técnico
 .settings-section__header {
   display:        flex;
   align-items:    center;
   gap:            7px;
   font-family:    var(--app-font-ui);
-  font-size:      0.68rem;
+  font-size:      0.65rem;
   font-weight:    700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color:          var(--ham-glow);
-  margin-bottom:  8px;
+  margin-bottom:  7px;
 
   ion-icon {
-    font-size: 0.9rem;
-    opacity:   0.8;
+    font-size: 0.88rem;
+    opacity:   0.85;
   }
 }
 
-// ── Settings card ────────────────────────────────────────────────────────
+// ── Tarjeta de ajuste — panel de configuración ────────────────────────────────
 .settings-card {
   background:    var(--ham-surface);
   border:        1px solid var(--ham-border);
   border-radius: var(--app-card-radius);
   overflow:      hidden;
+  box-shadow:    var(--app-shadow-card);
 
   &--about {
     padding: 14px;
   }
 }
 
-// ── Field ────────────────────────────────────────────────────────────────
+// ── Campo de ajuste ───────────────────────────────────────────────────────────
 .settings-field {
-  padding: 12px 14px;
+  padding: 11px 14px;
 
   &--select {
-    display:         flex;
-    flex-direction:  column;
-    gap:             4px;
+    display:        flex;
+    flex-direction: column;
+    gap:            4px;
   }
 }
 
 .settings-field__label {
   font-family:    var(--app-font-ui);
-  font-size:      0.65rem;
+  font-size:      0.62rem;
   font-weight:    700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color:          var(--ham-muted);
-  margin-bottom:  6px;
+  margin-bottom:  5px;
 }
 
+// Pista de uso — orientación contextual
 .settings-field__hint {
   font-family:  var(--app-font-ui);
-  font-size:    0.75rem;
+  font-size:    0.73rem;
   color:        var(--ham-muted);
-  margin-top:   5px;
-  line-height:  1.4;
+  margin-top:   4px;
+  line-height:  1.45;
+  opacity:      0.85;
 }
 
+// Input de indicativo — dato operativo (callsign)
 .settings-input {
   font-family: var(--app-font-mono) !important;
-  font-size:   1.35rem !important;
+  font-size:   1.3rem !important;
   color:       var(--ham-glow) !important;
   --placeholder-color: var(--ham-border-hi) !important;
   padding:     0 !important;
 }
 
+// Select de configuración
 .settings-select {
   font-family: var(--app-font-ui);
-  font-size:   1rem;
+  font-size:   0.95rem;
   color:       var(--ham-text);
   font-weight: 500;
 }
 
+// Divisor interno de tarjeta
 .settings-divider {
   height:     1px;
   background: var(--ham-border);
   margin:     0 14px;
 }
 
-// ── About ────────────────────────────────────────────────────────────────
+// ── Acerca de ─────────────────────────────────────────────────────────────────
 .about-app {
-  display:     flex;
-  align-items: baseline;
-  gap:         10px;
-  margin-bottom: 6px;
+  display:       flex;
+  align-items:   baseline;
+  gap:           10px;
+  margin-bottom: 5px;
 }
 
 .about-app__name {
   font-family:    var(--app-font-ui);
-  font-size:      1.1rem;
+  font-size:      1.05rem;
   font-weight:    700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color:          var(--ham-text);
 }
 
+// Badge de versión — tipo de instrumento
 .about-app__version {
-  font-family: var(--app-font-mono);
-  font-size:   0.8rem;
-  color:       var(--ham-glow);
-  background:  var(--ham-glow-dim);
-  border:      1px solid rgba(var(--ham-glow-rgb), 0.25);
-  border-radius: 2px;
-  padding:     1px 6px;
+  font-family:  var(--app-font-mono);
+  font-size:    0.75rem;
+  color:        var(--ham-glow);
+  background:   var(--ham-glow-dim);
+  border:       1px solid rgba(var(--ham-glow-rgb), 0.22);
+  border-radius: var(--app-radius-badge, 3px);
+  padding:      1px 6px;
 }
 
+// Descripción de la app
 .about-desc {
   font-family:    var(--app-font-ui);
-  font-size:      0.85rem;
+  font-size:      0.84rem;
   color:          var(--ham-muted);
   letter-spacing: 0.04em;
-  margin-bottom:  4px;
+  margin-bottom:  3px;
 
   &--small {
-    font-size: 0.78rem;
-    opacity:   0.8;
+    font-size: 0.76rem;
+    opacity:   0.78;
   }
 }
 
+// Atribución de mapa
 .about-osm {
   display:     flex;
   align-items: center;
-  gap:         7px;
+  gap:         6px;
   font-family: var(--app-font-ui);
-  font-size:   0.75rem;
+  font-size:   0.73rem;
   color:       var(--ham-muted);
   margin-top:  12px;
 
-  ion-icon { font-size: 0.9rem; flex-shrink: 0; }
+  ion-icon { font-size: 0.88rem; flex-shrink: 0; }
 }
 
-// ── Bottom padding ────────────────────────────────────────────────────────
+// ── Padding inferior de contenido ─────────────────────────────────────────────
 ion-content {
   --padding-bottom: 24px;
 }

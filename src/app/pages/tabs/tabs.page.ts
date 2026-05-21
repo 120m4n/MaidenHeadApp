@@ -38,27 +38,28 @@ import {
   `,
   styles: [`
     ion-tab-bar {
-      --background:     var(--ion-tab-bar-background, #06080a);
-      --border:         1px solid var(--ion-tab-bar-border-color, #1a2b1c);
-      --color:          var(--ham-muted, #4a6a4c);
-      --color-selected: var(--ham-glow, #39ff14);
+      --background:     var(--ion-tab-bar-background, #0b141c);
+      --border:         1px solid var(--ion-tab-bar-border-color, #1e3040);
+      --color:          var(--ham-muted, #4a7068);
+      --color-selected: var(--ham-glow, #34c9a0);
       height: 56px;
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     ion-tab-button {
-      font-family:    var(--app-font-ui, 'Barlow Condensed', sans-serif);
-      font-size:      0.6rem;
-      font-weight:    700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      --color:         var(--ham-muted, #4a6a4c);
-      --color-selected: var(--ham-glow, #39ff14);
+      font-family:      var(--app-font-ui, 'Barlow Condensed', sans-serif);
+      font-size:        0.63rem;
+      font-weight:      600;
+      letter-spacing:   0.10em;
+      text-transform:   uppercase;
+      --color:          var(--ham-muted, #4a7068);
+      --color-selected: var(--ham-glow, #34c9a0);
+      position:         relative;
 
       ion-icon {
-        font-size:       1.25rem;
-        margin-bottom:   2px;
-        transition:      filter 0.2s ease, transform 0.2s ease, color 0.2s ease;
+        font-size:    1.22rem;
+        margin-bottom: 2px;
+        transition:   color 0.2s ease;
       }
 
       ion-label {
@@ -69,11 +70,16 @@ import {
       }
     }
 
-    ion-tab-button.tab-selected {
-      ion-icon {
-        filter:    drop-shadow(0 0 5px var(--ham-glow, #39ff14));
-        transform: translateY(-1px);
-      }
+    // Indicador de tab activo — línea cartográfica en borde superior
+    ion-tab-button.tab-selected::after {
+      content:       '';
+      position:      absolute;
+      top:           0;
+      left:          22%;
+      right:         22%;
+      height:        2px;
+      background:    var(--ham-glow, #34c9a0);
+      border-radius: 0 0 2px 2px;
     }
   `],
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
