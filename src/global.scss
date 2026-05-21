@@ -456,11 +456,11 @@ ion-alert {
   &::before,
   &::after { display: none !important; }
 
-  // QTH Locator / Maidenhead — teal marino
+  // QTH Locator / Maidenhead — violeta índigo (desacoplado de ham-glow para contraste OSM)
   &--mh {
-    color:         var(--ham-glow) !important;
+    color:         var(--mh-map-color) !important;
     background:    var(--map-label-bg) !important;
-    border:        1px solid rgba(var(--ham-glow-rgb), 0.40) !important;
+    border:        1px solid rgba(var(--mh-map-color-rgb), 0.40) !important;
     padding:       2px 5px !important;
     border-radius: var(--app-radius-badge, 3px) !important;
   }

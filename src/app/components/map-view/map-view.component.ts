@@ -14,11 +14,14 @@ L.Icon.Default.mergeOptions({
 });
 
 // ── Paleta de colores fija (Leaflet no lee CSS variables en opciones JS) ──
-// Los valores coinciden con los tokens dark-theme de variables.scss:
-//   --ham-glow:   #34c9a0   --ham-amber: #d4923e   --ham-sky: #5ab0e8
+// USER_DOT y OLC coinciden con tokens dark-theme de variables.scss.
+// MH_COLOR está DESACOPLADO de --ham-glow: usa violeta índigo para máximo
+// contraste sobre tiles OSM (ratio mín 3.46:1 vs verde/beige/azul/rosa OSM).
+//   --ham-amber: #d4923e   --ham-sky: #5ab0e8
+//   MH map color: #5E35B1  (violeta — NO es el primary teal de la UI)
 const USER_DOT_COLOR  = '#5ab0e8';   // azul cielo  — usuario    (ham-sky dark)
 const USER_DOT_BORDER = '#ffffff';
-const MH_COLOR        = '#34c9a0';   // teal-cian   — Maidenhead (ham-glow dark)
+const MH_COLOR        = '#5E35B1';   // violeta índigo — Maidenhead sobre OSM (3.46:1 min)
 const OLC_COLOR       = '#d4923e';   // ámbar cálido — Plus Code  (ham-amber dark)
 const TAP_GRID_COLOR  = '#5ab0e8';   // azul cielo  — grid temporal de tap
 
@@ -398,7 +401,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.mhRect = L.rectangle(
       [[sw.lat, sw.lon], [ne.lat, ne.lon]],
       {
-        color: MH_COLOR, weight: 1.5,
+        color: MH_COLOR, weight: 2.0,
         fillColor: MH_COLOR, fillOpacity: 0.09,
         dashArray: '4 4',
         className: 'mh-rect',

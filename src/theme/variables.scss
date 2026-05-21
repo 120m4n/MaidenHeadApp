@@ -46,6 +46,9 @@
   --ham-glow:      #1b5f52;   // teal marino — señal / grid activo (primary)
   --ham-glow-rgb:  27, 95, 82;
   --ham-glow-dim:  rgba(27, 95, 82, 0.10);
+  // Grid Maidenhead en mapa — desacoplado de ham-glow para contraste OSM
+  --mh-map-color:     #5E35B1;   // violeta índigo — rect MH sobre tiles OSM (3.46:1 min)
+  --mh-map-color-rgb: 94, 53, 177;
   --ham-amber:     #a96820;   // cobre-ámbar — frecuencia, RST, Plus Code
   --ham-amber-rgb: 169, 104, 32;
   --ham-sky:       #1a5894;   // azul naval — onda celeste, DX, bearing
@@ -112,6 +115,9 @@
   --ham-glow:      #34c9a0;   // teal-cian — señal activa (NO es verde fósforo)
   --ham-glow-rgb:  52, 201, 160;
   --ham-glow-dim:  rgba(52, 201, 160, 0.10);
+  // Grid Maidenhead en mapa — desacoplado de ham-glow para contraste OSM
+  --mh-map-color:     #AB47BC;   // violeta brillante — label MH sobre fondo marino
+  --mh-map-color-rgb: 171, 71, 188;
   --ham-amber:     #d4923e;   // ámbar cálido — frecuencia, RST
   --ham-amber-rgb: 212, 146, 62;
   --ham-sky:       #5ab0e8;   // azul celeste — DX, bearing, onda de cielo
