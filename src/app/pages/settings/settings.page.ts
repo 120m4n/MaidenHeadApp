@@ -2,10 +2,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
-  IonLabel, IonInput, IonSelect, IonSelectOption,
-  IonNote, IonListHeader,
+  IonHeader, IonToolbar, IonTitle, IonContent,
+  IonInput, IonSelect, IonSelectOption, IonIcon,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  radioOutline, locationOutline, contrastOutline,
+  informationCircleOutline, mapOutline,
+} from 'ionicons/icons';
 
 import { SettingsService, ThemeMode, DistanceUnit } from '../../services/settings.service';
 import { ThemeService } from '../../services/theme.service';
@@ -17,14 +21,17 @@ import { GridPrecision } from '../../services/maidenhead.service';
   styleUrls: ['settings.page.scss'],
   imports: [
     CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
-    IonLabel, IonInput, IonSelect, IonSelectOption,
-    IonNote, IonListHeader,
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonInput, IonSelect, IonSelectOption, IonIcon,
   ],
 })
 export class SettingsPage implements OnInit {
   private settingsService = inject(SettingsService);
   private themeService = inject(ThemeService);
+
+  constructor() {
+    addIcons({ radioOutline, locationOutline, contrastOutline, informationCircleOutline, mapOutline });
+  }
 
   // Valores locales enlazados a ngModel
   callsign = '';

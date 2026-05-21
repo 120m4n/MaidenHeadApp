@@ -1,9 +1,9 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-title>
-      📋 QSO Log
+      QSO LOG
       @if (qsoLog.entries().length > 0) {
-        <ion-badge color="secondary">{{ qsoLog.entries().length }}</ion-badge>
+        <span class="log-count">{{ qsoLog.entries().length }}</span>
       }
     </ion-title>
     <ion-button slot="end" fill="clear" (click)="export()"
@@ -11,7 +11,7 @@
                 aria-label="Exportar ADIF">
       <ion-icon slot="icon-only" name="download-outline" />
     </ion-button>
-    <ion-button slot="end" fill="clear" color="danger"
+    <ion-button slot="end" fill="clear"
                 (click)="showClearAlert.set(true)"
                 [disabled]="qsoLog.entries().length === 0"
                 aria-label="Borrar todo">
@@ -24,40 +24,70 @@
 
   @if (qsoLog.entries().length === 0) {
     <div class="empty-state">
-      <ion-icon name="information-circle-outline" />
-      <p>No hay QSOs guardados aún.</p>
-      <p class="hint">Ve a "Mi QTH" o "Grid Lookup" y presiona el botón de QSO para agregar.</p>
+      <ion-icon name="radio-outline" class="empty-icon" />
+      <h3>Sin contactos aún</h3>
+      <p>Ve a "MI QTH" o "GRID LOOKUP" y pulsa el botón de QSO para agregar tu primer contacto.</p>
     </div>
   }
 
-  <ion-list>
-    @for (entry of qsoLog.entries(); track entry.id) {
-      <ion-item-sliding>
-
-        <ion-item>
-          <ion-label>
-            <h2>{{ entry.call }}</h2>
-            <p>{{ formatDate(entry.qsoDate) }} {{ formatTime(entry.timeOn) }} · {{ entry.band }} · {{ entry.mode }}</p>
-            <p>
-              @if (entry.dxGrid) { Grid: {{ entry.dxGrid }} · }
-              RST {{ entry.rstSent }}/{{ entry.rstRcvd }}
-              @if (distanceLabel(entry)) { · {{ distanceLabel(entry) }} }
-            </p>
-          </ion-label>
-          <ion-note slot="end">{{ entry.myGrid }}</ion-note>
-        </ion-item>
-
-        <ion-item-options side="end">
-          <ion-item-option color="danger" (click)="remove(entry.id)">
-            <ion-icon slot="icon-only" name="trash-outline" />
-          </ion-item-option>
-        </ion-item-options>
-
-      </ion-item-sliding>
-    }
-  </ion-list>
-
   @if (qsoLog.entries().length > 0) {
+    <div class="qso-list">
+      @for (entry of qsoLog.entries(); track entry.id) {
+        <div class="qso-card" (click)="$event.stopPropagation()">
+
+          <div class="qso-card__header">
+            <span class="qso-card__call">{{ entry.call }}</span>
+            <div class="qso-card__tags">
+              <span class="qso-tag qso-tag--band">{{ entry.band }}</span>
+              <span class="qso-tag qso-tag--mode">{{ entry.mode }}</span>
+            </div>
+            <button class="qso-delete-btn" (click)="remove(entry.id)" aria-label="Borrar QSO">
+              <ion-icon name="trash-outline" />
+            </button>
+          </div>
+
+          <div class="qso-card__body">
+
+            <div class="qso-meta-row">
+              <span class="qso-meta">
+                <ion-icon name="calendar-outline" />
+                {{ formatDate(entry.qsoDate) }}
+              </span>
+              <span class="qso-meta">
+                <ion-icon name="time-outline" />
+                {{ formatTime(entry.timeOn) }}z
+              </span>
+              <span class="qso-meta qso-meta--rst">
+                RST&nbsp;{{ entry.rstSent }}/{{ entry.rstRcvd }}
+              </span>
+            </div>
+
+            <div class="qso-grid-row">
+              @if (entry.dxGrid) {
+                <span class="qso-grid">
+                  <span class="qso-grid__label">DX</span>
+                  <span class="qso-grid__value">{{ entry.dxGrid }}</span>
+                </span>
+              }
+              <span class="qso-grid">
+                <span class="qso-grid__label">MY</span>
+                <span class="qso-grid__value">{{ entry.myGrid }}</span>
+              </span>
+              @if (distanceLabel(entry)) {
+                <span class="qso-distance">{{ distanceLabel(entry) }}</span>
+              }
+            </div>
+
+            @if (entry.comment) {
+              <div class="qso-comment">{{ entry.comment }}</div>
+            }
+
+          </div>
+
+        </div>
+      }
+    </div>
+
     <ion-button expand="block" color="primary" class="export-btn cta-large"
                 (click)="export()" [disabled]="exporting()">
       <ion-icon slot="start" name="download-outline" />
@@ -67,7 +97,6 @@
 
 </ion-content>
 
-<!-- Alerta de confirmación para borrar todo -->
 <ion-alert
   [isOpen]="showClearAlert()"
   header="Borrar todo el log"

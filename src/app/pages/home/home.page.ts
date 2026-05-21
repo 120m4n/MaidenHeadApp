@@ -1,16 +1,17 @@
 import {
-  Component, OnInit, OnDestroy, ViewChild, inject, signal,
+  Component, OnInit, OnDestroy, ViewChild, inject, signal, computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButton,
-  IonIcon, IonSpinner, IonToast, ModalController, IonFab, IonFabButton,
+  IonIcon, IonToast, ModalController, IonFab, IonFabButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { refreshOutline, addOutline } from 'ionicons/icons';
 
 import { GeolocationService } from '../../services/geolocation.service';
 import { MaidenheadService } from '../../services/maidenhead.service';
+import { PluscodeService } from '../../services/pluscode.service';
 import { SettingsService } from '../../services/settings.service';
 import { QsoLogService } from '../../services/qso-log.service';
 import { BearingService } from '../../services/bearing.service';
@@ -31,7 +32,7 @@ interface SavedPin {
   imports: [
     CommonModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButton,
-    IonIcon, IonSpinner, IonToast, IonFab, IonFabButton,
+    IonIcon, IonToast, IonFab, IonFabButton,
     MapViewComponent, PositionCardComponent,
   ],
 })
@@ -40,23 +41,61 @@ export class HomePage implements OnInit, OnDestroy {
 
   geo = inject(GeolocationService);
   private maidenhead = inject(MaidenheadService);
-  private settings = inject(SettingsService);
-  private qsoLog = inject(QsoLogService);
+  private pluscode   = inject(PluscodeService);
+  private settings   = inject(SettingsService);
+  private qsoLog     = inject(QsoLogService);
   private bearingService = inject(BearingService);
-  private modalCtrl = inject(ModalController);
+  private modalCtrl  = inject(ModalController);
 
   savedPins = signal<SavedPin[]>([]);
   toastMsg = signal('');
   showToast = signal(false);
 
-  // Grid bounds del QTH actual para resaltar en mapa
-  get gridBounds(): GridBounds | null {
+  // ── Computed map inputs ───────────────────────────────────────────────────
+  // IMPORTANTE: computed() memoiza por referencia — se re-ejecutan solo cuando
+  // el string del grid o el plus-code cambian (cruce de cuadrícula), NO en cada
+  // tick GPS. Esto evita que ngOnChanges de MapViewComponent destruya y recree
+  // las capas Leaflet en cada actualización de posición.
+
+  /** Posición central para el marcador (objeto estable entre ticks) */
+  readonly center = computed((): LatLon | null => {
     const pos = this.geo.position();
-    if (!pos) return null;
-    const precision = this.settings.gridPrecision();
-    const grid = precision === 4 ? pos.grid4 : precision === 8 ? pos.grid8 : pos.grid6;
-    return this.maidenhead.toBounds(grid);
-  }
+    return pos ? { lat: pos.lat, lon: pos.lon } : null;
+  });
+
+  /** Precisión GPS (primitivo — memoizado por ===) */
+  readonly accuracy = computed(() => this.geo.position()?.accuracy ?? null);
+
+  // String intermedio del grid (primitivo → equality === evita re-runs innecesarios)
+  private readonly _gridStr = computed((): string => {
+    const pos = this.geo.position();
+    if (!pos) return '';
+    const p = this.settings.gridPrecision();
+    return p === 4 ? pos.grid4 : p === 8 ? pos.grid8 : pos.grid6;
+  });
+
+  /** Label Maidenhead (ej: "FN20XR") */
+  readonly gridLabel = computed(() => this._gridStr());
+
+  /** Maidenhead bounds — solo se recalcula al cruzar cuadrícula */
+  readonly gridBounds = computed((): GridBounds | null => {
+    const grid = this._gridStr();
+    return grid ? this.maidenhead.toBounds(grid) : null;
+  });
+
+  // String intermedio del Plus Code (primitivo)
+  private readonly _plusStr = computed(() => this.geo.position()?.plusCode ?? '');
+
+  /** Label Plus Code (ej: "87G7PX7V+4H") */
+  readonly plusLabel = computed(() => this._plusStr());
+
+  /** Plus Code bounds — solo se recalcula cuando cambia el plus-code */
+  readonly plusBounds = computed((): GridBounds | null => {
+    const pc = this._plusStr();
+    if (!pc) return null;
+    const dec = this.pluscode.decode(pc);
+    return dec ? { sw: dec.sw, ne: dec.ne } : null;
+  });
 
   constructor() {
     addIcons({ refreshOutline, addOutline });

@@ -1,24 +1,22 @@
-.geo-error {
-  background: var(--ion-color-warning-tint);
-  color: var(--ion-color-dark);
-  padding: 12px 16px;
-  font-size: 0.9rem;
-  border-radius: 8px;
-  margin: 8px;
-}
-
-.loading-gps {
+.map-section-label {
+  padding: 10px 12px 4px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 24px;
-  gap: 12px;
-  color: var(--ion-color-medium);
-  font-size: 0.9rem;
+  gap: 8px;
+
+  &::after {
+    content:    '';
+    flex:       1;
+    height:     1px;
+    background: var(--ham-border);
+  }
 }
 
 app-map-view {
-  display: block;
-  margin: 8px;
+  display:  block;
+  margin:   0 12px 12px;
   --map-height: 280px;
+  border:       1px solid var(--ham-border);
+  border-radius: var(--app-card-radius);
+  overflow:     hidden;
 }

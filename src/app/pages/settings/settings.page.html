@@ -1,90 +1,118 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>⚙️ Ajustes</ion-title>
+  <ion-toolbar>
+    <ion-title>AJUSTES</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <ion-list>
+  <!-- ── Estación ─────────────────────────────────────────────────────── -->
+  <div class="settings-section">
+    <div class="settings-section__header">
+      <ion-icon name="radio-outline" />
+      <span>ESTACIÓN</span>
+    </div>
 
-    <!-- Indicativo (callsign) -->
-    <ion-list-header>Estación</ion-list-header>
+    <div class="settings-card">
+      <div class="settings-field">
+        <div class="settings-field__label">INDICATIVO (CALLSIGN)</div>
+        <ion-input
+          [(ngModel)]="callsign"
+          (ionBlur)="onCallsignChange(callsign)"
+          placeholder="Ej: EA4URE"
+          autocapitalize="characters"
+          autocorrect="off"
+          [style.text-transform]="'uppercase'"
+          inputmode="text"
+          class="settings-input" />
+        <div class="settings-field__hint">Se autocompleta en el formulario de QSO</div>
+      </div>
+    </div>
+  </div>
 
-    <ion-item>
-      <ion-label position="stacked">Tu indicativo (callsign)</ion-label>
-      <ion-input
-        [(ngModel)]="callsign"
-        (ionBlur)="onCallsignChange(callsign)"
-        placeholder="Ej: EA4URE"
-        autocapitalize="characters"
-        autocorrect="off"
-        [style.text-transform]="'uppercase'"
-        inputmode="text" />
-      <ion-note slot="helper">Se autocompleta en el formulario de QSO</ion-note>
-    </ion-item>
+  <!-- ── Localización ──────────────────────────────────────────────────── -->
+  <div class="settings-section">
+    <div class="settings-section__header">
+      <ion-icon name="location-outline" />
+      <span>LOCALIZACIÓN</span>
+    </div>
 
-    <!-- Precisión del grid -->
-    <ion-list-header>Localización</ion-list-header>
+    <div class="settings-card">
 
-    <ion-item>
-      <ion-label>Precisión QTH Locator</ion-label>
-      <ion-select
-        [(ngModel)]="gridPrecision"
-        (ionChange)="onPrecisionChange($any($event.detail.value))"
-        interface="popover">
-        <ion-select-option [value]="4">4 caracteres — FN20 (campo ~111×111 km)</ion-select-option>
-        <ion-select-option [value]="6">6 caracteres — FN20XR (cuadrado ~5×2 km)</ion-select-option>
-        <ion-select-option [value]="8">8 caracteres — FN20XR45 (subcuadro ~500×250 m)</ion-select-option>
-      </ion-select>
-    </ion-item>
+      <div class="settings-field settings-field--select">
+        <div class="settings-field__label">PRECISIÓN QTH LOCATOR</div>
+        <ion-select
+          [(ngModel)]="gridPrecision"
+          (ionChange)="onPrecisionChange($any($event.detail.value))"
+          interface="popover"
+          class="settings-select">
+          <ion-select-option [value]="4">4 chars — campo ~111×111 km</ion-select-option>
+          <ion-select-option [value]="6">6 chars — cuadrado ~5×2 km</ion-select-option>
+          <ion-select-option [value]="8">8 chars — subcuadro ~500×250 m</ion-select-option>
+        </ion-select>
+      </div>
 
-    <ion-item>
-      <ion-label>Unidades de distancia</ion-label>
-      <ion-select
-        [(ngModel)]="distanceUnit"
-        (ionChange)="onDistanceChange($any($event.detail.value))"
-        interface="popover">
-        <ion-select-option value="km">Kilómetros (km)</ion-select-option>
-        <ion-select-option value="nm">Millas náuticas (NM)</ion-select-option>
-      </ion-select>
-    </ion-item>
+      <div class="settings-divider"></div>
 
-    <!-- Tema -->
-    <ion-list-header>Apariencia</ion-list-header>
+      <div class="settings-field settings-field--select">
+        <div class="settings-field__label">UNIDADES DE DISTANCIA</div>
+        <ion-select
+          [(ngModel)]="distanceUnit"
+          (ionChange)="onDistanceChange($any($event.detail.value))"
+          interface="popover"
+          class="settings-select">
+          <ion-select-option value="km">Kilómetros (km)</ion-select-option>
+          <ion-select-option value="nm">Millas náuticas (NM)</ion-select-option>
+        </ion-select>
+      </div>
 
-    <ion-item>
-      <ion-label>Tema de color</ion-label>
-      <ion-select
-        [(ngModel)]="themeMode"
-        (ionChange)="onThemeChange($any($event.detail.value))"
-        interface="popover">
-        <ion-select-option value="auto">Automático (sistema)</ion-select-option>
-        <ion-select-option value="light">Claro</ion-select-option>
-        <ion-select-option value="dark">Oscuro (OLED dark)</ion-select-option>
-      </ion-select>
-      <ion-note slot="helper">Modo oscuro recomendado para operar de noche</ion-note>
-    </ion-item>
+    </div>
+  </div>
 
-    <!-- Acerca de -->
-    <ion-list-header>Acerca de</ion-list-header>
+  <!-- ── Apariencia ────────────────────────────────────────────────────── -->
+  <div class="settings-section">
+    <div class="settings-section__header">
+      <ion-icon name="contrast-outline" />
+      <span>APARIENCIA</span>
+    </div>
 
-    <ion-item>
-      <ion-label>
-        <h3>MaidenHead App</h3>
-        <p>v{{ version }} — Para radioaficionados</p>
-        <p>QTH Locator · Plus Code · QSO Log · ADIF</p>
-      </ion-label>
-    </ion-item>
+    <div class="settings-card">
+      <div class="settings-field settings-field--select">
+        <div class="settings-field__label">TEMA DE COLOR</div>
+        <ion-select
+          [(ngModel)]="themeMode"
+          (ionChange)="onThemeChange($any($event.detail.value))"
+          interface="popover"
+          class="settings-select">
+          <ion-select-option value="auto">Automático (sistema)</ion-select-option>
+          <ion-select-option value="light">Claro</ion-select-option>
+          <ion-select-option value="dark">Oscuro · OLED dark</ion-select-option>
+        </ion-select>
+        <div class="settings-field__hint">Modo oscuro recomendado para operar de noche</div>
+      </div>
+    </div>
+  </div>
 
-    <ion-item>
-      <ion-label>
-        <h3>Mapa</h3>
-        <p>© OpenStreetMap contributors</p>
-        <p>Tiles disponibles bajo licencia ODbL</p>
-      </ion-label>
-    </ion-item>
+  <!-- ── Acerca de ─────────────────────────────────────────────────────── -->
+  <div class="settings-section">
+    <div class="settings-section__header">
+      <ion-icon name="information-circle-outline" />
+      <span>ACERCA DE</span>
+    </div>
 
-  </ion-list>
+    <div class="settings-card settings-card--about">
+      <div class="about-app">
+        <span class="about-app__name">MaidenHead App</span>
+        <span class="about-app__version">v{{ version }}</span>
+      </div>
+      <div class="about-desc">QTH Locator · Plus Code · QSO Log · ADIF Export</div>
+      <div class="about-desc about-desc--small">Para radioaficionados · Para radioaficionadas</div>
+      <div class="settings-divider"></div>
+      <div class="about-osm">
+        <ion-icon name="map-outline" />
+        <span>Mapa © OpenStreetMap contributors · ODbL license</span>
+      </div>
+    </div>
+  </div>
 
 </ion-content>

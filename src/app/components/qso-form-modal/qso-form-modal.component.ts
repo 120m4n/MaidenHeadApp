@@ -1,13 +1,14 @@
-import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
+import { Component, Input, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-  IonContent, IonList, IonItem, IonLabel, IonInput, IonSelect,
+  IonContent, IonInput, IonSelect,
   IonSelectOption, IonIcon,
+  ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeOutline, saveOutline } from 'ionicons/icons';
+import { closeOutline, saveOutline, radioOutline } from 'ionicons/icons';
 import { QsoEntry, QsoMode, QsoBand, DEFAULT_RST } from '../../models/qso-entry.model';
 import { SettingsService } from '../../services/settings.service';
 
@@ -15,10 +16,10 @@ import { SettingsService } from '../../services/settings.service';
   selector: 'app-qso-form-modal',
   template: `
     <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>Nuevo QSO</ion-title>
+      <ion-toolbar>
+        <ion-title>NUEVO QSO</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="cancel.emit()" aria-label="Cancelar">
+          <ion-button (click)="dismissCancel()" aria-label="Cancelar">
             <ion-icon slot="icon-only" name="close-outline" />
           </ion-button>
         </ion-buttons>
@@ -26,83 +27,221 @@ import { SettingsService } from '../../services/settings.service';
     </ion-header>
 
     <ion-content>
-      <ion-list>
+      <div class="qso-form">
 
-        <ion-item>
-          <ion-label position="stacked">Indicativo corresponsal *</ion-label>
+        <!-- Callsign — hero field -->
+        <div class="qso-form-hero">
+          <div class="qso-form-hero__label">INDICATIVO CORRESPONSAL *</div>
           <ion-input
             [(ngModel)]="form().call"
             (ngModelChange)="updateForm('call', $event)"
-            placeholder="EG. W1ABC"
+            placeholder="W1ABC"
             [style.text-transform]="'uppercase'"
             autocapitalize="characters"
             autocorrect="off"
-            inputmode="text" />
-        </ion-item>
+            inputmode="text"
+            class="qso-form-hero__input" />
+        </div>
 
-        <ion-item>
-          <ion-label position="stacked">Banda *</ion-label>
-          <ion-select [(ngModel)]="form().band" (ngModelChange)="updateForm('band', $event)">
-            @for (b of bands; track b) {
-              <ion-select-option [value]="b">{{ b }}</ion-select-option>
-            }
-          </ion-select>
-        </ion-item>
+        <div class="qso-form__divider"></div>
 
-        <ion-item>
-          <ion-label position="stacked">Modo *</ion-label>
-          <ion-select [(ngModel)]="form().mode" (ngModelChange)="onModeChange($event)">
-            @for (m of modes; track m) {
-              <ion-select-option [value]="m">{{ m }}</ion-select-option>
-            }
-          </ion-select>
-        </ion-item>
+        <!-- Band + Mode row -->
+        <div class="qso-form__row2">
 
-        <ion-item>
-          <ion-label position="stacked">RST Enviado</ion-label>
-          <ion-input [(ngModel)]="form().rstSent" (ngModelChange)="updateForm('rstSent', $event)"
-                     placeholder="59" inputmode="numeric" />
-        </ion-item>
+          <div class="qso-form__field">
+            <div class="qso-form__label">BANDA *</div>
+            <ion-select [(ngModel)]="form().band" (ngModelChange)="updateForm('band', $event)"
+                        class="qso-form__select">
+              @for (b of bands; track b) {
+                <ion-select-option [value]="b">{{ b }}</ion-select-option>
+              }
+            </ion-select>
+          </div>
 
-        <ion-item>
-          <ion-label position="stacked">RST Recibido</ion-label>
-          <ion-input [(ngModel)]="form().rstRcvd" (ngModelChange)="updateForm('rstRcvd', $event)"
-                     placeholder="59" inputmode="numeric" />
-        </ion-item>
+          <div class="qso-form__field">
+            <div class="qso-form__label">MODO *</div>
+            <ion-select [(ngModel)]="form().mode" (ngModelChange)="onModeChange($event)"
+                        class="qso-form__select">
+              @for (m of modes; track m) {
+                <ion-select-option [value]="m">{{ m }}</ion-select-option>
+              }
+            </ion-select>
+          </div>
 
-        <ion-item>
-          <ion-label position="stacked">Grid del corresponsal (opcional)</ion-label>
+        </div>
+
+        <div class="qso-form__divider"></div>
+
+        <!-- RST row -->
+        <div class="qso-form__row2">
+
+          <div class="qso-form__field">
+            <div class="qso-form__label">RST ENVIADO</div>
+            <ion-input [(ngModel)]="form().rstSent" (ngModelChange)="updateForm('rstSent', $event)"
+                       placeholder="59" inputmode="numeric"
+                       class="qso-form__input--small" />
+          </div>
+
+          <div class="qso-form__field">
+            <div class="qso-form__label">RST RECIBIDO</div>
+            <ion-input [(ngModel)]="form().rstRcvd" (ngModelChange)="updateForm('rstRcvd', $event)"
+                       placeholder="59" inputmode="numeric"
+                       class="qso-form__input--small" />
+          </div>
+
+        </div>
+
+        <div class="qso-form__divider"></div>
+
+        <!-- DX Grid -->
+        <div class="qso-form__field qso-form__field--full">
+          <div class="qso-form__label">GRID CORRESPONSAL (opcional)</div>
           <ion-input [(ngModel)]="form().dxGrid" (ngModelChange)="updateForm('dxGrid', $event)"
                      placeholder="FN20" autocapitalize="characters"
-                     [style.text-transform]="'uppercase'" />
-        </ion-item>
+                     [style.text-transform]="'uppercase'"
+                     class="qso-form__input--grid" />
+        </div>
 
-        <ion-item>
-          <ion-label position="stacked">Nota / Comentario</ion-label>
+        <div class="qso-form__divider"></div>
+
+        <!-- Comment -->
+        <div class="qso-form__field qso-form__field--full">
+          <div class="qso-form__label">NOTA / COMENTARIO</div>
           <ion-input [(ngModel)]="form().comment" (ngModelChange)="updateForm('comment', $event)"
-                     placeholder="Campo libre" />
-        </ion-item>
+                     placeholder="Campo libre…"
+                     class="qso-form__input--comment" />
+        </div>
 
-      </ion-list>
+        <div class="qso-form__save">
+          <ion-button expand="block" color="primary" class="cta-large"
+                      [disabled]="!isValid()"
+                      (click)="save()">
+            <ion-icon slot="start" name="save-outline" />
+            Guardar QSO
+          </ion-button>
+        </div>
 
-      <div class="btn-row">
-        <ion-button expand="block" color="primary" class="cta-large"
-                    [disabled]="!isValid()"
-                    (click)="save()">
-          <ion-icon slot="start" name="save-outline" />
-          Guardar QSO
-        </ion-button>
       </div>
     </ion-content>
   `,
   styles: [`
-    .btn-row { padding: 16px; }
-    ion-input[style*="uppercase"] { text-transform: uppercase; }
+    ion-content { --background: var(--ham-bg); }
+
+    .qso-form { padding: 0 0 24px; }
+
+    // ── Hero callsign field ─────────────────────────────────────────────
+    .qso-form-hero {
+      padding: 16px 16px 14px;
+      background: var(--ham-surface);
+      position: relative;
+
+      &::after {
+        content:    '';
+        position:   absolute;
+        top:        0; left: 0; right: 0;
+        height:     2px;
+        background: var(--ham-glow);
+        opacity:    0.6;
+      }
+    }
+
+    .qso-form-hero__label {
+      font-family:    var(--app-font-ui);
+      font-size:      0.65rem;
+      font-weight:    700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color:          var(--ham-muted);
+      margin-bottom:  8px;
+    }
+
+    .qso-form-hero__input {
+      font-family: var(--app-font-mono) !important;
+      font-size:   2.2rem !important;
+      color:       var(--ham-glow) !important;
+      --placeholder-color: var(--ham-border-hi) !important;
+      text-shadow: 0 0 20px rgba(var(--ham-glow-rgb), 0.35);
+      padding:     0 !important;
+    }
+
+    // ── Divider ─────────────────────────────────────────────────────────
+    .qso-form__divider {
+      height:     1px;
+      background: var(--ham-border);
+    }
+
+    // ── 2-col row ────────────────────────────────────────────────────────
+    .qso-form__row2 {
+      display:               grid;
+      grid-template-columns: 1fr 1fr;
+      background:            var(--ham-surface);
+    }
+
+    .qso-form__field {
+      padding: 12px 14px;
+
+      &:first-child {
+        border-right: 1px solid var(--ham-border);
+      }
+
+      &--full {
+        background: var(--ham-surface);
+        padding:    12px 16px;
+      }
+    }
+
+    .qso-form__label {
+      font-family:    var(--app-font-ui);
+      font-size:      0.62rem;
+      font-weight:    700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color:          var(--ham-muted);
+      margin-bottom:  6px;
+    }
+
+    .qso-form__select {
+      font-family: var(--app-font-mono) !important;
+      font-size:   1.15rem !important;
+      color:       var(--ham-amber) !important;
+      font-weight: 400;
+      padding:     0;
+    }
+
+    .qso-form__input--small {
+      font-family: var(--app-font-mono) !important;
+      font-size:   1.5rem !important;
+      color:       var(--ham-amber) !important;
+      padding:     0 !important;
+      --placeholder-color: var(--ham-border-hi) !important;
+    }
+
+    .qso-form__input--grid {
+      font-family: var(--app-font-mono) !important;
+      font-size:   1.4rem !important;
+      color:       var(--ham-text) !important;
+      padding:     0 !important;
+      --placeholder-color: var(--ham-border-hi) !important;
+    }
+
+    .qso-form__input--comment {
+      font-family: var(--app-font-ui) !important;
+      font-size:   1rem !important;
+      color:       var(--ham-text) !important;
+      padding:     0 !important;
+      --placeholder-color: var(--ham-border-hi) !important;
+    }
+
+    // ── Save button ──────────────────────────────────────────────────────
+    .qso-form__save {
+      padding: 16px;
+      margin-top: 4px;
+    }
   `],
   imports: [
     CommonModule, FormsModule,
     IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-    IonContent, IonList, IonItem, IonLabel, IonInput, IonSelect,
+    IonContent, IonInput, IonSelect,
     IonSelectOption, IonIcon,
   ],
 })
@@ -110,10 +249,12 @@ export class QsoFormModalComponent {
   @Input() myGrid = '';
   @Input() myPlusCode = '';
   @Input() prefillDxGrid = '';
-  @Output() saved = new EventEmitter<Omit<QsoEntry, 'id'>>();
-  @Output() cancel = new EventEmitter<void>();
 
-  private settings = inject(SettingsService);
+  // Comunicación con el padre SÓLO vía ModalController.dismiss():
+  //   dismiss(null, 'cancel')  → canceló
+  //   dismiss(entry, 'confirm') → QSO guardado, data = QsoEntry sin id
+  private settings  = inject(SettingsService);
+  private modalCtrl  = inject(ModalController);
 
   bands: QsoBand[] = ['160M','80M','40M','30M','20M','17M','15M','12M','10M','6M','4M','2M','70CM','23CM','OTHER'];
   modes: QsoMode[] = ['SSB','CW','FT8','FT4','AM','FM','DIGI','OTHER'];
@@ -129,8 +270,7 @@ export class QsoFormModalComponent {
   });
 
   constructor() {
-    addIcons({ closeOutline, saveOutline });
-    // Pre-rellenar callsign del settings
+    addIcons({ closeOutline, saveOutline, radioOutline });
     const cs = this.settings.callsign();
     if (cs) this.updateForm('myGrid', cs);
     if (this.prefillDxGrid) this.updateForm('dxGrid', this.prefillDxGrid);
@@ -153,23 +293,30 @@ export class QsoFormModalComponent {
     return !!(f.call?.trim() && f.band && f.mode);
   }
 
-  save(): void {
+  /** Cierra el modal sin guardar (botón ✕ o swipe) */
+  async dismissCancel(): Promise<void> {
+    await this.modalCtrl.dismiss(null, 'cancel');
+  }
+
+  /** Valida, construye el QSO y cierra pasando los datos al padre */
+  async save(): Promise<void> {
     if (!this.isValid()) return;
     const now = new Date();
     const pad = (n: number, l = 2) => String(n).padStart(l, '0');
     const f = this.form();
-    this.saved.emit({
-      call: (f.call ?? '').toUpperCase().trim(),
-      qsoDate: `${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}`,
-      timeOn: `${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}`,
-      band: f.band as QsoBand,
-      mode: f.mode as QsoMode,
-      rstSent: f.rstSent ?? DEFAULT_RST[f.mode as QsoMode],
-      rstRcvd: f.rstRcvd ?? DEFAULT_RST[f.mode as QsoMode],
-      dxGrid: (f.dxGrid ?? '').toUpperCase(),
-      myGrid: this.myGrid,
+    const entry: Omit<QsoEntry, 'id'> = {
+      call:      (f.call ?? '').toUpperCase().trim(),
+      qsoDate:   `${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}`,
+      timeOn:    `${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}`,
+      band:      f.band as QsoBand,
+      mode:      f.mode as QsoMode,
+      rstSent:   f.rstSent ?? DEFAULT_RST[f.mode as QsoMode],
+      rstRcvd:   f.rstRcvd ?? DEFAULT_RST[f.mode as QsoMode],
+      dxGrid:    (f.dxGrid ?? '').toUpperCase(),
+      myGrid:    this.myGrid,
       myPlusCode: this.myPlusCode,
-      comment: f.comment,
-    });
+      comment:   f.comment,
+    };
+    await this.modalCtrl.dismiss(entry, 'confirm');
   }
 }

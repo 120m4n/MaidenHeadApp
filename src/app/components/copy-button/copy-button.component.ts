@@ -7,22 +7,44 @@ import { copyOutline, checkmarkOutline } from 'ionicons/icons';
 @Component({
   selector: 'app-copy-button',
   template: `
-    <ion-button
-      [color]="copied() ? 'success' : color"
-      [fill]="fill"
-      class="cta-large"
+    <button
+      class="copy-btn"
+      [class.copy-btn--done]="copied()"
       (click)="copy()"
       [attr.aria-label]="'Copiar ' + label">
-      <ion-icon slot="icon-only" [name]="copied() ? 'checkmark-outline' : 'copy-outline'" />
-    </ion-button>
+      <ion-icon [name]="copied() ? 'checkmark-outline' : 'copy-outline'" />
+    </button>
   `,
   styles: [`
-    ion-button {
-      --min-height: var(--app-cta-min-size);
-      --min-width: var(--app-cta-min-size);
+    .copy-btn {
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+      width:           44px;
+      height:          44px;
+      background:      transparent;
+      border:          1px solid var(--ham-border);
+      border-radius:   var(--app-card-radius);
+      color:           var(--ham-muted);
+      cursor:          pointer;
+      transition:      all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+
+      ion-icon { font-size: 1.15rem; }
+
+      &:active {
+        transform: scale(0.93);
+      }
+
+      &--done {
+        background:   var(--ham-glow-dim);
+        border-color: var(--ham-glow);
+        color:        var(--ham-glow);
+        box-shadow:   0 0 8px rgba(var(--ham-glow-rgb), 0.25);
+      }
     }
   `],
-  imports: [IonButton, IonIcon],
+  imports: [IonIcon],
 })
 export class CopyButtonComponent {
   @Input() value = '';

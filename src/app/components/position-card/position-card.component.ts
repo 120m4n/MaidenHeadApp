@@ -1,12 +1,9 @@
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  IonCard, IonCardContent, IonCardHeader, IonCardTitle,
-  IonButton, IonIcon, IonBadge,
-} from '@ionic/angular/standalone';
+import { IonIcon } from '@ionic/angular/standalone';
 import { Share } from '@capacitor/share';
 import { addIcons } from 'ionicons';
-import { shareOutline, locationOutline } from 'ionicons/icons';
+import { shareOutline, locationOutline, locateOutline, flashOutline } from 'ionicons/icons';
 import { Position } from '../../models/position.model';
 import { SettingsService } from '../../services/settings.service';
 import { CopyButtonComponent } from '../copy-button/copy-button.component';
@@ -15,93 +12,309 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
   selector: 'app-position-card',
   template: `
     @if (position) {
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="location-outline" /> Mi QTH
-          </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
+      <div class="pos-card" [class.pos-card--locked]="true">
 
-          <!-- QTH Locator (Maidenhead) -->
-          <div class="locator-row">
-            <div class="locator-block">
-              <span class="locator-label">QTH Locator (Maidenhead)</span>
-              <span class="grid-value">{{ gridDisplay }}</span>
-            </div>
-            <div class="btn-group">
-              <app-copy-button [value]="gridDisplay" label="QTH Locator" />
-              <ion-button fill="outline" class="cta-large" (click)="share('grid')"
-                          aria-label="Compartir QTH Locator">
-                <ion-icon slot="icon-only" name="share-outline" />
-              </ion-button>
+        <!-- ── Status bar ─────────────────────────────────────────── -->
+        <div class="pos-card__status">
+          <div class="pos-card__status-left">
+            <span class="pos-lock-dot"></span>
+            <span class="pos-card__status-label">GPS LOCKED</span>
+          </div>
+          <span class="pos-card__accuracy">
+            ± {{ position.accuracy | number:'1.0-0' }} m
+          </span>
+        </div>
+
+        <div class="pos-card__divider"></div>
+
+        <!-- ── QTH Locator — hero display ─────────────────────────── -->
+        <div class="pos-card__section">
+          <div class="pos-card__section-label">QTH LOCATOR · MAIDENHEAD</div>
+          <div class="pos-card__grid-wrap">
+            <div class="pos-card__grid-value">{{ gridDisplay }}</div>
+            <div class="pos-card__actions">
+              <app-copy-button [value]="gridDisplay" label="QTH Locator" color="primary" fill="clear" />
+              <button class="pos-action-btn" (click)="share('grid')" aria-label="Compartir QTH Locator">
+                <ion-icon name="share-outline" />
+              </button>
             </div>
           </div>
+          <div class="pos-card__grid-sub">{{ precisionLabel }}</div>
+        </div>
 
-          <!-- Plus Code -->
-          <div class="locator-row">
-            <div class="locator-block">
-              <span class="locator-label">Plus Code</span>
-              <span class="grid-value plus-code">{{ position.plusCode }}</span>
-            </div>
-            <div class="btn-group">
-              <app-copy-button [value]="position.plusCode" label="Plus Code" />
-              <ion-button fill="outline" class="cta-large" (click)="share('plus')"
-                          aria-label="Compartir Plus Code">
-                <ion-icon slot="icon-only" name="share-outline" />
-              </ion-button>
+        <div class="pos-card__divider"></div>
+
+        <!-- ── Plus Code ───────────────────────────────────────────── -->
+        <div class="pos-card__section">
+          <div class="pos-card__section-label">PLUS CODE</div>
+          <div class="pos-card__plus-wrap">
+            <div class="pos-card__plus-value">{{ position.plusCode }}</div>
+            <div class="pos-card__actions">
+              <app-copy-button [value]="position.plusCode" label="Plus Code" color="primary" fill="clear" />
+              <button class="pos-action-btn" (click)="share('plus')" aria-label="Compartir Plus Code">
+                <ion-icon name="share-outline" />
+              </button>
             </div>
           </div>
+        </div>
 
-          <!-- Coordenadas -->
-          <div class="coord-row">
-            <span class="coord-value small">
-              {{ position.lat | number:'1.5-5' }}°N &nbsp;
-              {{ position.lon | number:'1.5-5' }}°E
-            </span>
-            <ion-badge color="medium">±{{ position.accuracy | number:'1.0-0' }} m</ion-badge>
-          </div>
+        <div class="pos-card__divider"></div>
 
-        </ion-card-content>
-      </ion-card>
+        <!-- ── Coordinates ─────────────────────────────────────────── -->
+        <div class="pos-card__coords">
+          <ion-icon name="locate-outline" class="pos-card__coord-icon" />
+          <span class="pos-card__coord-value">
+            {{ position.lat | number:'1.5-5' }}°N&nbsp;&nbsp;{{ position.lon | number:'1.5-5' }}°{{ position.lon < 0 ? 'W' : 'E' }}
+          </span>
+        </div>
+
+      </div>
     } @else {
-      <ion-card>
-        <ion-card-content class="no-pos">
-          <ion-icon name="location-outline" class="no-pos-icon" />
-          <p>Obteniendo posición GPS…</p>
-        </ion-card-content>
-      </ion-card>
+      <!-- ── Acquiring ─────────────────────────────────────────────── -->
+      <div class="pos-card pos-card--acquiring">
+        <div class="pos-card__status">
+          <div class="pos-card__status-left">
+            <span class="pos-acquire-dot"></span>
+            <span class="pos-card__status-label">ACQUIRING GPS</span>
+          </div>
+        </div>
+        <div class="pos-card__no-fix">
+          <div class="pos-card__no-fix-grid">——·——</div>
+          <div class="pos-card__no-fix-hint">Searching for satellites…</div>
+        </div>
+      </div>
     }
   `,
   styles: [`
-    ion-card { --border-radius: var(--app-card-radius); margin: 8px; }
-    .locator-row {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 8px; padding: 8px 0;
-      border-bottom: 1px solid var(--ion-color-light);
+    // ── Card container ──────────────────────────────────────────────────
+    .pos-card {
+      margin: 12px 12px 0;
+      background:    var(--ham-surface);
+      border:        1px solid var(--ham-border);
+      border-radius: var(--app-card-radius);
+      overflow:      hidden;
+      animation:     fade-up 0.35s ease both;
+      position:      relative;
+
+      // Phosphor top accent
+      &::before {
+        content:    '';
+        position:   absolute;
+        top:        0;
+        left:       0;
+        right:      0;
+        height:     2px;
+        background: var(--ham-glow);
+        opacity:    0.7;
+      }
+
+      &--acquiring::before {
+        background: var(--ham-amber);
+        animation:  gps-acquire 1.4s ease-in-out infinite;
+      }
     }
-    .locator-row:last-of-type { border-bottom: none; }
-    .locator-block { display: flex; flex-direction: column; flex: 1; min-width: 0; }
-    .locator-label {
-      font-size: 0.72rem; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--ion-color-medium);
-      margin-bottom: 2px;
+
+    // ── Status bar ──────────────────────────────────────────────────────
+    .pos-card__status {
+      display:         flex;
+      align-items:     center;
+      justify-content: space-between;
+      padding:         10px 14px 9px;
     }
-    .grid-value { font-family: var(--app-font-mono); font-size: 1.75rem; font-weight: 700; }
-    .plus-code { font-size: 1.3rem; }
-    .btn-group { display: flex; gap: 4px; flex-shrink: 0; }
-    .coord-row {
-      display: flex; align-items: center; gap: 8px;
-      padding-top: 8px;
+
+    .pos-card__status-left {
+      display:     flex;
+      align-items: center;
+      gap:         8px;
     }
-    .coord-value.small { font-family: var(--app-font-mono); font-size: 0.9rem; color: var(--ion-color-medium); }
-    .no-pos { text-align: center; padding: 24px; }
-    .no-pos-icon { font-size: 2.5rem; color: var(--ion-color-medium); }
+
+    .pos-card__status-label {
+      font-family:    var(--app-font-ui);
+      font-size:      0.68rem;
+      font-weight:    700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color:          var(--ham-muted);
+    }
+
+    .pos-lock-dot {
+      width:         8px;
+      height:        8px;
+      border-radius: 50%;
+      background:    var(--ham-glow);
+      box-shadow:    0 0 6px var(--ham-glow), 0 0 12px rgba(var(--ham-glow-rgb), 0.4);
+      flex-shrink:   0;
+    }
+
+    .pos-acquire-dot {
+      width:         8px;
+      height:        8px;
+      border-radius: 50%;
+      background:    var(--ham-amber);
+      box-shadow:    0 0 6px var(--ham-amber);
+      flex-shrink:   0;
+      animation:     gps-acquire 1.4s ease-in-out infinite;
+    }
+
+    .pos-card__accuracy {
+      font-family:    var(--app-font-mono);
+      font-size:      0.72rem;
+      color:          var(--ham-muted);
+      letter-spacing: 0.05em;
+    }
+
+    // ── Divider ─────────────────────────────────────────────────────────
+    .pos-card__divider {
+      height:     1px;
+      background: var(--ham-border);
+    }
+
+    // ── Section ─────────────────────────────────────────────────────────
+    .pos-card__section {
+      padding: 12px 14px 10px;
+    }
+
+    .pos-card__section-label {
+      font-family:    var(--app-font-ui);
+      font-size:      0.65rem;
+      font-weight:    700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color:          var(--ham-muted);
+      margin-bottom:  4px;
+    }
+
+    // ── Grid value (hero) ────────────────────────────────────────────────
+    .pos-card__grid-wrap {
+      display:         flex;
+      align-items:     center;
+      justify-content: space-between;
+      gap:             8px;
+    }
+
+    .pos-card__grid-value {
+      font-family:  var(--app-font-mono);
+      font-size:    clamp(2rem, 8vw, 2.8rem);
+      font-weight:  400;
+      color:        var(--ham-glow);
+      line-height:  1.0;
+      letter-spacing: 0.04em;
+      text-shadow:  0 0 24px rgba(var(--ham-glow-rgb), 0.5);
+      flex:         1;
+      min-width:    0;
+      overflow:     hidden;
+      text-overflow: ellipsis;
+      white-space:  nowrap;
+    }
+
+    .pos-card__grid-sub {
+      font-family:    var(--app-font-ui);
+      font-size:      0.7rem;
+      color:          var(--ham-muted);
+      letter-spacing: 0.08em;
+      margin-top:     3px;
+    }
+
+    // ── Plus Code ────────────────────────────────────────────────────────
+    .pos-card__plus-wrap {
+      display:         flex;
+      align-items:     center;
+      justify-content: space-between;
+      gap:             8px;
+    }
+
+    .pos-card__plus-value {
+      font-family:    var(--app-font-mono);
+      font-size:      clamp(1.15rem, 4.5vw, 1.5rem);
+      font-weight:    400;
+      color:          var(--ham-amber);
+      letter-spacing: 0.04em;
+      text-shadow:    0 0 16px rgba(var(--ham-amber-rgb), 0.4);
+      flex:           1;
+    }
+
+    // ── Action buttons ────────────────────────────────────────────────────
+    .pos-card__actions {
+      display:     flex;
+      align-items: center;
+      gap:         4px;
+      flex-shrink: 0;
+    }
+
+    .pos-action-btn {
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+      width:           44px;
+      height:          44px;
+      background:      transparent;
+      border:          1px solid var(--ham-border);
+      border-radius:   var(--app-card-radius);
+      color:           var(--ham-muted);
+      cursor:          pointer;
+      transition:      all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+
+      ion-icon { font-size: 1.2rem; }
+
+      &:active {
+        background: var(--ham-glow-dim);
+        border-color: var(--ham-glow);
+        color: var(--ham-glow);
+        transform: scale(0.95);
+      }
+    }
+
+    // ── Coordinates ───────────────────────────────────────────────────────
+    .pos-card__coords {
+      display:     flex;
+      align-items: center;
+      gap:         8px;
+      padding:     8px 14px 10px;
+    }
+
+    .pos-card__coord-icon {
+      font-size:   0.9rem;
+      color:       var(--ham-muted);
+      flex-shrink: 0;
+    }
+
+    .pos-card__coord-value {
+      font-family:    var(--app-font-mono);
+      font-size:      0.82rem;
+      color:          var(--ham-muted);
+      letter-spacing: 0.03em;
+      overflow:       hidden;
+      white-space:    nowrap;
+      text-overflow:  ellipsis;
+    }
+
+    // ── No-fix state ─────────────────────────────────────────────────────
+    .pos-card__no-fix {
+      padding:    24px 14px 20px;
+      text-align: center;
+    }
+
+    .pos-card__no-fix-grid {
+      font-family:    var(--app-font-mono);
+      font-size:      2.4rem;
+      color:          var(--ham-border-hi);
+      letter-spacing: 0.1em;
+      animation:      value-flash 2s ease-in-out infinite;
+    }
+
+    .pos-card__no-fix-hint {
+      font-family:    var(--app-font-ui);
+      font-size:      0.78rem;
+      color:          var(--ham-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top:     8px;
+    }
   `],
   imports: [
     CommonModule,
-    IonCard, IonCardContent, IonCardHeader, IonCardTitle,
-    IonButton, IonIcon, IonBadge,
+    IonIcon,
     CopyButtonComponent,
   ],
 })
@@ -110,7 +323,7 @@ export class PositionCardComponent {
   private settings = inject(SettingsService);
 
   constructor() {
-    addIcons({ shareOutline, locationOutline });
+    addIcons({ shareOutline, locationOutline, locateOutline, flashOutline });
   }
 
   get gridDisplay(): string {
@@ -119,6 +332,16 @@ export class PositionCardComponent {
     return p === 4 ? this.position.grid4
       : p === 8 ? this.position.grid8
       : this.position.grid6;
+  }
+
+  get precisionLabel(): string {
+    const p = this.settings.gridPrecision();
+    const labels: Record<number, string> = {
+      4: '4 chars · field ~111×111 km',
+      6: '6 chars · square ~5×2 km',
+      8: '8 chars · subsquare ~500×250 m',
+    };
+    return labels[p] ?? '';
   }
 
   async share(type: 'grid' | 'plus'): Promise<void> {

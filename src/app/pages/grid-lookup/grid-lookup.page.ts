@@ -4,8 +4,8 @@ import {
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel,
-  IonInput, IonButton, IonIcon, IonCard, IonCardContent,
+  IonHeader, IonToolbar, IonTitle, IonContent,
+  IonInput, IonButton, IonIcon,
   IonSegment, IonSegmentButton, IonToast, ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -31,11 +31,10 @@ type InputMode = 'grid' | 'plus';
   styleUrls: ['grid-lookup.page.scss'],
   imports: [
     CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel,
-    IonInput, IonButton, IonIcon, IonCard, IonCardContent,
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonInput, IonButton, IonIcon,
     IonSegment, IonSegmentButton, IonToast,
     MapViewComponent, BearingIndicatorComponent, CopyButtonComponent,
-    // ModalController no va en imports, se inyecta via DI
   ],
 })
 export class GridLookupPage {
@@ -53,10 +52,13 @@ export class GridLookupPage {
   gridInput = signal('');
   plusInput = signal('');
 
-  resultCenter = signal<LatLon | null>(null);
-  resultBounds = signal<GridBounds | null>(null);
-  resolvedGrid = signal('');
-  resolvedPlus = signal('');
+  resultCenter    = signal<LatLon | null>(null);
+  /** Bounds del grid Maidenhead del resultado */
+  resultBounds    = signal<GridBounds | null>(null);
+  /** Bounds del Plus Code del resultado */
+  resultPlusBounds = signal<GridBounds | null>(null);
+  resolvedGrid    = signal('');
+  resolvedPlus    = signal('');
   bearingResult = signal<BearingResult | null>(null);
   validationError = signal('');
   toastMsg = signal('');
@@ -87,10 +89,14 @@ export class GridLookupPage {
     const center = this.maidenhead.toCenter(raw);
     if (!bounds || !center) return;
 
+    const plusCode = this.pluscode.encode(center.lat, center.lon);
+    const plusDecoded = this.pluscode.decode(plusCode);
+
     this.resultBounds.set(bounds);
+    this.resultPlusBounds.set(plusDecoded ? { sw: plusDecoded.sw, ne: plusDecoded.ne } : null);
     this.resultCenter.set(center);
     this.resolvedGrid.set(raw);
-    this.resolvedPlus.set(this.pluscode.encode(center.lat, center.lon));
+    this.resolvedPlus.set(plusCode);
     this.calcBearing(center);
     this.mapView?.flyTo(center, 10);
   }
@@ -105,13 +111,13 @@ export class GridLookupPage {
     if (!decoded) return;
 
     const center = decoded.center;
+    const grid   = this.maidenhead.toGrid(center.lat, center.lon, this.settings.gridPrecision());
+
     this.resultCenter.set(center);
-    this.resultBounds.set({
-      sw: decoded.sw,
-      ne: decoded.ne,
-    });
+    this.resultBounds.set(this.maidenhead.toBounds(grid));       // Maidenhead
+    this.resultPlusBounds.set({ sw: decoded.sw, ne: decoded.ne }); // Plus Code
     this.resolvedPlus.set(raw);
-    this.resolvedGrid.set(this.maidenhead.toGrid(center.lat, center.lon, this.settings.gridPrecision()));
+    this.resolvedGrid.set(grid);
     this.calcBearing(center);
     this.mapView?.flyTo(center, 12);
   }
@@ -124,13 +130,14 @@ export class GridLookupPage {
   }
 
   onMapTap(evt: MapTapEvent): void {
-    const grid = this.maidenhead.toGrid(evt.lat, evt.lon, this.settings.gridPrecision());
-    const plus = this.pluscode.encode(evt.lat, evt.lon);
-    const bounds = this.maidenhead.toBounds(grid);
+    const grid    = this.maidenhead.toGrid(evt.lat, evt.lon, this.settings.gridPrecision());
+    const plus    = this.pluscode.encode(evt.lat, evt.lon);
+    const plusDec = this.pluscode.decode(plus);
     const center: LatLon = { lat: evt.lat, lon: evt.lon };
 
     this.resultCenter.set(center);
-    this.resultBounds.set(bounds);
+    this.resultBounds.set(this.maidenhead.toBounds(grid));
+    this.resultPlusBounds.set(plusDec ? { sw: plusDec.sw, ne: plusDec.ne } : null);
     this.resolvedGrid.set(grid);
     this.resolvedPlus.set(plus);
     this.gridInput.set(grid);

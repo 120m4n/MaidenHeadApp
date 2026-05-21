@@ -1,44 +1,181 @@
-ion-segment { margin: 12px 8px; }
+// ── Segment ───────────────────────────────────────────────────────────────
+.lookup-segment-wrap {
+  padding: 12px 12px 0;
+}
 
-.lookup-btn { margin: 8px; }
+// ── Input card ────────────────────────────────────────────────────────────
+.lookup-input-card {
+  margin: 12px 12px 0;
+  background:    var(--ham-surface);
+  border:        1px solid var(--ham-border);
+  border-radius: var(--app-card-radius);
+  overflow:      hidden;
+  animation:     fade-up 0.3s ease both;
+  position:      relative;
 
-.validation-error {
-  color: var(--ion-color-danger);
-  font-size: 0.875rem;
-  padding: 4px 16px;
+  &::before {
+    content:    '';
+    position:   absolute;
+    top:        0;
+    left:       0;
+    right:      0;
+    height:     2px;
+    background: var(--ham-sky);
+    opacity:    0.6;
+  }
+}
+
+.lookup-field {
+  padding: 14px 14px 4px;
+}
+
+.lookup-field__label {
+  font-family:    var(--app-font-ui);
+  font-size:      0.65rem;
+  font-weight:    700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color:          var(--ham-muted);
+  margin-bottom:  6px;
+}
+
+.lookup-input {
+  font-family: var(--app-font-mono) !important;
+  font-size:   1.6rem !important;
+  color:       var(--ham-text) !important;
+  --placeholder-color: var(--ham-border-hi) !important;
+  padding:     0 !important;
+}
+
+.lookup-error {
+  font-family:    var(--app-font-ui);
+  font-size:      0.82rem;
+  color:          var(--ham-danger);
+  padding:        4px 14px 0;
+  letter-spacing: 0.04em;
+}
+
+.lookup-btn {
+  margin: 10px 12px 12px;
+}
+
+// ── Result card ───────────────────────────────────────────────────────────
+.result-card {
+  margin:        12px 12px 0;
+  background:    var(--ham-surface);
+  border:        1px solid var(--ham-border);
+  border-radius: var(--app-card-radius);
+  overflow:      hidden;
+  animation:     fade-up 0.35s ease both;
+  position:      relative;
+
+  &::before {
+    content:    '';
+    position:   absolute;
+    top:        0;
+    left:       0;
+    right:      0;
+    height:     2px;
+    background: var(--ham-glow);
+    opacity:    0.7;
+  }
+}
+
+.result-card__header {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--ham-border);
+}
+
+.result-card__title {
+  font-family:    var(--app-font-ui);
+  font-size:      0.65rem;
+  font-weight:    700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color:          var(--ham-muted);
+}
+
+.result-card__body {
+  padding: 12px 14px;
 }
 
 .result-row {
-  display: flex;
-  align-items: center;
+  display:         flex;
+  align-items:     center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--ion-color-light);
+  gap:             12px;
 }
 
 .result-block {
-  display: flex;
+  display:   flex;
   flex-direction: column;
-  flex: 1;
+  gap:       3px;
+  flex:      1;
+  min-width: 0;
 }
 
 .result-label {
-  font-size: 0.72rem;
+  font-family:    var(--app-font-ui);
+  font-size:      0.62rem;
+  font-weight:    700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ion-color-medium);
+  color:          var(--ham-muted);
 }
 
-.map-hint {
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
-  text-align: center;
-  margin: 4px 0;
+.result-value-grid {
+  font-family:    var(--app-font-mono);
+  font-size:      clamp(1.6rem, 6.5vw, 2.2rem);
+  color:          var(--ham-glow);
+  letter-spacing: 0.04em;
+  text-shadow:    0 0 20px rgba(var(--ham-glow-rgb), 0.45);
+  line-height:    1.0;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+  white-space:    nowrap;
+}
+
+.result-value-plus {
+  font-family:    var(--app-font-mono);
+  font-size:      clamp(1rem, 4vw, 1.3rem);
+  color:          var(--ham-amber);
+  letter-spacing: 0.04em;
+  text-shadow:    0 0 12px rgba(var(--ham-amber-rgb), 0.35);
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+  white-space:    nowrap;
+}
+
+.result-divider {
+  height:     1px;
+  background: var(--ham-border);
+  margin:     10px 0;
+}
+
+.result-qso-btn {
+  margin-top: 12px;
+}
+
+// ── Map ───────────────────────────────────────────────────────────────────
+.map-section-label {
+  padding: 10px 12px 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &::after {
+    content:    '';
+    flex:       1;
+    height:     1px;
+    background: var(--ham-border);
+  }
 }
 
 app-map-view {
-  display: block;
-  margin: 0 8px 8px;
-  --map-height: 260px;
+  display:       block;
+  margin:        0 12px 12px;
+  --map-height:  260px;
+  border:        1px solid var(--ham-border);
+  border-radius: var(--app-card-radius);
+  overflow:      hidden;
 }

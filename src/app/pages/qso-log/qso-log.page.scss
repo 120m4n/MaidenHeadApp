@@ -1,33 +1,200 @@
-.empty-state {
+// ── Header count badge ────────────────────────────────────────────────────
+.log-count {
+  display:        inline-block;
+  font-family:    var(--app-font-mono);
+  font-size:      0.75rem;
+  background:     var(--ham-glow-dim);
+  color:          var(--ham-glow);
+  border:         1px solid rgba(var(--ham-glow-rgb), 0.3);
+  border-radius:  2px;
+  padding:        1px 6px;
+  margin-left:    6px;
+  vertical-align: middle;
+}
+
+// ── QSO list ──────────────────────────────────────────────────────────────
+.qso-list {
+  padding: 12px 12px 0;
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+// ── QSO card ──────────────────────────────────────────────────────────────
+.qso-card {
+  background:    var(--ham-surface);
+  border:        1px solid var(--ham-border);
+  border-radius: var(--app-card-radius);
+  overflow:      hidden;
+  animation:     fade-up 0.3s ease both;
+  position:      relative;
+
+  // Accent line — amber (each contact is a precious signal)
+  &::before {
+    content:    '';
+    position:   absolute;
+    left:       0;
+    top:        0;
+    bottom:     0;
+    width:      3px;
+    background: var(--ham-amber);
+    opacity:    0.7;
+  }
+}
+
+.qso-card__header {
+  display:         flex;
+  align-items:     center;
+  gap:             10px;
+  padding:         10px 12px 8px 14px;
+  border-bottom:   1px solid var(--ham-border);
+}
+
+.qso-card__call {
+  font-family:    var(--app-font-mono);
+  font-size:      1.25rem;
+  font-weight:    400;
+  color:          var(--ham-glow);
+  letter-spacing: 0.04em;
+  text-shadow:    0 0 12px rgba(var(--ham-glow-rgb), 0.35);
+  flex:           1;
+}
+
+.qso-card__tags {
+  display: flex;
+  gap:     5px;
+}
+
+.qso-tag {
+  font-family:    var(--app-font-ui);
+  font-size:      0.65rem;
+  font-weight:    700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius:  2px;
+  padding:        2px 6px;
+
+  &--band {
+    background: var(--ham-glow-dim);
+    color:      var(--ham-glow);
+    border:     1px solid rgba(var(--ham-glow-rgb), 0.25);
+  }
+
+  &--mode {
+    background: rgba(var(--ham-sky), 0.08);
+    color:      var(--ham-sky);
+    border:     1px solid rgba(77, 184, 255, 0.25);
+  }
+}
+
+.qso-delete-btn {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           36px;
+  height:          36px;
+  background:      transparent;
+  border:          1px solid transparent;
+  border-radius:   var(--app-card-radius);
+  color:           var(--ham-muted);
+  cursor:          pointer;
+  transition:      all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  ion-icon { font-size: 1rem; }
+
+  &:active {
+    background:   rgba(204, 32, 32, 0.1);
+    border-color: var(--ham-danger);
+    color:        var(--ham-danger);
+  }
+}
+
+// ── Card body ─────────────────────────────────────────────────────────────
+.qso-card__body {
+  padding: 8px 12px 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.qso-meta-row {
+  display:     flex;
   align-items: center;
-  padding: 48px 24px;
-  color: var(--ion-color-medium);
-  text-align: center;
+  gap:         14px;
+  flex-wrap:   wrap;
+}
 
-  ion-icon {
-    font-size: 3rem;
-    margin-bottom: 12px;
-  }
+.qso-meta {
+  display:        flex;
+  align-items:    center;
+  gap:            4px;
+  font-family:    var(--app-font-ui);
+  font-size:      0.8rem;
+  color:          var(--ham-muted);
+  letter-spacing: 0.04em;
 
-  .hint {
-    font-size: 0.85rem;
-    margin-top: 8px;
+  ion-icon { font-size: 0.85rem; }
+
+  &--rst {
+    font-family:    var(--app-font-mono);
+    font-size:      0.82rem;
+    color:          var(--ham-amber);
+    margin-left:    auto;
   }
 }
 
+// ── Grid row ──────────────────────────────────────────────────────────────
+.qso-grid-row {
+  display:     flex;
+  align-items: center;
+  gap:         12px;
+  flex-wrap:   wrap;
+}
+
+.qso-grid {
+  display:     flex;
+  align-items: baseline;
+  gap:         5px;
+
+  &__label {
+    font-family:    var(--app-font-ui);
+    font-size:      0.6rem;
+    font-weight:    700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color:          var(--ham-muted);
+  }
+
+  &__value {
+    font-family:    var(--app-font-mono);
+    font-size:      0.95rem;
+    color:          var(--ham-text);
+    letter-spacing: 0.03em;
+  }
+}
+
+.qso-distance {
+  font-family:    var(--app-font-ui);
+  font-size:      0.8rem;
+  color:          var(--ham-sky);
+  letter-spacing: 0.06em;
+  margin-left:    auto;
+  font-weight:    600;
+}
+
+.qso-comment {
+  font-family:    var(--app-font-ui);
+  font-size:      0.82rem;
+  color:          var(--ham-muted);
+  font-style:     italic;
+  letter-spacing: 0.02em;
+  padding-top:    2px;
+  border-top:     1px dashed var(--ham-border);
+  margin-top:     2px;
+}
+
+// ── Export button ─────────────────────────────────────────────────────────
 .export-btn {
-  margin: 16px;
-}
-
-ion-item h2 {
-  font-weight: 700;
-  font-family: var(--app-font-mono);
-  font-size: 1.1rem;
-}
-
-ion-note {
-  font-family: var(--app-font-mono);
-  font-size: 0.85rem;
+  margin: 16px 12px 24px;
 }

@@ -1,12 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
-  IonLabel, IonButton, IonIcon, IonItemSliding, IonItemOptions,
-  IonItemOption, IonNote, IonAlert, IonBadge,
+  IonHeader, IonToolbar, IonTitle, IonContent,
+  IonButton, IonIcon, IonAlert,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { downloadOutline, trashOutline, informationCircleOutline } from 'ionicons/icons';
+import {
+  downloadOutline, trashOutline, informationCircleOutline,
+  radioOutline, calendarOutline, timeOutline,
+} from 'ionicons/icons';
 
 import { QsoLogService } from '../../services/qso-log.service';
 import { SettingsService } from '../../services/settings.service';
@@ -18,9 +20,8 @@ import { QsoEntry } from '../../models/qso-entry.model';
   styleUrls: ['qso-log.page.scss'],
   imports: [
     CommonModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
-    IonLabel, IonButton, IonIcon, IonItemSliding, IonItemOptions,
-    IonItemOption, IonNote, IonAlert, IonBadge,
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonButton, IonIcon, IonAlert,
   ],
 })
 export class QsoLogPage {
@@ -36,7 +37,7 @@ export class QsoLogPage {
   ];
 
   constructor() {
-    addIcons({ downloadOutline, trashOutline, informationCircleOutline });
+    addIcons({ downloadOutline, trashOutline, informationCircleOutline, radioOutline, calendarOutline, timeOutline });
   }
 
   formatDate(qsoDate: string): string {

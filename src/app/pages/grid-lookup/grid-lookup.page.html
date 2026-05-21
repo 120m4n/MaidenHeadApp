@@ -1,100 +1,119 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>🔍 Grid Lookup</ion-title>
+  <ion-toolbar>
+    <ion-title>GRID LOOKUP</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <!-- Selector de tipo de input -->
-  <ion-segment
-    [value]="inputMode()"
-    (ionChange)="inputMode.set($any($event.detail.value)); validationError.set('')">
-    <ion-segment-button value="grid">QTH Locator (Maidenhead)</ion-segment-button>
-    <ion-segment-button value="plus">Plus Code</ion-segment-button>
-  </ion-segment>
+  <!-- Mode selector -->
+  <div class="lookup-segment-wrap">
+    <ion-segment
+      [value]="inputMode()"
+      (ionChange)="inputMode.set($any($event.detail.value)); validationError.set('')">
+      <ion-segment-button value="grid">QTH Locator</ion-segment-button>
+      <ion-segment-button value="plus">Plus Code</ion-segment-button>
+    </ion-segment>
+  </div>
 
-  <!-- Input Maidenhead -->
-  @if (inputMode() === 'grid') {
-    <ion-item>
-      <ion-label position="stacked">QTH Locator</ion-label>
-      <ion-input
-        [ngModel]="gridInput()"
-        (ngModelChange)="gridInput.set($event)"
-        placeholder="FN20, FN20XR, FN20XR45"
-        autocapitalize="characters"
-        autocorrect="off"
-        [style.text-transform]="'uppercase'"
-        (keyup.enter)="lookup()" />
-    </ion-item>
-  }
+  <!-- Input area -->
+  <div class="lookup-input-card">
 
-  <!-- Input Plus Code -->
-  @if (inputMode() === 'plus') {
-    <ion-item>
-      <ion-label position="stacked">Plus Code</ion-label>
-      <ion-input
-        [ngModel]="plusInput()"
-        (ngModelChange)="plusInput.set($event)"
-        placeholder="87G7PX7V+4H"
-        autocorrect="off"
-        (keyup.enter)="lookup()" />
-    </ion-item>
-  }
+    @if (inputMode() === 'grid') {
+      <div class="lookup-field">
+        <div class="lookup-field__label">QTH LOCATOR (MAIDENHEAD)</div>
+        <ion-input
+          [ngModel]="gridInput()"
+          (ngModelChange)="gridInput.set($event)"
+          placeholder="FN20, FN20XR, FN20XR45"
+          autocapitalize="characters"
+          autocorrect="off"
+          [style.text-transform]="'uppercase'"
+          (keyup.enter)="lookup()"
+          class="lookup-input" />
+      </div>
+    }
 
-  <!-- Error de validación -->
-  @if (validationError()) {
-    <p class="validation-error">⚠️ {{ validationError() }}</p>
-  }
+    @if (inputMode() === 'plus') {
+      <div class="lookup-field">
+        <div class="lookup-field__label">PLUS CODE</div>
+        <ion-input
+          [ngModel]="plusInput()"
+          (ngModelChange)="plusInput.set($event)"
+          placeholder="87G7PX7V+4H"
+          autocorrect="off"
+          (keyup.enter)="lookup()"
+          class="lookup-input" />
+      </div>
+    }
 
-  <ion-button expand="block" color="primary" class="cta-large lookup-btn"
-              (click)="lookup()">
-    <ion-icon slot="start" name="search-outline" />
-    Buscar
-  </ion-button>
+    @if (validationError()) {
+      <div class="lookup-error">⚠ {{ validationError() }}</div>
+    }
 
-  <!-- Resultado -->
+    <ion-button expand="block" color="primary" class="cta-large lookup-btn"
+                (click)="lookup()">
+      <ion-icon slot="start" name="search-outline" />
+      Buscar
+    </ion-button>
+
+  </div>
+
+  <!-- Result -->
   @if (resultCenter()) {
-    <ion-card>
-      <ion-card-content>
+    <div class="result-card">
+
+      <div class="result-card__header">
+        <span class="result-card__title">RESULTADO</span>
+      </div>
+
+      <div class="result-card__body">
 
         <div class="result-row">
           <div class="result-block">
-            <span class="result-label">QTH Locator</span>
-            <span class="grid-value">{{ resolvedGrid() }}</span>
+            <span class="result-label">QTH LOCATOR</span>
+            <span class="result-value-grid">{{ resolvedGrid() }}</span>
           </div>
           <app-copy-button [value]="resolvedGrid()" label="QTH Locator" />
         </div>
 
+        <div class="result-divider"></div>
+
         <div class="result-row">
           <div class="result-block">
-            <span class="result-label">Plus Code</span>
-            <span class="grid-value" style="font-size: 1.3rem">{{ resolvedPlus() }}</span>
+            <span class="result-label">PLUS CODE</span>
+            <span class="result-value-plus">{{ resolvedPlus() }}</span>
           </div>
           <app-copy-button [value]="resolvedPlus()" label="Plus Code" />
         </div>
 
-        <!-- Distancia y rumbo -->
+        <div class="result-divider"></div>
+
+        <!-- Bearing & distance -->
         <app-bearing-indicator
           [result]="bearingResult()"
           [unit]="distanceUnit()" />
 
-        <!-- Guardar como QSO -->
         <ion-button expand="block" fill="outline" color="secondary"
-                    (click)="saveQso()">
+                    class="result-qso-btn" (click)="saveQso()">
           <ion-icon slot="start" name="add-circle-outline" />
           Guardar como QSO
         </ion-button>
 
-      </ion-card-content>
-    </ion-card>
+      </div>
+    </div>
   }
 
-  <!-- Mapa: tap para resolver punto -->
-  <p class="map-hint">Toca el mapa para resolver cualquier punto</p>
+  <!-- Map -->
+  <div class="map-section-label">
+    <span class="label-micro">MAPA · toca para resolver punto</span>
+  </div>
   <app-map-view
     [center]="resultCenter()"
     [gridBounds]="resultBounds()"
+    [gridLabel]="resolvedGrid()"
+    [plusBounds]="resultPlusBounds()"
+    [plusLabel]="resolvedPlus()"
     (mapTap)="onMapTap($event)" />
 
 </ion-content>

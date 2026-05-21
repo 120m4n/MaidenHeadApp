@@ -1,6 +1,6 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>📡 Mi QTH</ion-title>
+  <ion-toolbar>
+    <ion-title>MI QTH</ion-title>
     <ion-button slot="end" fill="clear" (click)="refresh()" aria-label="Refrescar GPS">
       <ion-icon slot="icon-only" name="refresh-outline" />
     </ion-button>
@@ -9,42 +9,54 @@
 
 <ion-content>
 
-  <!-- Estado GPS -->
+  <!-- GPS error / denied -->
   @if (geo.status() === 'denied') {
-    <div class="geo-error">
-      <p>⚠️ Permiso de ubicación denegado. Actívalo en Ajustes del sistema.</p>
+    <div class="gps-pill gps-pill--error">
+      <span class="gps-dot gps-dot--error"></span>
+      Permiso de ubicación denegado — actívalo en Ajustes
     </div>
   }
 
   @if (geo.status() === 'error') {
-    <div class="geo-error">
-      <p>⚠️ {{ geo.error() }}</p>
+    <div class="gps-pill gps-pill--error">
+      <span class="gps-dot gps-dot--error"></span>
+      {{ geo.error() }}
     </div>
   }
 
+  <!-- GPS acquiring (no position yet) -->
   @if (geo.status() === 'watching' && !geo.position()) {
-    <div class="loading-gps">
-      <ion-spinner name="crescent" />
-      <p>Buscando señal GPS…</p>
+    <div class="gps-pill gps-pill--acquiring">
+      <span class="gps-dot gps-dot--acquiring"></span>
+      Buscando señal GPS…
     </div>
   }
 
-  <!-- Card de posición -->
+  <!-- Position card -->
   <app-position-card [position]="geo.position()" />
 
-  <!-- Mapa -->
+  <!-- Map label -->
+  <div class="map-section-label">
+    <span class="label-micro">MAPA · toca para grid · mantén para pin</span>
+  </div>
+
+  <!-- Map -->
   <app-map-view
-    [center]="geo.position() ? { lat: geo.position()!.lat, lon: geo.position()!.lon } : null"
-    [gridBounds]="gridBounds"
+    [center]="center()"
+    [accuracy]="accuracy()"
+    [gridBounds]="gridBounds()"
+    [gridLabel]="gridLabel()"
+    [plusBounds]="plusBounds()"
+    [plusLabel]="plusLabel()"
     [savedMarkers]="savedPins()"
     (mapTap)="onMapTap($event)"
     (mapLongPress)="onMapLongPress($event)" />
 
 </ion-content>
 
-<!-- FAB: agregar QSO -->
+<!-- FAB: nuevo QSO -->
 <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-  <ion-fab-button color="secondary" (click)="newQso()" aria-label="Nuevo QSO">
+  <ion-fab-button (click)="newQso()" aria-label="Nuevo QSO">
     <ion-icon name="add-outline" />
   </ion-fab-button>
 </ion-fab>

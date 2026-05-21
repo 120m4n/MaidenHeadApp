@@ -17,17 +17,36 @@ log.txt
 /.versions
 /coverage
 
-# Ionic
+# Ionic / Angular build output
 /.ionic
+/.angular
+/.angular/cache
 /www
-/platforms
-/plugins
-
-# Compiled output
 /dist
 /tmp
 /out-tsc
+/coverage
 /bazel-out
+
+# Capacitor / native platforms
+/platforms
+/plugins
+
+# Android / Gradle
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/local.properties
+/android/capacitor-cordova-android-plugins/build/
+
+# iOS / Xcode
+/ios/Pods/
+/ios/App/build/
+/ios/App/App.xcodeproj/project.xcworkspace/xcuserdata/
+/ios/App/App.xcworkspace/xcuserdata/
+/ios/App/DerivedData/
+/ios/CapApp-SPM/.build/
+/ios/**/*.xcuserstate
 
 # Node
 /node_modules
@@ -54,17 +73,16 @@ yarn-error.log
 
 
 # Miscellaneous
-/.angular
-/.angular/cache
-.sass-cache/
 /.nx
 /.nx/cache
+.sass-cache/
 /connect.lock
-/coverage
 /libpeerconnection.log
-testem.log
+/testem.log
 /typings
 
 # System files
 .DS_Store
 Thumbs.db
+.agents/*
+.claude/*

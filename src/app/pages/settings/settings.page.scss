@@ -1,13 +1,142 @@
-ion-list-header {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: var(--ion-color-primary);
-  margin-top: 8px;
+// ── Settings section ─────────────────────────────────────────────────────
+.settings-section {
+  margin: 16px 12px 0;
+  animation: fade-up 0.3s ease both;
 }
 
-ion-note {
-  font-size: 0.78rem;
-  color: var(--ion-color-medium);
+.settings-section__header {
+  display:        flex;
+  align-items:    center;
+  gap:            7px;
+  font-family:    var(--app-font-ui);
+  font-size:      0.68rem;
+  font-weight:    700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color:          var(--ham-glow);
+  margin-bottom:  8px;
+
+  ion-icon {
+    font-size: 0.9rem;
+    opacity:   0.8;
+  }
+}
+
+// ── Settings card ────────────────────────────────────────────────────────
+.settings-card {
+  background:    var(--ham-surface);
+  border:        1px solid var(--ham-border);
+  border-radius: var(--app-card-radius);
+  overflow:      hidden;
+
+  &--about {
+    padding: 14px;
+  }
+}
+
+// ── Field ────────────────────────────────────────────────────────────────
+.settings-field {
+  padding: 12px 14px;
+
+  &--select {
+    display:         flex;
+    flex-direction:  column;
+    gap:             4px;
+  }
+}
+
+.settings-field__label {
+  font-family:    var(--app-font-ui);
+  font-size:      0.65rem;
+  font-weight:    700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color:          var(--ham-muted);
+  margin-bottom:  6px;
+}
+
+.settings-field__hint {
+  font-family:  var(--app-font-ui);
+  font-size:    0.75rem;
+  color:        var(--ham-muted);
+  margin-top:   5px;
+  line-height:  1.4;
+}
+
+.settings-input {
+  font-family: var(--app-font-mono) !important;
+  font-size:   1.35rem !important;
+  color:       var(--ham-glow) !important;
+  --placeholder-color: var(--ham-border-hi) !important;
+  padding:     0 !important;
+}
+
+.settings-select {
+  font-family: var(--app-font-ui);
+  font-size:   1rem;
+  color:       var(--ham-text);
+  font-weight: 500;
+}
+
+.settings-divider {
+  height:     1px;
+  background: var(--ham-border);
+  margin:     0 14px;
+}
+
+// ── About ────────────────────────────────────────────────────────────────
+.about-app {
+  display:     flex;
+  align-items: baseline;
+  gap:         10px;
+  margin-bottom: 6px;
+}
+
+.about-app__name {
+  font-family:    var(--app-font-ui);
+  font-size:      1.1rem;
+  font-weight:    700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color:          var(--ham-text);
+}
+
+.about-app__version {
+  font-family: var(--app-font-mono);
+  font-size:   0.8rem;
+  color:       var(--ham-glow);
+  background:  var(--ham-glow-dim);
+  border:      1px solid rgba(var(--ham-glow-rgb), 0.25);
+  border-radius: 2px;
+  padding:     1px 6px;
+}
+
+.about-desc {
+  font-family:    var(--app-font-ui);
+  font-size:      0.85rem;
+  color:          var(--ham-muted);
+  letter-spacing: 0.04em;
+  margin-bottom:  4px;
+
+  &--small {
+    font-size: 0.78rem;
+    opacity:   0.8;
+  }
+}
+
+.about-osm {
+  display:     flex;
+  align-items: center;
+  gap:         7px;
+  font-family: var(--app-font-ui);
+  font-size:   0.75rem;
+  color:       var(--ham-muted);
+  margin-top:  12px;
+
+  ion-icon { font-size: 0.9rem; flex-shrink: 0; }
+}
+
+// ── Bottom padding ────────────────────────────────────────────────────────
+ion-content {
+  --padding-bottom: 24px;
 }

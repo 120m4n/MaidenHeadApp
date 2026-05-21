@@ -21,6 +21,8 @@ export class GeolocationService {
 
   /** Inicia el watch continuo de posición */
   async startWatch(): Promise<void> {
+    if (this.watchId) return; // ya hay un watch activo — evitar leak de GPS watches huérfanos
+
     const perms = await this.requestPermission();
     if (!perms) return;
 
