@@ -278,9 +278,6 @@ export class QsoFormModalComponent {
 
   constructor() {
     addIcons({ closeOutline, saveOutline, radioOutline });
-    const cs = this.settings.callsign();
-    if (cs) this.updateForm('myGrid', cs);
-    if (this.prefillDxGrid) this.updateForm('dxGrid', this.prefillDxGrid);
   }
 
   updateForm(key: keyof QsoEntry, value: any): void {
@@ -320,9 +317,10 @@ export class QsoFormModalComponent {
       rstSent:   f.rstSent ?? DEFAULT_RST[f.mode as QsoMode],
       rstRcvd:   f.rstRcvd ?? DEFAULT_RST[f.mode as QsoMode],
       dxGrid:    (f.dxGrid ?? '').toUpperCase(),
-      myGrid:    this.myGrid,
-      myPlusCode: this.myPlusCode,
-      comment:   f.comment,
+      myGrid:          this.myGrid,
+      myPlusCode:      this.myPlusCode,
+      stationCallsign: this.settings.callsign() || undefined,
+      comment:         f.comment,
     };
     await this.modalCtrl.dismiss(entry, 'confirm');
   }

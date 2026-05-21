@@ -94,6 +94,7 @@ export class QsoLogService {
       this.field('rst_rcvd', e.rstRcvd),
       this.field('my_gridsquare', e.myGrid),
     ];
+    if (e.stationCallsign) fields.push(this.field('station_callsign', e.stationCallsign));
     if (e.dxGrid) fields.push(this.field('gridsquare', e.dxGrid));
     if (e.comment) fields.push(this.field('comment', e.comment));
     fields.push('<eor>');

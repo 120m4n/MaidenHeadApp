@@ -19,6 +19,8 @@ export interface QsoEntry {
   /** Grid propio al momento del QSO */
   myGrid: string;
   myPlusCode: string;
+  /** Indicativo propio (station callsign) al momento del QSO */
+  stationCallsign?: string;
   /** Distancia calculada en km */
   distanceKm?: number;
   comment?: string;
