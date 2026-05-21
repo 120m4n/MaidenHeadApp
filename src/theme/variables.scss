@@ -23,12 +23,6 @@
   --app-card-radius:     6px;   // más amigable; 3px era demasiado industrial
   --app-radius-ctrl:     4px;   // controles del mapa, botones secundarios
   --app-radius-badge:    3px;   // badges y tags
-
-  // Panel de instrumento — oscuro en ambos temas (como bisel de ploter)
-  --ion-toolbar-background:   #0f1a22;
-  --ion-toolbar-color:        #a8c4bc;
-  --ion-tab-bar-background:   #0b141c;
-  --ion-tab-bar-border-color: #1e3040;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -37,6 +31,12 @@
 
 :root,
 :root[data-theme="light"] {
+  // ── Panel de instrumento — oscuro en ambos temas (bisel de ploter) ───
+  --ion-toolbar-background:   #0f1a22;
+  --ion-toolbar-color:        #a8c4bc;
+  --ion-tab-bar-background:   #0b141c;
+  --ion-tab-bar-border-color: #1e3040;
+
   // ── Ham palette — carta topográfica ──────────────────────────────────
   --ham-bg:        #efeade;   // papel náutico cálido — evita blanco clínico
   --ham-surface:   #faf8f3;   // superficie principal — crema limpia
