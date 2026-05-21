@@ -458,39 +458,49 @@ ion-alert {
 }
 
 // ─── Grid tooltips (label permanente dentro del rectángulo) ─────────────────
+//
+// ESTRUCTURA DOM de Leaflet tooltip:
+//   <div class="leaflet-tooltip map-grid-label map-grid-label--mh">FN20XR</div>
+//
+// El texto va DIRECTAMENTE en el contenedor <div> como nodo de texto.
+// NO existe un <span> ni .leaflet-tooltip-content hijo.
+// Por eso todos los estilos se aplican al propio contenedor (no a hijos).
+// El color por defecto de Leaflet (color: #222) se sobreescribe aquí con !important.
+// ─────────────────────────────────────────────────────────────────────────────
 .map-grid-label {
-  background:   transparent !important;
-  border:       none !important;
-  box-shadow:   none !important;
-  padding:      0 !important;
-  white-space:  nowrap;
+  // Reset Leaflet defaults
+  box-shadow:     none !important;
+  white-space:    nowrap;
   pointer-events: none;
 
-  // flecha del tooltip — ocultar
-  &::before { display: none !important; }
+  // Tipografía — misma fuente mono que el resto de la app
+  font-family:    var(--app-font-mono, 'Share Tech Mono', monospace) !important;
+  font-size:      0.72rem !important;
+  font-weight:    400 !important;
+  letter-spacing: 0.06em !important;
 
-  .leaflet-tooltip-content,
-  span {
-    font-family:    var(--app-font-mono, monospace) !important;
-    font-size:      0.72rem !important;
-    font-weight:    400;
-    letter-spacing: 0.06em;
-    padding:        2px 5px;
-    border-radius:  2px;
+  // Ocultar flecha/triángulo del tooltip (::before Y ::after por seguridad)
+  &::before,
+  &::after { display: none !important; }
+
+  // ── QTH Locator / Maidenhead — verde (ham-glow) ───────────────────────
+  //    light: #1a6b1c sobre fondo blanco  ·  dark: #39ff14 sobre fondo negro
+  &--mh {
+    color:         var(--ham-glow, #39ff14) !important;
+    background:    var(--map-label-bg, rgba(0, 0, 0, 0.62)) !important;
+    border:        1px solid rgba(var(--ham-glow-rgb, 57, 255, 20), 0.45) !important;
+    padding:       2px 5px !important;
+    border-radius: 2px !important;
   }
 
-  &--mh span,
-  &--mh .leaflet-tooltip-content {
-    color:      #39ff14 !important;
-    background: rgba(0, 0, 0, 0.55) !important;
-    border:     1px solid rgba(57, 255, 20, 0.3) !important;
-  }
-
-  &--olc span,
-  &--olc .leaflet-tooltip-content {
-    color:      #ff4444 !important;
-    background: rgba(0, 0, 0, 0.55) !important;
-    border:     1px solid rgba(255, 68, 68, 0.3) !important;
+  // ── Plus Code / OLC — café (ham-amber) ───────────────────────────────
+  //    light: #9a5400 sobre fondo blanco  ·  dark: #f0a500 sobre fondo negro
+  &--olc {
+    color:         var(--ham-amber, #f0a500) !important;
+    background:    var(--map-label-bg, rgba(0, 0, 0, 0.62)) !important;
+    border:        1px solid rgba(var(--ham-amber-rgb, 240, 165, 0), 0.45) !important;
+    padding:       2px 5px !important;
+    border-radius: 2px !important;
   }
 }
 

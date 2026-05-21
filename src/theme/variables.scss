@@ -46,6 +46,8 @@
   --ham-muted:     #56745a;
   --ham-danger:    #cc2020;
   --ham-success:   #1a6b1c;
+  // Fondo para labels de grids en el mapa — claro: píldora blanca sobre tiles OSM
+  --map-label-bg:  rgba(255, 255, 255, 0.92);
 
   // ── Ionic component tokens ────────────────────────────────────────────
   --ion-color-primary:              #1a6b1c;
@@ -105,6 +107,8 @@
   --ham-muted:     #4a6a4c;
   --ham-danger:    #ff4444;
   --ham-success:   #39ff14;
+  // Fondo para labels de grids en el mapa — oscuro: píldora negra semi-transparente
+  --map-label-bg:  rgba(0, 0, 0, 0.62);
 
   // ── Ionic component tokens — oscuro ───────────────────────────────────
   --ion-color-primary:              #39ff14;

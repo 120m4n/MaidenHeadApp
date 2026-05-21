@@ -14,10 +14,12 @@ L.Icon.Default.mergeOptions({
 });
 
 // ── Paleta de colores fija (Leaflet no lee CSS variables en opciones JS) ──
-const USER_DOT_COLOR  = '#4db8ff';   // azul cielo — usuario
+// Los valores coinciden con los tokens dark-theme de variables.scss:
+//   --ham-glow:   #39ff14   --ham-amber: #f0a500   --ham-sky: #4db8ff
+const USER_DOT_COLOR  = '#4db8ff';   // azul cielo  — usuario    (ham-sky dark)
 const USER_DOT_BORDER = '#ffffff';
-const MH_COLOR        = '#39ff14';   // fósforo verde — Maidenhead
-const OLC_COLOR       = '#ff4444';   // rojo — Open Location Code / Plus Code
+const MH_COLOR        = '#39ff14';   // verde fósforo — Maidenhead (ham-glow dark)
+const OLC_COLOR       = '#f0a500';   // ámbar / café  — Plus Code  (ham-amber dark)
 
 export type GridLayer = 'mh' | 'olc' | 'both';
 
