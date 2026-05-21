@@ -10,6 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
+    "icons:generate": "node scripts/generate-icons.cjs",
     "cap:sync": "ng build && cap sync",
     "cap:android": "ng build && cap sync && cap open android",
     "cap:ios": "ng build && cap sync && cap open ios",
@@ -77,6 +78,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "sharp": "^0.34.5",
     "typescript": "~5.9.0"
   },
   "description": "An Ionic project"
