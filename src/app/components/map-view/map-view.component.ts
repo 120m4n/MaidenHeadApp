@@ -98,12 +98,18 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private firstFix = true;
 
   // IDs de timers pendientes — se cancelan en ngOnDestroy
-  private initTimer?: ReturnType<typeof setTimeout>;
+  private initTimer?:     ReturnType<typeof setTimeout>;
   private invalidateTimer?: ReturnType<typeof setTimeout>;
+
+  // Observa cambios de tamaño del contenedor (flex/rotación) y avisa a Leaflet
+  private resizeObserver?: ResizeObserver;
 
   // ── Lifecycle ────────────────────────────────────────────────────────────
 
-  ngAfterViewInit(): void { this.initMap(); }
+  ngAfterViewInit(): void {
+    this.initMap();
+    this.setupResizeObserver();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.map) return;
@@ -131,6 +137,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
     clearTimeout(this.initTimer);
     clearTimeout(this.invalidateTimer);
     this.map?.remove();
@@ -140,7 +147,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private initMap(): void {
     const el = this.mapContainer.nativeElement;
-    if (!el.offsetHeight) el.style.height = '280px';
+    // NOTA: NO se fuerza height inline — el tamaño viene del CSS (flex / --map-height).
+    // Si el contenedor aún tiene height=0 en este momento (iOS / WKWebView), el
+    // ResizeObserver llamará invalidateSize() en cuanto el layout se establezca.
 
     this.map = L.map(el, { zoomControl: true, attributionControl: true })
       .setView([0, 0], 2);
@@ -163,6 +172,29 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (this.savedMarkers.length) this.updateSavedMarkers();
 
     this.initTimer = setTimeout(() => this.map.invalidateSize(), 200);
+  }
+
+  // ── ResizeObserver: sincroniza Leaflet con el tamaño real del contenedor ──
+  // Esto resuelve dos problemas en iOS/WKWebView:
+  //   1. El layout flex no está calculado cuando ngAfterViewInit dispara →
+  //      el mapa se inicializa con height=0 y los tiles no se cargan bien.
+  //   2. Cambios posteriores de tamaño (rotación, show/hide de elementos) no
+  //      eran notificados a Leaflet, dejando zonas grises.
+
+  private setupResizeObserver(): void {
+    const el = this.mapContainer.nativeElement;
+
+    this.resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        if (width > 0 && height > 0 && this.map) {
+          // animate: false evita flicker visual al redimensionar
+          this.map.invalidateSize({ animate: false });
+        }
+      }
+    });
+
+    this.resizeObserver.observe(el);
   }
 
   // ── Control: selector de capas MH / OLC / ALL ────────────────────────────

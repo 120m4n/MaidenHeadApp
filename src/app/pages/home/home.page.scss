@@ -1,8 +1,21 @@
+// ── Scrollcontainer de ion-content → columna flex ────────────────────────────
+// En WKWebView, `height: 100%` en un elemento slotted no siempre resuelve
+// contra el contenedor interno del shadow DOM. La solución es hacer que
+// ion-content::part(scroll) sea el flex-container y .page-body use flex: 1.
+// Este selector puede escribirse desde el SCSS del componente porque Angular
+// no aplica el atributo _ngcontent a ::part() (no atraviesa shadow DOM).
+ion-content::part(scroll) {
+  display:        flex;
+  flex-direction: column;
+  overflow:       hidden;
+}
+
 // ── Layout de página — columna flex que llena el viewport sin scroll ─────────
 .page-body {
   display:        flex;
   flex-direction: column;
-  height:         100%;
+  flex:           1;    // fill del scroll-container (no height:100% que falla en WKWebView)
+  min-height:     0;
   overflow:       hidden;
 }
 
