@@ -1,0 +1,96 @@
+// MaidenHeadApp — Ham Radio theme
+// Accessible-UX: high contrast, large CTAs, legible al sol
+
+// ─── Global custom props ────────────────────────────────────────────────────
+:root {
+  // Fuente monospace para valores de grid/coord (lectura rápida en QSO)
+  --app-font-mono: 'Courier New', 'Lucida Console', monospace;
+  --app-grid-font-size: 1.9rem;
+  --app-cta-min-size: 56px;
+  --app-card-radius: 12px;
+
+  // ── Primary: VHF green (ham radio vibes) ──────────────────────────────────
+  --ion-color-primary: #2d7c2e;
+  --ion-color-primary-rgb: 45, 124, 46;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #27702a;
+  --ion-color-primary-tint: #428943;
+
+  // ── Secondary: CW amber ───────────────────────────────────────────────────
+  --ion-color-secondary: #c87800;
+  --ion-color-secondary-rgb: 200, 120, 0;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #b06a00;
+  --ion-color-secondary-tint: #d48700;
+
+  // ── Tertiary: azul cielo (propagación) ────────────────────────────────────
+  --ion-color-tertiary: #1a6fa6;
+  --ion-color-tertiary-rgb: 26, 111, 166;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #176292;
+  --ion-color-tertiary-tint: #317daf;
+
+  // ── Success / warning / danger (Ionic defaults are fine) ─────────────────
+  --ion-color-success: #2dd36f;
+  --ion-color-warning: #ffc409;
+  --ion-color-danger: #eb445a;
+
+  // Fondo light
+  --ion-background-color: #f7f7f2;
+  --ion-background-color-rgb: 247, 247, 242;
+  --ion-item-background: #ffffff;
+  --ion-text-color: #1a1a1a;
+}
+
+// ─── Dark mode via system preference ─────────────────────────────────────────
+// Ionic dark.class.css + dark.system.css son importados en global.scss
+// Aquí sobreescribimos tokens propios en ambas formas
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.ion-palette-light) {
+    --ion-background-color: #0c0c0c;
+    --ion-background-color-rgb: 12, 12, 12;
+    --ion-item-background: #1a1a1a;
+    --ion-text-color: #efefef;
+    --ion-text-color-rgb: 239, 239, 239;
+
+    // Primary más brillante para OLED dark
+    --ion-color-primary: #4caf50;
+    --ion-color-primary-rgb: 76, 175, 80;
+    --ion-color-primary-shade: #43a047;
+    --ion-color-primary-tint: #61bb65;
+    --ion-color-primary-contrast: #000000;
+    --ion-color-primary-contrast-rgb: 0, 0, 0;
+
+    --ion-color-secondary: #ffb300;
+    --ion-color-secondary-rgb: 255, 179, 0;
+    --ion-color-secondary-shade: #e0a000;
+    --ion-color-secondary-tint: #ffc133;
+    --ion-color-secondary-contrast: #000000;
+  }
+}
+
+// Clase manual .ion-palette-dark (para ThemeService)
+.ion-palette-dark {
+  --ion-background-color: #0c0c0c;
+  --ion-background-color-rgb: 12, 12, 12;
+  --ion-item-background: #1a1a1a;
+  --ion-text-color: #efefef;
+  --ion-text-color-rgb: 239, 239, 239;
+
+  --ion-color-primary: #4caf50;
+  --ion-color-primary-rgb: 76, 175, 80;
+  --ion-color-primary-shade: #43a047;
+  --ion-color-primary-tint: #61bb65;
+  --ion-color-primary-contrast: #000000;
+  --ion-color-primary-contrast-rgb: 0, 0, 0;
+
+  --ion-color-secondary: #ffb300;
+  --ion-color-secondary-rgb: 255, 179, 0;
+  --ion-color-secondary-shade: #e0a000;
+  --ion-color-secondary-tint: #ffc133;
+  --ion-color-secondary-contrast: #000000;
+}

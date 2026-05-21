@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>📡 Mi QTH</ion-title>
+    <ion-button slot="end" fill="clear" (click)="refresh()" aria-label="Refrescar GPS">
+      <ion-icon slot="icon-only" name="refresh-outline" />
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Estado GPS -->
+  @if (geo.status() === 'denied') {
+    <div class="geo-error">
+      <p>⚠️ Permiso de ubicación denegado. Actívalo en Ajustes del sistema.</p>
+    </div>
+  }
+
+  @if (geo.status() === 'error') {
+    <div class="geo-error">
+      <p>⚠️ {{ geo.error() }}</p>
+    </div>
+  }
+
+  @if (geo.status() === 'watching' && !geo.position()) {
+    <div class="loading-gps">
+      <ion-spinner name="crescent" />
+      <p>Buscando señal GPS…</p>
+    </div>
+  }
+
+  <!-- Card de posición -->
+  <app-position-card [position]="geo.position()" />
+
+  <!-- Mapa -->
+  <app-map-view
+    [center]="geo.position() ? { lat: geo.position()!.lat, lon: geo.position()!.lon } : null"
+    [gridBounds]="gridBounds"
+    [savedMarkers]="savedPins()"
+    (mapTap)="onMapTap($event)"
+    (mapLongPress)="onMapLongPress($event)" />
+
+</ion-content>
+
+<!-- FAB: agregar QSO -->
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button color="secondary" (click)="newQso()" aria-label="Nuevo QSO">
+    <ion-icon name="add-outline" />
+  </ion-fab-button>
+</ion-fab>
+
+<ion-toast
+  [isOpen]="showToast()"
+  [message]="toastMsg()"
+  [duration]="3000"
+  (didDismiss)="showToast.set(false)"
+  position="top" />

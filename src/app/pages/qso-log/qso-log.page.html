@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      📋 QSO Log
+      @if (qsoLog.entries().length > 0) {
+        <ion-badge color="secondary">{{ qsoLog.entries().length }}</ion-badge>
+      }
+    </ion-title>
+    <ion-button slot="end" fill="clear" (click)="export()"
+                [disabled]="qsoLog.entries().length === 0 || exporting()"
+                aria-label="Exportar ADIF">
+      <ion-icon slot="icon-only" name="download-outline" />
+    </ion-button>
+    <ion-button slot="end" fill="clear" color="danger"
+                (click)="showClearAlert.set(true)"
+                [disabled]="qsoLog.entries().length === 0"
+                aria-label="Borrar todo">
+      <ion-icon slot="icon-only" name="trash-outline" />
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  @if (qsoLog.entries().length === 0) {
+    <div class="empty-state">
+      <ion-icon name="information-circle-outline" />
+      <p>No hay QSOs guardados aún.</p>
+      <p class="hint">Ve a "Mi QTH" o "Grid Lookup" y presiona el botón de QSO para agregar.</p>
+    </div>
+  }
+
+  <ion-list>
+    @for (entry of qsoLog.entries(); track entry.id) {
+      <ion-item-sliding>
+
+        <ion-item>
+          <ion-label>
+            <h2>{{ entry.call }}</h2>
+            <p>{{ formatDate(entry.qsoDate) }} {{ formatTime(entry.timeOn) }} · {{ entry.band }} · {{ entry.mode }}</p>
+            <p>
+              @if (entry.dxGrid) { Grid: {{ entry.dxGrid }} · }
+              RST {{ entry.rstSent }}/{{ entry.rstRcvd }}
+              @if (distanceLabel(entry)) { · {{ distanceLabel(entry) }} }
+            </p>
+          </ion-label>
+          <ion-note slot="end">{{ entry.myGrid }}</ion-note>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="remove(entry.id)">
+            <ion-icon slot="icon-only" name="trash-outline" />
+          </ion-item-option>
+        </ion-item-options>
+
+      </ion-item-sliding>
+    }
+  </ion-list>
+
+  @if (qsoLog.entries().length > 0) {
+    <ion-button expand="block" color="primary" class="export-btn cta-large"
+                (click)="export()" [disabled]="exporting()">
+      <ion-icon slot="start" name="download-outline" />
+      Exportar ADIF (.adi)
+    </ion-button>
+  }
+
+</ion-content>
+
+<!-- Alerta de confirmación para borrar todo -->
+<ion-alert
+  [isOpen]="showClearAlert()"
+  header="Borrar todo el log"
+  message="¿Estás seguro? Esta acción no se puede deshacer."
+  [buttons]="alertButtons"
+  (didDismiss)="showClearAlert.set(false)" />

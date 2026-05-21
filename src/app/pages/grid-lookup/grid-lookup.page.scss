@@ -1,0 +1,44 @@
+ion-segment { margin: 12px 8px; }
+
+.lookup-btn { margin: 8px; }
+
+.validation-error {
+  color: var(--ion-color-danger);
+  font-size: 0.875rem;
+  padding: 4px 16px;
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.result-block {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.result-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ion-color-medium);
+}
+
+.map-hint {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  text-align: center;
+  margin: 4px 0;
+}
+
+app-map-view {
+  display: block;
+  margin: 0 8px 8px;
+  --map-height: 260px;
+}
