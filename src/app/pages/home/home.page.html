@@ -50,6 +50,8 @@
       [gridLabel]="gridLabel()"
       [plusBounds]="plusBounds()"
       [plusLabel]="plusLabel()"
+      [tapGridBounds]="tapGridBounds()"
+      [tapGridLabel]="tapGridLabel()"
       [savedMarkers]="savedPins()"
       (mapTap)="onMapTap($event)"
       (mapLongPress)="onMapLongPress($event)" />
@@ -69,5 +71,5 @@
   [isOpen]="showToast()"
   [message]="toastMsg()"
   [duration]="3000"
-  (didDismiss)="showToast.set(false)"
+  (didDismiss)="onToastDismiss()"
   position="top" />

@@ -15,11 +15,12 @@ L.Icon.Default.mergeOptions({
 
 // ── Paleta de colores fija (Leaflet no lee CSS variables en opciones JS) ──
 // Los valores coinciden con los tokens dark-theme de variables.scss:
-//   --ham-glow:   #39ff14   --ham-amber: #f0a500   --ham-sky: #4db8ff
-const USER_DOT_COLOR  = '#4db8ff';   // azul cielo  — usuario    (ham-sky dark)
+//   --ham-glow:   #34c9a0   --ham-amber: #d4923e   --ham-sky: #5ab0e8
+const USER_DOT_COLOR  = '#5ab0e8';   // azul cielo  — usuario    (ham-sky dark)
 const USER_DOT_BORDER = '#ffffff';
-const MH_COLOR        = '#39ff14';   // verde fósforo — Maidenhead (ham-glow dark)
-const OLC_COLOR       = '#f0a500';   // ámbar / café  — Plus Code  (ham-amber dark)
+const MH_COLOR        = '#34c9a0';   // teal-cian   — Maidenhead (ham-glow dark)
+const OLC_COLOR       = '#d4923e';   // ámbar cálido — Plus Code  (ham-amber dark)
+const TAP_GRID_COLOR  = '#5ab0e8';   // azul cielo  — grid temporal de tap
 
 export type GridLayer = 'mh' | 'olc' | 'both';
 
@@ -66,6 +67,10 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() plusBounds:  GridBounds | null = null;
   @Input() plusLabel:   string = '';
 
+  /** Grid temporal de tap (azul) — se borra al mismo tiempo que el toast */
+  @Input() tapGridBounds: GridBounds | null = null;
+  @Input() tapGridLabel:  string = '';
+
   @Input() savedMarkers: Array<{ pos: LatLon; label: string }> = [];
 
   // ── Outputs ─────────────────────────────────────────────────────────────
@@ -80,6 +85,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private mhLabel?:      L.Tooltip;     // Maidenhead label — esquina NW del rect
   private olcRect?:      L.Rectangle;   // Plus Code / OLC grid rect
   private olcLabel?:     L.Tooltip;     // OLC label — esquina NW del rect
+  private tapRect?:      L.Rectangle;   // Grid temporal de tap (azul)
+  private tapLabelTip?:  L.Tooltip;     // Label del tap grid
   private savedLayers:   L.Marker[] = [];
 
   // ── Estado del selector de capas ─────────────────────────────────────────
@@ -114,6 +121,11 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     else if (changes['plusLabel'])
       this.olcLabel?.setContent(this.plusLabel || ' ');
 
+    if (changes['tapGridBounds'])
+      this.updateTapRect();
+    else if (changes['tapGridLabel'])
+      this.tapLabelTip?.setContent(this.tapGridLabel || ' ');
+
     if (changes['savedMarkers'])
       this.updateSavedMarkers();
   }
@@ -147,6 +159,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (this.center)              this.updateUserMarker();
     if (this.gridBounds)          this.updateMhRect();
     if (this.plusBounds)          this.updateOlcRect();
+    if (this.tapGridBounds)       this.updateTapRect();
     if (this.savedMarkers.length) this.updateSavedMarkers();
 
     this.initTimer = setTimeout(() => this.map.invalidateSize(), 200);
@@ -419,6 +432,42 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (this.activeLayer !== 'mh') {
       this.olcRect.addTo(this.map);
       this.olcLabel?.addTo(this.map);
+    }
+  }
+
+  // ── Grid temporal de tap (azul) ─────────────────────────────────────────
+
+  private updateTapRect(): void {
+    this.tapRect?.remove();
+    this.tapLabelTip?.remove();
+    this.tapRect     = undefined;
+    this.tapLabelTip = undefined;
+    if (!this.tapGridBounds) return;
+
+    const { sw, ne } = this.tapGridBounds;
+    this.tapRect = L.rectangle(
+      [[sw.lat, sw.lon], [ne.lat, ne.lon]],
+      {
+        color:       TAP_GRID_COLOR,
+        weight:      2,
+        fillColor:   TAP_GRID_COLOR,
+        fillOpacity: 0.14,
+        dashArray:   '5 4',
+        className:   'tap-rect',
+      },
+    ).addTo(this.map);
+
+    if (this.tapGridLabel) {
+      this.tapLabelTip = L.tooltip({
+        permanent:   true,
+        direction:   'right',
+        className:   'map-grid-label map-grid-label--tap',
+        interactive: false,
+        offset:      [4, 10],
+      })
+      .setLatLng([ne.lat, sw.lon])   // esquina NW
+      .setContent(this.tapGridLabel)
+      .addTo(this.map);
     }
   }
 

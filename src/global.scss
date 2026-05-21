@@ -473,6 +473,15 @@ ion-alert {
     padding:       2px 5px !important;
     border-radius: var(--app-radius-badge, 3px) !important;
   }
+
+  // Grid de tap temporal — azul cielo
+  &--tap {
+    color:         var(--ham-sky) !important;
+    background:    var(--map-label-bg) !important;
+    border:        1px solid rgba(var(--ham-sky-rgb), 0.45) !important;
+    padding:       2px 5px !important;
+    border-radius: var(--app-radius-badge, 3px) !important;
+  }
 }
 
 // ─── Control de capas del mapa ────────────────────────────────────────────

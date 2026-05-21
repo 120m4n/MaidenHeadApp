@@ -48,8 +48,12 @@ export class HomePage implements OnInit, OnDestroy {
   private modalCtrl  = inject(ModalController);
 
   savedPins = signal<SavedPin[]>([]);
-  toastMsg = signal('');
+  toastMsg  = signal('');
   showToast = signal(false);
+
+  /** Grid temporal azul que aparece al tocar el mapa */
+  readonly tapGridBounds = signal<GridBounds | null>(null);
+  readonly tapGridLabel  = signal<string>('');
 
   // ── Computed map inputs ───────────────────────────────────────────────────
   // IMPORTANTE: computed() memoiza por referencia — se re-ejecutan solo cuando
@@ -114,10 +118,21 @@ export class HomePage implements OnInit, OnDestroy {
     this.mapView?.invalidate();
   }
 
-  /** Tap en mapa → popup con grid del punto */
+  /** Tap en mapa → dibuja grid azul temporal + muestra toast */
   onMapTap(evt: MapTapEvent): void {
-    const grid = this.maidenhead.toGrid(evt.lat, evt.lon, this.settings.gridPrecision());
+    const grid   = this.maidenhead.toGrid(evt.lat, evt.lon, this.settings.gridPrecision());
+    const bounds = this.maidenhead.toBounds(grid);
+    // Muestra el rectángulo azul; se borra en onToastDismiss (mismo instante que el toast)
+    this.tapGridBounds.set(bounds);
+    this.tapGridLabel.set(grid);
     this.toast(`Grid: ${grid} (${evt.lat.toFixed(4)}, ${evt.lon.toFixed(4)})`);
+  }
+
+  /** Cierra el toast Y borra el grid de tap al mismo tiempo */
+  onToastDismiss(): void {
+    this.showToast.set(false);
+    this.tapGridBounds.set(null);
+    this.tapGridLabel.set('');
   }
 
   /** Long-press → guarda pin permanente */
