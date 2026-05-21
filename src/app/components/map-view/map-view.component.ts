@@ -66,8 +66,10 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private map!: L.Map;
   private userDot?:      L.CircleMarker;
   private accuracyRing?: L.Circle;
-  private mhRect?:       L.Rectangle;   // Maidenhead grid
-  private olcRect?:      L.Rectangle;   // Plus Code / OLC grid
+  private mhRect?:       L.Rectangle;   // Maidenhead grid rect
+  private mhLabel?:      L.Tooltip;     // Maidenhead label — esquina NW del rect
+  private olcRect?:      L.Rectangle;   // Plus Code / OLC grid rect
+  private olcLabel?:     L.Tooltip;     // OLC label — esquina NW del rect
   private savedLayers:   L.Marker[] = [];
 
   // ── Estado del selector de capas ─────────────────────────────────────────
@@ -95,12 +97,12 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (changes['gridBounds'])
       this.updateMhRect();
     else if (changes['gridLabel'])
-      this.mhRect?.setTooltipContent(this.gridLabel || ' ');
+      this.mhLabel?.setContent(this.gridLabel || ' ');
 
     if (changes['plusBounds'])
       this.updateOlcRect();
     else if (changes['plusLabel'])
-      this.olcRect?.setTooltipContent(this.plusLabel || ' ');
+      this.olcLabel?.setContent(this.plusLabel || ' ');
 
     if (changes['savedMarkers'])
       this.updateSavedMarkers();
@@ -219,12 +221,10 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     const showMH  = this.activeLayer !== 'olc';
     const showOLC = this.activeLayer !== 'mh';
 
-    if (this.mhRect) {
-      showMH ? this.mhRect.addTo(this.map) : this.mhRect.remove();
-    }
-    if (this.olcRect) {
-      showOLC ? this.olcRect.addTo(this.map) : this.olcRect.remove();
-    }
+    if (this.mhRect)   { showMH  ? this.mhRect.addTo(this.map)   : this.mhRect.remove(); }
+    if (this.mhLabel)  { showMH  ? this.mhLabel.addTo(this.map)  : this.mhLabel.remove(); }
+    if (this.olcRect)  { showOLC ? this.olcRect.addTo(this.map)  : this.olcRect.remove(); }
+    if (this.olcLabel) { showOLC ? this.olcLabel.addTo(this.map) : this.olcLabel.remove(); }
   }
 
   // ── Control: botón "centrar en mi posición" ──────────────────────────────
@@ -330,11 +330,13 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (this.firstFix) { this.firstFix = false; this.map.setView(ll, 13); }
   }
 
-  // ── Maidenhead rect (verde) ──────────────────────────────────────────────
+  // ── Maidenhead rect (teal) ──────────────────────────────────────────────
 
   private updateMhRect(): void {
     this.mhRect?.remove();
-    this.mhRect = undefined;
+    this.mhLabel?.remove();
+    this.mhRect  = undefined;
+    this.mhLabel = undefined;
     if (!this.gridBounds) return;
 
     const { sw, ne } = this.gridBounds;
@@ -349,25 +351,35 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     );
 
     if (this.gridLabel) {
-      this.mhRect.bindTooltip(this.gridLabel, {
-        permanent:  true,
-        direction:  'center',
-        className:  'map-grid-label map-grid-label--mh',
+      // Label anclado en el vértice NW (esquina superior-izquierda) del rect.
+      // direction:'right' coloca el borde izquierdo del tooltip en el punto
+      // geográfico; offset [4, 10] compensa ~la mitad de la altura del tooltip
+      // para que el borde superior quede sobre el borde del grid.
+      this.mhLabel = L.tooltip({
+        permanent:   true,
+        direction:   'right',
+        className:   'map-grid-label map-grid-label--mh',
         interactive: false,
-      });
+        offset:      [4, 10],
+      })
+      .setLatLng([ne.lat, sw.lon])   // NW corner: lat más alta, lon más occidental
+      .setContent(this.gridLabel);
     }
 
-    // Sólo añadir si la capa está activa
+    // Añadir sólo si la capa está activa
     if (this.activeLayer !== 'olc') {
       this.mhRect.addTo(this.map);
+      this.mhLabel?.addTo(this.map);
     }
   }
 
-  // ── Plus Code / OLC rect (rojo) ──────────────────────────────────────────
+  // ── Plus Code / OLC rect (ámbar) ────────────────────────────────────────
 
   private updateOlcRect(): void {
     this.olcRect?.remove();
-    this.olcRect = undefined;
+    this.olcLabel?.remove();
+    this.olcRect  = undefined;
+    this.olcLabel = undefined;
     if (!this.plusBounds) return;
 
     const { sw, ne } = this.plusBounds;
@@ -381,17 +393,22 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     );
 
     if (this.plusLabel) {
-      this.olcRect.bindTooltip(this.plusLabel, {
-        permanent:  true,
-        direction:  'center',
-        className:  'map-grid-label map-grid-label--olc',
+      // Mismo patrón que MH: label en esquina NW, dirección right + offset vertical
+      this.olcLabel = L.tooltip({
+        permanent:   true,
+        direction:   'right',
+        className:   'map-grid-label map-grid-label--olc',
         interactive: false,
-      });
+        offset:      [4, 10],
+      })
+      .setLatLng([ne.lat, sw.lon])   // NW corner
+      .setContent(this.plusLabel);
     }
 
-    // Sólo añadir si la capa está activa
+    // Añadir sólo si la capa está activa
     if (this.activeLayer !== 'mh') {
       this.olcRect.addTo(this.map);
+      this.olcLabel?.addTo(this.map);
     }
   }
 
