@@ -1,0 +1,25 @@
+# Dependencias y caché — no van en el contexto de Docker
+node_modules/
+.angular/
+
+# Código fuente — solo se necesita www/ (ya compilado)
+src/
+e2e/
+
+# Capacitor / Mobile
+android/
+ios/
+
+# Config y herramientas de desarrollo
+.git/
+.github/
+.vscode/
+*.md
+*.sh
+capacitor.config.ts
+karma.conf.js
+tsconfig*.json
+angular.json
+.eslintrc.json
+.editorconfig
+.gitignore
