@@ -57,9 +57,13 @@ fi
 echo ""
 
 # ─── 2. Build imagen Docker ───────────────────────────────────────────────────
-log "2/4 Build Docker image (nginx:alpine)…"
-docker build \
+# `docker buildx build` (no `docker build`) garantiza la plataforma objetivo
+# aunque el host sea arm64 (Apple Silicon). --load carga la imagen al daemon
+# local para que el `docker push` posterior pueda encontrarla.
+log "2/4 Build Docker image linux/amd64 (nginx:alpine)…"
+docker buildx build \
     --platform linux/amd64 \
+    --load \
     --label "org.opencontainers.image.source=https://github.com/${GITHUB_USER}/${IMAGE_NAME}" \
     --label "org.opencontainers.image.description=MaidenHead Ham Radio PWA — grid locator + QSO log" \
     --label "org.opencontainers.image.version=${VERSION}" \
