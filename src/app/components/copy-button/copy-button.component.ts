@@ -23,7 +23,7 @@ import { copyOutline, checkmarkOutline } from 'ionicons/icons';
       width:           44px;
       height:          44px;
       background:      var(--ham-surface2);
-      border:          1px solid var(--ham-border-hi);
+      border:          1px solid var(--ham-muted);
       border-radius:   var(--app-radius-ctrl, 4px);
       color:           var(--ham-text);
       cursor:          pointer;
@@ -46,6 +46,12 @@ import { copyOutline, checkmarkOutline } from 'ionicons/icons';
         border-color: var(--ham-glow);
         color:        var(--ham-glow);
         box-shadow:   0 0 8px rgba(var(--ham-glow-rgb), 0.25);
+      }
+
+      @media (max-width: 600px) {
+        width:  32px;
+        height: 32px;
+        ion-icon { font-size: 0.85rem; }
       }
     }
   `],
