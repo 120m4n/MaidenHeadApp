@@ -87,7 +87,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
   styles: [`
     // ── Card container ──────────────────────────────────────────────────
     .pos-card {
-      margin:        12px 12px 0;
+      margin:        8px 10px 0;
       background:    var(--ham-surface);
       border:        1px solid var(--ham-border);
       border-radius: var(--app-card-radius);
@@ -120,7 +120,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       display:         flex;
       align-items:     center;
       justify-content: space-between;
-      padding:         7px 14px 5px;
+      padding:         4px 12px 3px;
     }
 
     .pos-card__status-left {
@@ -173,7 +173,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     // ── Section ─────────────────────────────────────────────────────────
     .pos-card__section {
-      padding: 8px 14px 6px;
+      padding: 5px 12px 4px;
     }
 
     .pos-card__section-label {
@@ -269,7 +269,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       display:     flex;
       align-items: center;
       gap:         8px;
-      padding:     7px 14px 10px;
+      padding:     4px 12px 5px;
     }
 
     .pos-card__coord-icon {
@@ -290,7 +290,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     // ── Sin fix GPS ──────────────────────────────────────────────────────
     .pos-card__no-fix {
-      padding:    22px 14px 18px;
+      padding:    10px 14px 8px;
       text-align: center;
     }
 
@@ -311,17 +311,34 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       margin-top:     8px;
     }
 
-    // ── Mobile: fuente compacta para priorizar el mapa ───────────────────
+    // ── Mobile: máxima compacidad para priorizar el mapa ────────────────
     @media (max-width: 600px) {
+      .pos-card {
+        margin: 4px 8px 0;
+      }
+      .pos-card__status {
+        padding: 2px 10px 2px;
+      }
+      .pos-card__coords {
+        display: none;
+      }
+      .pos-card__section {
+        padding: 1px 10px 1px;
+      }
+      .pos-card__section-label {
+        display: none;   // colores (teal/amber) identifican el tipo
+      }
       .pos-card__grid-value,
       .pos-card__plus-value {
         font-size: 1.25rem;
       }
-      .pos-card__section {
-        padding: 6px 12px 4px;
+      .pos-card__actions {
+        gap: 2px;
       }
-      .pos-card__section-label {
-        margin-bottom: 2px;
+      .pos-action-btn {
+        width: 28px;
+        height: 28px;
+        ion-icon { font-size: 0.82rem; }
       }
     }
 
