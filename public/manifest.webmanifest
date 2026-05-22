@@ -12,6 +12,36 @@
   "theme_color": "#0f1a22",
   "background_color": "#0d1520",
   "categories": ["navigation", "utilities"],
+  "screenshots": [
+    {
+      "src": "screenshots/home-mobile.jpg",
+      "sizes": "780x1558",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Mi QTH — GPS, grid Maidenhead y mapa"
+    },
+    {
+      "src": "screenshots/lookup-mobile.jpg",
+      "sizes": "780x1558",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Lookup — resuelve grid o Plus Code en el mapa"
+    },
+    {
+      "src": "screenshots/home-desktop.jpg",
+      "sizes": "2628x1433",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Mi QTH — vista desktop"
+    },
+    {
+      "src": "screenshots/lookup-desktop.jpg",
+      "sizes": "2628x1433",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Lookup — vista desktop"
+    }
+  ],
   "icons": [
     {
       "src": "icons/icon-72x72.png",
