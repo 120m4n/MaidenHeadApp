@@ -146,7 +146,7 @@ export class HomePage implements OnInit, OnDestroy {
       componentProps: {
         myGrid: pos?.grid6 ?? '',
         myPlusCode: pos?.plusCode ?? '',
-        prefillDxGrid: pos?.grid6 ?? '',
+        prefillDxGrid: this._gridStr(),
       },
     });
     modal.onDidDismiss().then(async (result) => {
