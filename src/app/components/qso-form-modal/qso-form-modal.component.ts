@@ -1,4 +1,4 @@
-import { Component, Input, signal, inject } from '@angular/core';
+import { Component, Input, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
@@ -99,6 +99,7 @@ import { SettingsService } from '../../services/settings.service';
           <ion-input [(ngModel)]="form().dxGrid" (ngModelChange)="updateForm('dxGrid', $event)"
                      placeholder="FN20" autocapitalize="characters"
                      [style.text-transform]="'uppercase'"
+                     clearInput="true"
                      class="qso-form__input--grid" />
         </div>
 
@@ -252,7 +253,7 @@ import { SettingsService } from '../../services/settings.service';
     IonSelectOption, IonIcon,
   ],
 })
-export class QsoFormModalComponent {
+export class QsoFormModalComponent implements OnInit {
   @Input() myGrid = '';
   @Input() myPlusCode = '';
   @Input() prefillDxGrid = '';
@@ -278,6 +279,12 @@ export class QsoFormModalComponent {
 
   constructor() {
     addIcons({ closeOutline, saveOutline, radioOutline });
+  }
+
+  ngOnInit(): void {
+    if (this.prefillDxGrid) {
+      this.form.update(f => ({ ...f, dxGrid: this.prefillDxGrid.toUpperCase() }));
+    }
   }
 
   updateForm(key: keyof QsoEntry, value: any): void {
