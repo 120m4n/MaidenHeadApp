@@ -4,6 +4,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
+  IonHeader, IonToolbar, IonTitle,
   IonContent, IonInput, IonButton, IonIcon,
   IonSegment, IonSegmentButton, IonToast, ModalController,
 } from '@ionic/angular/standalone';
@@ -30,6 +31,7 @@ type InputMode = 'grid' | 'plus';
   styleUrls: ['grid-lookup.page.scss'],
   imports: [
     CommonModule, FormsModule,
+    IonHeader, IonToolbar, IonTitle,
     IonContent, IonInput, IonButton, IonIcon,
     IonSegment, IonSegmentButton, IonToast,
     MapViewComponent, BearingIndicatorComponent, CopyButtonComponent,

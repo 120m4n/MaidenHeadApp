@@ -1,14 +1,16 @@
-<ion-content>
-
-  <!-- Topbar compacto: título + conteo + acciones -->
-  <div class="qso-topbar">
-    <span class="qso-topbar__title">
+<ion-header [translucent]="false">
+  <ion-toolbar>
+    <div class="app-header-brand" slot="start">
+      <span class="app-header-logo">MH</span>
+      <span class="app-header-name">Maidenhead</span>
+    </div>
+    <ion-title>
       QSO LOG
       @if (qsoLog.entries().length > 0) {
         <span class="log-count">{{ qsoLog.entries().length }}</span>
       }
-    </span>
-    <div class="qso-topbar__actions">
+    </ion-title>
+    <div slot="end" class="qso-header-actions">
       <button class="qso-action-btn" (click)="export()"
               [disabled]="qsoLog.entries().length === 0 || exporting()"
               aria-label="Exportar ADIF">
@@ -20,7 +22,10 @@
         <ion-icon name="trash-outline" />
       </button>
     </div>
-  </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
 
   @if (qsoLog.entries().length === 0) {
     <div class="empty-state">

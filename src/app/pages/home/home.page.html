@@ -1,13 +1,16 @@
+<ion-header [translucent]="false">
+  <ion-toolbar>
+    <div class="app-header-brand" slot="start">
+      <span class="app-header-logo">MH</span>
+      <span class="app-header-name">Maidenhead</span>
+    </div>
+    <ion-title>MI QTH</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [scrollY]="false">
 
   <div class="page-body">
-
-    <!-- Topbar compacto: solo el botón de refresh (safe-area incluida) -->
-    <div class="page-topbar">
-      <button class="topbar-refresh-btn" (click)="refresh()" aria-label="Refrescar GPS">
-        <ion-icon name="refresh-outline" />
-      </button>
-    </div>
 
     <!-- GPS error / denied -->
     @if (geo.status() === 'denied') {

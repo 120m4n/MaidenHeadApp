@@ -3,10 +3,11 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  IonHeader, IonToolbar, IonTitle,
   IonContent, IonIcon, IonToast, ModalController, IonFab, IonFabButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { refreshOutline, addOutline } from 'ionicons/icons';
+import { addOutline } from 'ionicons/icons';
 
 import { GeolocationService } from '../../services/geolocation.service';
 import { MaidenheadService } from '../../services/maidenhead.service';
@@ -30,7 +31,8 @@ interface SavedPin {
   styleUrls: ['home.page.scss'],
   imports: [
     CommonModule,
-    IonContent, IonIcon, IonToast, IonFab, IonFabButton,
+    IonHeader, IonToolbar, IonTitle,
+  IonContent, IonIcon, IonToast, IonFab, IonFabButton,
     MapViewComponent, PositionCardComponent,
   ],
 })
@@ -100,7 +102,7 @@ export class HomePage implements OnInit, OnDestroy {
   });
 
   constructor() {
-    addIcons({ refreshOutline, addOutline });
+    addIcons({ addOutline });
   }
 
   async ngOnInit(): Promise<void> {
@@ -109,11 +111,6 @@ export class HomePage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.geo.stopWatch();
-  }
-
-  async refresh(): Promise<void> {
-    await this.geo.getCurrent();
-    this.mapView?.invalidate();
   }
 
   /** Tap en mapa → dibuja grid azul temporal + muestra toast */
