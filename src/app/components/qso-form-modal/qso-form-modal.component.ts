@@ -149,9 +149,9 @@ import { SettingsService } from '../../services/settings.service';
 
     .qso-form-hero__label {
       font-family:    var(--app-font-ui);
-      font-size:      0.62rem;
+      font-size:      var(--app-type-label-size, 0.66rem);
       font-weight:    700;
-      letter-spacing: 0.14em;
+      letter-spacing: var(--app-type-label-tracking, 0.12em);
       text-transform: uppercase;
       color:          var(--ham-muted);
       margin-bottom:  7px;
@@ -195,9 +195,9 @@ import { SettingsService } from '../../services/settings.service';
     // Label de campo del formulario
     .qso-form__label {
       font-family:    var(--app-font-ui);
-      font-size:      0.60rem;
+      font-size:      var(--app-type-label-size, 0.66rem);
       font-weight:    700;
-      letter-spacing: 0.14em;
+      letter-spacing: var(--app-type-label-tracking, 0.12em);
       text-transform: uppercase;
       color:          var(--ham-muted);
       margin-bottom:  6px;
