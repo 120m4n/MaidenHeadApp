@@ -148,6 +148,6 @@
 
 // ── Padding de contenido (safe-area superior + inferior) ──────────────────────
 ion-content {
-  --padding-top:    env(safe-area-inset-top, 0px);
+  --padding-top:    max(env(safe-area-inset-top, 0px), 8px);
   --padding-bottom: 24px;
 }
