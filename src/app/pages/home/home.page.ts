@@ -3,8 +3,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButton,
-  IonIcon, IonToast, ModalController, IonFab, IonFabButton,
+  IonContent, IonIcon, IonToast, ModalController, IonFab, IonFabButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { refreshOutline, addOutline } from 'ionicons/icons';
@@ -31,8 +30,7 @@ interface SavedPin {
   styleUrls: ['home.page.scss'],
   imports: [
     CommonModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButton,
-    IonIcon, IonToast, IonFab, IonFabButton,
+    IonContent, IonIcon, IonToast, IonFab, IonFabButton,
     MapViewComponent, PositionCardComponent,
   ],
 })

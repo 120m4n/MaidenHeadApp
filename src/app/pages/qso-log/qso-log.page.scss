@@ -1,4 +1,66 @@
-// ── Badge de conteo en header ─────────────────────────────────────────────────
+// ── Topbar compacto ───────────────────────────────────────────────────────────
+.qso-topbar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         calc(env(safe-area-inset-top, 0px) + 10px) 14px 9px;
+  border-bottom:   1px solid var(--ham-border);
+  gap:             10px;
+  background:      var(--ham-bg);
+  flex-shrink:     0;
+}
+
+.qso-topbar__title {
+  font-family:    var(--app-font-ui);
+  font-size:      var(--app-type-label-size, 0.66rem);
+  font-weight:    700;
+  letter-spacing: var(--app-type-label-tracking, 0.12em);
+  text-transform: uppercase;
+  color:          var(--ham-muted);
+  display:        flex;
+  align-items:    center;
+  gap:            6px;
+}
+
+.qso-topbar__actions {
+  display: flex;
+  gap:     6px;
+}
+
+.qso-action-btn {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           40px;
+  height:          40px;
+  background:      var(--ham-surface2);
+  border:          1px solid var(--ham-border-hi);
+  border-radius:   var(--app-radius-ctrl, 4px);
+  color:           var(--ham-text);
+  cursor:          pointer;
+  transition:      all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  ion-icon { font-size: 1rem; }
+
+  &:focus-visible {
+    outline:        2px solid rgba(var(--ham-glow-rgb), 0.55);
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    opacity:        0.32;
+    pointer-events: none;
+  }
+
+  &:active:not(:disabled) {
+    background:   rgba(var(--ham-glow-rgb), 0.09);
+    border-color: var(--ham-glow);
+    color:        var(--ham-glow);
+  }
+}
+
+// ── Badge de conteo en topbar ─────────────────────────────────────────────────
 .log-count {
   display:        inline-block;
   font-family:    var(--app-font-mono);

@@ -2,8 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent,
-  IonInput, IonSelect, IonSelectOption, IonIcon,
+  IonContent, IonInput, IonSelect, IonSelectOption, IonIcon,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -21,8 +20,7 @@ import { GridPrecision } from '../../services/maidenhead.service';
   styleUrls: ['settings.page.scss'],
   imports: [
     CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent,
-    IonInput, IonSelect, IonSelectOption, IonIcon,
+    IonContent, IonInput, IonSelect, IonSelectOption, IonIcon,
   ],
 })
 export class SettingsPage implements OnInit {

@@ -1,26 +1,26 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
+<ion-content>
+
+  <!-- Topbar compacto: título + conteo + acciones -->
+  <div class="qso-topbar">
+    <span class="qso-topbar__title">
       QSO LOG
       @if (qsoLog.entries().length > 0) {
         <span class="log-count">{{ qsoLog.entries().length }}</span>
       }
-    </ion-title>
-    <ion-button slot="end" fill="clear" (click)="export()"
-                [disabled]="qsoLog.entries().length === 0 || exporting()"
-                aria-label="Exportar ADIF">
-      <ion-icon slot="icon-only" name="download-outline" />
-    </ion-button>
-    <ion-button slot="end" fill="clear"
-                (click)="showClearAlert.set(true)"
-                [disabled]="qsoLog.entries().length === 0"
-                aria-label="Borrar todo">
-      <ion-icon slot="icon-only" name="trash-outline" />
-    </ion-button>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
+    </span>
+    <div class="qso-topbar__actions">
+      <button class="qso-action-btn" (click)="export()"
+              [disabled]="qsoLog.entries().length === 0 || exporting()"
+              aria-label="Exportar ADIF">
+        <ion-icon name="download-outline" />
+      </button>
+      <button class="qso-action-btn" (click)="showClearAlert.set(true)"
+              [disabled]="qsoLog.entries().length === 0"
+              aria-label="Borrar todo">
+        <ion-icon name="trash-outline" />
+      </button>
+    </div>
+  </div>
 
   @if (qsoLog.entries().length === 0) {
     <div class="empty-state">

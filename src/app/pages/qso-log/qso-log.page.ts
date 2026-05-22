@@ -1,8 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent,
-  IonButton, IonIcon, IonAlert,
+  IonContent, IonButton, IonIcon, IonAlert,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -20,8 +19,7 @@ import { QsoEntry } from '../../models/qso-entry.model';
   styleUrls: ['qso-log.page.scss'],
   imports: [
     CommonModule,
-    IonHeader, IonToolbar, IonTitle, IonContent,
-    IonButton, IonIcon, IonAlert,
+    IonContent, IonButton, IonIcon, IonAlert,
   ],
 })
 export class QsoLogPage {
