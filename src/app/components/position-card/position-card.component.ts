@@ -21,7 +21,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
             <span class="pos-card__status-label">GPS LOCKED</span>
           </div>
           <span class="pos-card__accuracy">
-            ± {{ position.accuracy | number:'1.0-0' }} m
+            {{ latDisplay }}&nbsp;{{ lonDisplay }}&ensp;·&ensp;±&thinsp;{{ position.accuracy | number:'1.0-0' }}&thinsp;m
           </span>
         </div>
 
@@ -29,7 +29,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
         <!-- ── QTH Locator — hero display ─────────────────────────── -->
         <div class="pos-card__section pos-card__section--paired">
-          <div class="pos-card__section-label">QTH LOCATOR · MAIDENHEAD</div>
+          <div class="pos-card__section-label">QTH LOCATOR</div>
           <div class="pos-card__grid-wrap">
             <div class="pos-card__grid-value">{{ gridDisplay }}</div>
             <div class="pos-card__actions">
@@ -163,6 +163,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       font-size:      var(--app-type-meta-size, 0.72rem);
       color:          var(--ham-muted);
       letter-spacing: 0.04em;
+      white-space:    nowrap;
     }
 
     // ── Divider ─────────────────────────────────────────────────────────
@@ -325,9 +326,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       .pos-card__section {
         padding: 1px 10px 1px;
       }
-      .pos-card__section-label {
-        display: none;   // colores (teal/amber) identifican el tipo
-      }
+      // .pos-card__section-label visible — ocupa espacio ya reservado por min-height: 58px
       .pos-card__grid-value,
       .pos-card__plus-value {
         font-size: 1.25rem;
@@ -355,6 +354,18 @@ export class PositionCardComponent {
 
   constructor() {
     addIcons({ shareOutline, locationOutline, locateOutline, flashOutline });
+  }
+
+  get latDisplay(): string {
+    if (!this.position) return '';
+    const abs = Math.abs(this.position.lat).toFixed(3);
+    return `${abs}°${this.position.lat >= 0 ? 'N' : 'S'}`;
+  }
+
+  get lonDisplay(): string {
+    if (!this.position) return '';
+    const abs = Math.abs(this.position.lon).toFixed(3);
+    return `${abs}°${this.position.lon < 0 ? 'W' : 'E'}`;
   }
 
   get gridDisplay(): string {
