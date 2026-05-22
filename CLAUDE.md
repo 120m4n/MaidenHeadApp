@@ -80,6 +80,14 @@ Use these rules to avoid reintroducing light/dark inheritance bugs:
 - **Header/footer parity**: define `--ion-toolbar-*` and `--ion-tab-bar-*` in both light and dark blocks. Do not leave one theme with implicit inherited values.
 - **When changing theme code**: validate at least `Settings -> Theme` toggle cycle `light → dark → auto` and confirm header, footer, and map controls update live.
 
+### Definition of Done (theme PRs)
+
+- Header and footer must visibly change between `light` and `dark` using theme tokens only (no fixed hex in component/page styles).
+- `auto` mode must remove `data-theme` and follow system preference; explicit `light`/`dark` must override auto behavior.
+- Leaflet/map colors must update without recreating the map view when theme changes.
+- Validate manually on `tabs/home` and `tabs/settings`: `light → dark → auto → light` in a single runtime session.
+- Run `npm run build` before merge to catch regressions in styling/theme wiring.
+
 ## Design system — "Terrain & Signal"
 
 Theme tokens live in `src/theme/variables.scss`. Theme switching is CSS-attribute-driven:
