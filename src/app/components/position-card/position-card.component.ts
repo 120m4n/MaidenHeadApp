@@ -97,16 +97,16 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       box-shadow:    var(--app-shadow-card);
 
       // Acento de estado en borde superior — cartographic ruleset
-      &::before {
-        content:    '';
-        position:   absolute;
-        top:        0;
-        left:       0;
-        right:      0;
-        height:     2px;
-        background: var(--ham-glow);
-        opacity:    0.55;
-      }
+      // &::before {
+      //   content:    '';
+      //   position:   absolute;
+      //   top:        0;
+      //   left:       0;
+      //   right:      0;
+      //   height:     2px;
+      //   background: var(--ham-glow);
+      //   opacity:    0.55;
+      // }
 
       &--acquiring::before {
         background: var(--ham-amber);
@@ -329,7 +329,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       // .pos-card__section-label visible — ocupa espacio ya reservado por min-height: 58px
       .pos-card__grid-value,
       .pos-card__plus-value {
-        font-size: 1.25rem;
+        font-size: 2.25rem;
       }
       .pos-card__actions {
         gap: 2px;
