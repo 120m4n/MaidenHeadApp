@@ -30,6 +30,6 @@ bootstrapApplication(AppComponent, {
   const qsoLog = appRef.injector.get(QsoLogService);
 
   await settings.init();
-  await qsoLog.init();
   theme.init(); // usa effect() reactivo — no async
+  await qsoLog.init();
 }).catch(err => console.error('Bootstrap error:', err));

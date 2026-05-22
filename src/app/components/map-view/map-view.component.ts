@@ -13,17 +13,15 @@ L.Icon.Default.mergeOptions({
   shadowUrl:     'assets/leaflet/marker-shadow.png',
 });
 
-// ── Paleta de colores fija (Leaflet no lee CSS variables en opciones JS) ──
-// USER_DOT y OLC coinciden con tokens dark-theme de variables.scss.
-// MH_COLOR está DESACOPLADO de --ham-glow: usa violeta índigo para máximo
-// contraste sobre tiles OSM (ratio mín 3.46:1 vs verde/beige/azul/rosa OSM).
-//   --ham-amber: #d4923e   --ham-sky: #5ab0e8
-//   MH map color: #5E35B1  (violeta — NO es el primary teal de la UI)
-const USER_DOT_COLOR  = '#5ab0e8';   // azul cielo  — usuario    (ham-sky dark)
+// ── Colores Leaflet: se leen desde variables CSS activas de tema ──────────
 const USER_DOT_BORDER = '#ffffff';
-const MH_COLOR        = '#5E35B1';   // violeta índigo — Maidenhead sobre OSM (3.46:1 min)
-const OLC_COLOR       = '#d4923e';   // ámbar cálido — Plus Code  (ham-amber dark)
-const TAP_GRID_COLOR  = '#5ab0e8';   // azul cielo  — grid temporal de tap
+
+interface MapThemeColors {
+  userDot: string;
+  mh: string;
+  olc: string;
+  tap: string;
+}
 
 export type GridLayer = 'mh' | 'olc' | 'both';
 
@@ -56,6 +54,11 @@ export interface MapTapEvent {
   `],
 })
 export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
+  private readonly mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  private themeAttrObserver?: MutationObserver;
+  private themeMediaListener?: (event: MediaQueryListEvent) => void;
+  private colors: MapThemeColors = this.resolveThemeColors();
+
   @ViewChild('mapContainer') mapContainer!: ElementRef<HTMLDivElement>;
 
   // ── Inputs ──────────────────────────────────────────────────────────────
@@ -112,6 +115,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   ngAfterViewInit(): void {
     this.initMap();
     this.setupResizeObserver();
+    this.startThemeSync();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -140,10 +144,113 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
+    this.themeAttrObserver?.disconnect();
+    if (this.themeMediaListener) {
+      this.mediaQuery.removeEventListener('change', this.themeMediaListener);
+    }
     this.resizeObserver?.disconnect();
     clearTimeout(this.initTimer);
     clearTimeout(this.invalidateTimer);
     this.map?.remove();
+  }
+
+  private startThemeSync(): void {
+    this.colors = this.resolveThemeColors();
+    this.applyThemeToMapLayers();
+
+    this.themeAttrObserver = new MutationObserver(() => {
+      this.colors = this.resolveThemeColors();
+      this.applyThemeToMapLayers();
+    });
+
+    this.themeAttrObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+
+    this.themeMediaListener = () => {
+      if (!document.documentElement.hasAttribute('data-theme')) {
+        this.colors = this.resolveThemeColors();
+        this.applyThemeToMapLayers();
+      }
+    };
+
+    this.mediaQuery.addEventListener('change', this.themeMediaListener);
+  }
+
+  private cssVar(name: string, fallback: string): string {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(name)
+      .trim();
+    return value || fallback;
+  }
+
+  private resolveThemeColors(): MapThemeColors {
+    return {
+      userDot: this.cssVar('--ham-sky', '#5ab0e8'),
+      mh: this.cssVar('--mh-map-color', '#5E35B1'),
+      olc: this.cssVar('--ham-amber', '#d4923e'),
+      tap: this.cssVar('--ham-sky', '#5ab0e8'),
+    };
+  }
+
+  private applyThemeToMapLayers(): void {
+    if (!this.map) return;
+
+    if (this.accuracyRing) {
+      this.accuracyRing.setStyle({
+        color: this.colors.userDot,
+        fillColor: this.colors.userDot,
+      });
+    }
+
+    if (this.userDot) {
+      this.userDot.setStyle({
+        color: USER_DOT_BORDER,
+        fillColor: this.colors.userDot,
+      });
+    }
+
+    if (this.mhRect) {
+      this.mhRect.setStyle({
+        color: this.colors.mh,
+        fillColor: this.colors.mh,
+      });
+    }
+
+    if (this.olcRect) {
+      this.olcRect.setStyle({
+        color: this.colors.olc,
+        fillColor: this.colors.olc,
+      });
+    }
+
+    if (this.tapRect) {
+      this.tapRect.setStyle({
+        color: this.colors.tap,
+        fillColor: this.colors.tap,
+      });
+    }
+
+    this.refreshLayerControlDots();
+  }
+
+  private refreshLayerControlDots(): void {
+    if (!this.layerBtns) return;
+
+    for (const layer of Object.keys(this.layerBtns) as GridLayer[]) {
+      const btn = this.layerBtns[layer];
+      const dots = btn.querySelectorAll('.mlc-dot');
+
+      if (layer === 'mh' && dots[0]) {
+        (dots[0] as HTMLElement).style.background = this.colors.mh;
+      } else if (layer === 'olc' && dots[0]) {
+        (dots[0] as HTMLElement).style.background = this.colors.olc;
+      } else if (layer === 'both') {
+        if (dots[0]) (dots[0] as HTMLElement).style.background = this.colors.mh;
+        if (dots[1]) (dots[1] as HTMLElement).style.background = this.colors.olc;
+      }
+    }
   }
 
   // ── Inicialización ───────────────────────────────────────────────────────
@@ -210,9 +317,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         const wrap = L.DomUtil.create('div', 'map-layer-ctrl');
 
         const btns = {
-          mh:   self.makeLayerBtn(wrap, 'mh',   MH_COLOR,  'MH'),
-          olc:  self.makeLayerBtn(wrap, 'olc',  OLC_COLOR, 'OLC'),
-          both: self.makeLayerBtn(wrap, 'both', '',        'ALL'),
+          mh:   self.makeLayerBtn(wrap, 'mh',   'MH'),
+          olc:  self.makeLayerBtn(wrap, 'olc',  'OLC'),
+          both: self.makeLayerBtn(wrap, 'both', 'ALL'),
         };
         self.layerBtns = btns;
         self.syncLayerBtns();
@@ -229,7 +336,6 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private makeLayerBtn(
     parent: HTMLElement,
     layer: GridLayer,
-    color: string,
     text: string,
   ): HTMLButtonElement {
     const btn = L.DomUtil.create('button', 'mlc-btn', parent) as HTMLButtonElement;
@@ -242,16 +348,16 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (layer === 'both') {
       const d1 = document.createElement('span');
       d1.className = 'mlc-dot';
-      d1.style.background = MH_COLOR;
+      d1.style.background = this.colors.mh;
       const d2 = document.createElement('span');
       d2.className = 'mlc-dot';
-      d2.style.background = OLC_COLOR;
+      d2.style.background = this.colors.olc;
       btn.appendChild(d1);
       btn.appendChild(d2);
     } else {
       const dot = document.createElement('span');
       dot.className = 'mlc-dot';
-      dot.style.background = color;
+      dot.style.background = layer === 'mh' ? this.colors.mh : this.colors.olc;
       btn.appendChild(dot);
     }
 
@@ -364,8 +470,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         this.accuracyRing.setRadius(acc);
       } else {
         this.accuracyRing = L.circle(ll, {
-          radius: acc, fillColor: USER_DOT_COLOR, fillOpacity: 0.08,
-          color: USER_DOT_COLOR, weight: 1.5, dashArray: '5 5',
+          radius: acc, fillColor: this.colors.userDot, fillOpacity: 0.08,
+          color: this.colors.userDot, weight: 1.5, dashArray: '5 5',
           interactive: false, className: 'accuracy-ring',
         }).addTo(this.map);
       }
@@ -379,7 +485,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       this.userDot.setLatLng(ll);
     } else {
       this.userDot = L.circleMarker(ll, {
-        radius: 9, fillColor: USER_DOT_COLOR, fillOpacity: 1,
+        radius: 9, fillColor: this.colors.userDot, fillOpacity: 1,
         color: USER_DOT_BORDER, weight: 2.5,
         interactive: false, className: 'user-dot',
       }).addTo(this.map);
@@ -401,8 +507,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.mhRect = L.rectangle(
       [[sw.lat, sw.lon], [ne.lat, ne.lon]],
       {
-        color: MH_COLOR, weight: 2.0,
-        fillColor: MH_COLOR, fillOpacity: 0.09,
+        color: this.colors.mh, weight: 2.0,
+        fillColor: this.colors.mh, fillOpacity: 0.09,
         dashArray: '4 4',
         className: 'mh-rect',
       },
@@ -444,8 +550,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.olcRect = L.rectangle(
       [[sw.lat, sw.lon], [ne.lat, ne.lon]],
       {
-        color: OLC_COLOR, weight: 1.5,
-        fillColor: OLC_COLOR, fillOpacity: 0.12,
+        color: this.colors.olc, weight: 1.5,
+        fillColor: this.colors.olc, fillOpacity: 0.12,
         className: 'olc-rect',
       },
     );
@@ -483,9 +589,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.tapRect = L.rectangle(
       [[sw.lat, sw.lon], [ne.lat, ne.lon]],
       {
-        color:       TAP_GRID_COLOR,
+        color:       this.colors.tap,
         weight:      2,
-        fillColor:   TAP_GRID_COLOR,
+        fillColor:   this.colors.tap,
         fillOpacity: 0.14,
         dashArray:   '5 4',
         className:   'tap-rect',

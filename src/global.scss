@@ -79,8 +79,8 @@ html, body {
 
 // Toolbar — panel oscuro en ambos temas (como bisel de instrumento de campo)
 ion-header ion-toolbar {
-  --background:    var(--ion-toolbar-background, #0f1a22);
-  --color:         var(--ion-toolbar-color, #a8c4bc);
+  --background:    var(--ion-toolbar-background);
+  --color:         var(--ion-toolbar-color);
   --border-color:  transparent;
   --padding-start: 16px;
   --padding-end:   8px;
@@ -103,8 +103,8 @@ ion-header ion-toolbar {
 
 // Tab bar — barra de navegación de instrumento
 ion-tab-bar {
-  --background:      var(--ion-tab-bar-background, #0b141c);
-  --border:          1px solid var(--ion-tab-bar-border-color, #1e3040);
+  --background:      var(--ion-tab-bar-background);
+  --border:          1px solid var(--ion-tab-bar-border-color);
   --color:           var(--ham-muted);
   --color-selected:  var(--ham-glow);
   height: 56px;

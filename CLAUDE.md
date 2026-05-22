@@ -43,7 +43,7 @@ npm run cap:run:android  # Build + sync + deploy to connected device/emulator
 
 Services that need async init are resolved **after** `bootstrapApplication` resolves:
 ```
-SettingsService.init() → QsoLogService.init() → ThemeService.init()
+SettingsService.init() → ThemeService.init() → QsoLogService.init()
 ```
 `ThemeService.init()` is synchronous but must run after settings are loaded.
 
@@ -63,9 +63,22 @@ This is critical for `MapViewComponent` — it does not use `ChangeDetectionStra
 
 - Standalone Leaflet map (not using `@bluehalo/ngx-leaflet` or similar wrappers).
 - Leaflet marker icon paths are fixed at module load with `L.Icon.Default.mergeOptions` (standard Angular + Capacitor workaround).
-- **Color constants are hardcoded** in the component (`MH_COLOR`, `OLC_COLOR`, `USER_DOT_COLOR`) because Leaflet reads JS options at draw time, not CSS variables. These values must match the dark-theme tokens in `variables.scss`.
+- Leaflet style options are set from active CSS theme variables (`--mh-map-color`, `--ham-amber`, `--ham-sky`) resolved via `getComputedStyle(document.documentElement)`.
+- Theme re-sync for existing Leaflet layers is triggered by observing `<html data-theme>` changes and `prefers-color-scheme` changes in `auto` mode.
 - Exposes public API: `centerOnUser()`, `flyTo(pos, zoom)`, `invalidate()`.
 - Layer toggle control (MH / OLC / ALL) is a custom `L.Control` built with `L.DomUtil`.
+
+## Theme guardrails (anti-regression)
+
+Use these rules to avoid reintroducing light/dark inheritance bugs:
+
+- **Single source of truth**: all theme colors must come from `src/theme/variables.scss` semantic tokens (`--ham-*`, `--ion-*`).
+- **No hardcoded theme hex** in component/page styles for header/footer/content surfaces. If a color changes with theme, it must be a CSS variable.
+- **Inline style exception**: JS/Leaflet style options may use inline values only when read from active CSS vars (never fixed theme literals).
+- **Ionic legacy tokens**: do not reintroduce fixed fallback literals like `var(--ion-toolbar-background, #0f1a22)` for theme-sensitive UI. Prefer `var(--ion-toolbar-background)` and ensure token exists in both themes.
+- **Auto mode precedence**: dark media-query block must target only `:root:not([data-theme])` so explicit `light`/`dark` always wins.
+- **Header/footer parity**: define `--ion-toolbar-*` and `--ion-tab-bar-*` in both light and dark blocks. Do not leave one theme with implicit inherited values.
+- **When changing theme code**: validate at least `Settings -> Theme` toggle cycle `light → dark → auto` and confirm header, footer, and map controls update live.
 
 ## Design system — "Terrain & Signal"
 
@@ -112,3 +125,4 @@ refactor: Extraer lógica de conversión a servicio dedicado
 - Evita cambiar comentarios si no es necesario para el cambio que estás haciendo, para mantener el historial de cambios claro y enfocado.
 - Planea los cambios antes de implementarlos para minimizar la cantidad de commits necesarios y evitar cambios innecesarios en el código.
 - Si un cambio requiere mas de 10 lineas de código, considera dividirlo en varios commits lógicos para facilitar la revisión y el seguimiento de cambios. Presenta al usuario el plan de cambios antes de implementarlos para asegurarte de que estás alineado con lo que se espera.
+- Al revisar los estilos css, revisa primero las variables de tema y colores en `variables.scss` antes de hacer cambios directos en los componentes, para mantener la consistencia visual y facilitar el mantenimiento del código.

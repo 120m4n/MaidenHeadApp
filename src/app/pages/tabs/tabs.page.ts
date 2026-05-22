@@ -38,10 +38,10 @@ import {
   `,
   styles: [`
     ion-tab-bar {
-      --background:     var(--ion-tab-bar-background, #0b141c);
-      --border:         1px solid var(--ion-tab-bar-border-color, #1e3040);
-      --color:          var(--ham-muted, #4a7068);
-      --color-selected: var(--ham-glow, #34c9a0);
+      --background:     var(--ion-tab-bar-background);
+      --border:         1px solid var(--ion-tab-bar-border-color);
+      --color:          var(--ham-muted);
+      --color-selected: var(--ham-glow);
       height: 56px;
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
@@ -52,8 +52,8 @@ import {
       font-weight:      600;
       letter-spacing:   0.10em;
       text-transform:   uppercase;
-      --color:          var(--ham-muted, #4a7068);
-      --color-selected: var(--ham-glow, #34c9a0);
+      --color:          var(--ham-muted);
+      --color-selected: var(--ham-glow);
       position:         relative;
 
       ion-icon {
@@ -78,7 +78,7 @@ import {
       left:          22%;
       right:         22%;
       height:        2px;
-      background:    var(--ham-glow, #34c9a0);
+      background:    var(--ham-glow);
       border-radius: 0 0 2px 2px;
     }
   `],

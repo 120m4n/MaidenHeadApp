@@ -31,11 +31,11 @@
 
 :root,
 :root[data-theme="light"] {
-  // ── Panel de instrumento — oscuro en ambos temas (bisel de ploter) ───
-  --ion-toolbar-background:   #0f1a22;
-  --ion-toolbar-color:        #a8c4bc;
-  --ion-tab-bar-background:   #0b141c;
-  --ion-tab-bar-border-color: #1e3040;
+  // ── Panel superior/inferior — versión clara del instrumento ──────────
+  --ion-toolbar-background:   #faf8f3;
+  --ion-toolbar-color:        #1c2a22;
+  --ion-tab-bar-background:   #f2ede3;
+  --ion-tab-bar-border-color: #c4d2b8;
 
   // ── Ham palette — carta topográfica ──────────────────────────────────
   --ham-bg:        #efeade;   // papel náutico cálido — evita blanco clínico
@@ -184,7 +184,7 @@
 
 // Oscuro automático — sistema en dark, sin preferencia explícita de claro
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme]) {
     @include dark-theme-vars;
   }
 }

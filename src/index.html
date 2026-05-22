@@ -23,6 +23,35 @@
   <meta name="theme-color" content="#0f1a22"/>
   <link rel="manifest" href="manifest.webmanifest"/>
 
+  <script>
+    (function () {
+      try {
+        var keys = ['app_settings', 'CapacitorStorage.app_settings', '_cap_app_settings'];
+        var raw = null;
+
+        for (var i = 0; i < keys.length && !raw; i++) {
+          raw = localStorage.getItem(keys[i]);
+        }
+
+        if (!raw) return;
+
+        var parsed = JSON.parse(raw);
+        var themeMode = parsed && typeof parsed.themeMode === 'string' ? parsed.themeMode : null;
+        var doc = document.documentElement;
+
+        if (themeMode === 'dark') {
+          doc.setAttribute('data-theme', 'dark');
+        } else if (themeMode === 'light') {
+          doc.setAttribute('data-theme', 'light');
+        } else {
+          doc.removeAttribute('data-theme');
+        }
+      } catch (_err) {
+        // Silent on purpose: this is a best-effort optimization.
+      }
+    })();
+  </script>
+
   <!-- add to homescreen for ios -->
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
