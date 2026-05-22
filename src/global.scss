@@ -536,13 +536,18 @@ ion-alert {
   &[data-layer="both"].mlc-btn--active { border-left: 3px solid var(--ham-sky); }
 }
 
-// Posicionamiento del control topleft
+// Posicionamiento controles top-left y top-right
 .leaflet-top.leaflet-left {
   margin-top:  8px;
   margin-left: 8px;
 }
 
-// ─── Botón de localización del mapa ─────────────────────────────────────────
+.leaflet-top.leaflet-right {
+  margin-top:   8px;
+  margin-right: 8px;
+}
+
+// ─── Botón de localización del mapa (posición: topright, bajo zoom) ──────────
 .map-locate-btn {
   display:         flex;
   align-items:     center;
@@ -558,7 +563,7 @@ ion-alert {
   transition:      all 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   padding:         0;
-  margin-bottom:   8px;
+  margin-top:      6px;   // separación visual del control de zoom
 
   svg { display: block; flex-shrink: 0; }
 

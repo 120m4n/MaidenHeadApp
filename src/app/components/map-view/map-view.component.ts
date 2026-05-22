@@ -35,12 +35,10 @@ export interface MapTapEvent {
   template: `<div #mapContainer class="map-container"></div>`,
   styles: [`
     :host {
-      display: block;
-      width:   100%;
-      /* Sin height explícito: en layout normal (:host = display:block) su alto
-         viene determinado por el contenido (.map-container con --map-height fijo).
-         En home, al ser flex-item con flex:1, el algoritmo flexbox asigna
-         la altura y percentage height en .map-container resuelve contra ella. */
+      display:   block;
+      /* width NO se fija a 100%: en flex column, align-self:stretch (default)
+         ya asigna el ancho correcto respetando el margin horizontal del padre.
+         Fijar width:100% ignora los márgenes y provoca overflow lateral. */
     }
     .map-container {
       width:         100%;
@@ -419,7 +417,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       onRemove: () => {},
     });
 
-    new LocateControl({ position: 'bottomright' }).addTo(this.map);
+    new LocateControl({ position: 'topright' }).addTo(this.map);
   }
 
   // ── Handlers del mapa ────────────────────────────────────────────────────

@@ -41,6 +41,28 @@ app-position-card {
   }
 }
 
+// ── FAB "nuevo QSO" — pill con icono + etiqueta ────────────────────────────
+ion-fab-button.fab-qso {
+  --border-radius: 14px;   // pill en lugar de círculo
+  width: auto;             // se expande para acomodar el texto
+
+  &::part(native) {
+    width:       auto;
+    min-width:   52px;
+    padding:     0 16px;
+    gap:         4px;
+    flex-direction: row;
+  }
+}
+
+.fab-qso-label {
+  font-family:     var(--app-font-ui);
+  font-size:       0.76rem;
+  font-weight:     700;
+  letter-spacing:  0.10em;
+  text-transform:  uppercase;
+}
+
 // ── Mapa — ocupa todo el espacio vertical restante ───────────────────────────
 app-map-view {
   display:    block;
