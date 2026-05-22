@@ -1,26 +1,30 @@
 ion-content {
-  --padding-top: env(safe-area-inset-top, 0px);
+  --padding-top: max(env(safe-area-inset-top, 0px), 8px);
 }
 
 ion-content::part(scroll) {
   display:        flex;
   flex-direction: column;
+  overflow:       hidden;
 }
 
 .lookup-page-body {
   display:        flex;
   flex-direction: column;
   flex:           1;
-  min-height:     100%;
+  min-height:     0;
+  overflow:       hidden;
 }
 
 // ── Selector de modo ─────────────────────────────────────────────────────────
 .lookup-segment-wrap {
+  flex-shrink: 0;
   padding: 12px 12px 0;
 }
 
 // ── Tarjeta de entrada — analítica y cartográfica ──────────────────────────
 .lookup-input-card {
+  flex-shrink:   0;
   margin:        12px 12px 0;
   background:    var(--ham-surface);
   border:        1px solid var(--ham-border);
@@ -79,6 +83,7 @@ ion-content::part(scroll) {
 
 // ── Tarjeta de resultado ──────────────────────────────────────────────────────
 .result-card {
+  flex-shrink:   0;
   margin:        12px 12px 0;
   background:    var(--ham-surface);
   border:        1px solid var(--ham-border);
@@ -185,7 +190,7 @@ ion-content::part(scroll) {
   display:        flex;
   flex-direction: column;
   flex:           1;
-  min-height:     260px;
+  min-height:     0;
 }
 
 .map-section-label {
@@ -253,12 +258,7 @@ app-map-view {
     margin-top: 10px;
   }
 
-  .lookup-map-block {
-    min-height: 50vh;
-  }
-
   app-map-view {
-    min-height: 50vh;
     margin: 0 12px 10px;
   }
 }
