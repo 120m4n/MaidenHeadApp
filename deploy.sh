@@ -49,7 +49,8 @@ if [[ "${SKIP_BUILD}" == "--skip-build" ]]; then
     warn "1/4 --skip-build activo — usando www/ existente"
     [[ -d "www" ]] || fail "www/ no existe. Ejecuta primero: npm run build"
 else
-    log "1/4 Build Angular PWA (producción)…"
+    log "1/4 Build Angular PWA (producción, sin caché)…"
+    rm -rf .angular/cache
     npm run build
     ok "Angular build completado → www/"
 fi
@@ -60,9 +61,10 @@ echo ""
 # `docker buildx build` (no `docker build`) garantiza la plataforma objetivo
 # aunque el host sea arm64 (Apple Silicon). --load carga la imagen al daemon
 # local para que el `docker push` posterior pueda encontrarla.
-log "2/4 Build Docker image linux/amd64 (nginx:alpine)…"
+log "2/4 Build Docker image linux/amd64 (nginx:alpine, sin caché)…"
 docker buildx build \
     --platform linux/amd64 \
+    --no-cache \
     --load \
     --label "org.opencontainers.image.source=https://github.com/${GITHUB_USER}/${IMAGE_NAME}" \
     --label "org.opencontainers.image.description=MaidenHead Ham Radio PWA — grid locator + QSO log" \
