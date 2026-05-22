@@ -125,9 +125,9 @@ import { BearingResult } from '../../services/bearing.service';
     // Label de campo operativo
     .bearing-label {
       font-family:    var(--app-font-ui);
-      font-size:      0.60rem;
+      font-size:      var(--app-type-label-size, 0.66rem);
       font-weight:    700;
-      letter-spacing: 0.14em;
+      letter-spacing: var(--app-type-label-tracking, 0.12em);
       text-transform: uppercase;
       color:          var(--ham-muted);
     }
@@ -159,6 +159,32 @@ import { BearingResult } from '../../services/bearing.service';
       letter-spacing: 0.06em;
       text-transform: uppercase;
       opacity:        0.75;
+    }
+
+    // ── Mobile: quitar brújula, readout horizontal compacto ─────────────
+    @media (max-width: 600px) {
+      .bearing-wrap {
+        padding: 6px 0 4px;
+        gap:     10px;
+      }
+      .compass-ring {
+        display: none;
+      }
+      .bearing-data {
+        flex-direction: row;
+        gap:            16px;
+      }
+      .bearing-row {
+        flex-direction: row;
+        align-items:    center;
+        gap:            5px;
+      }
+      .bearing-value {
+        font-size: 1.05rem;
+      }
+      .distance-value {
+        font-size: 1.05rem;
+      }
     }
   `],
   imports: [CommonModule, IonIcon],
