@@ -91,45 +91,11 @@ app-map-view {
 
 @media (max-width: 600px) {
   .page-body {
-    gap: 8px;
-  }
-
-  app-position-card .pos-card__section {
-    padding: 9px 12px 7px;
-  }
-
-  app-position-card .pos-card__section--paired {
-    min-height: 108px;
-  }
-
-  app-position-card .pos-card__grid-wrap,
-  app-position-card .pos-card__plus-wrap {
-    min-height: 66px;
-  }
-
-  app-position-card .pos-card__coords {
-    display: none;
-  }
-
-  app-position-card .pos-card__status {
-    padding: 8px 12px 7px;
-  }
-
-  app-position-card .pos-card__actions {
-    gap: 3px;
-  }
-
-  app-position-card .pos-action-btn {
-    width: 40px;
-    height: 40px;
+    gap: 6px;
   }
 
   .map-section-label {
-    padding: 8px 12px 3px;
-  }
-
-  app-position-card {
-    margin-bottom: -2px;
+    padding: 6px 12px 3px;
   }
 
   app-map-view {

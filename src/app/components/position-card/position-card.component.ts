@@ -39,7 +39,6 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
               </button>
             </div>
           </div>
-          <div class="pos-card__grid-sub">{{ precisionLabel }}</div>
         </div>
 
         <div class="pos-card__divider"></div>
@@ -121,7 +120,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       display:         flex;
       align-items:     center;
       justify-content: space-between;
-      padding:         9px 14px 8px;
+      padding:         7px 14px 5px;
     }
 
     .pos-card__status-left {
@@ -174,11 +173,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     // ── Section ─────────────────────────────────────────────────────────
     .pos-card__section {
-      padding: 11px 14px 9px;
-    }
-
-    .pos-card__section--paired {
-      min-height: 126px;
+      padding: 8px 14px 6px;
     }
 
     .pos-card__section-label {
@@ -188,7 +183,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       letter-spacing: var(--app-type-label-tracking, 0.12em);
       text-transform: uppercase;
       color:          var(--ham-muted);
-      margin-bottom:  5px;
+      margin-bottom:  3px;
     }
 
     // ── Valor de grid (hero) — lectura operativa principal ───────────────
@@ -197,12 +192,11 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       align-items:     center;
       justify-content: space-between;
       gap:             8px;
-      min-height:      80px;
     }
 
     .pos-card__grid-value {
       font-family:    var(--app-font-mono);
-      font-size:      clamp(2rem, 8vw, 2.6rem);
+      font-size:      var(--app-type-code-size, clamp(1.6rem, 6.5vw, 2.2rem));
       font-weight:    400;
       color:          var(--ham-glow);
       line-height:    1.0;
@@ -216,27 +210,17 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       white-space:    nowrap;
     }
 
-    .pos-card__grid-sub {
-      font-family:    var(--app-font-ui);
-      font-size:      var(--app-type-meta-size, 0.72rem);
-      color:          var(--ham-muted);
-      letter-spacing: 0.06em;
-      margin-top:     3px;
-      text-transform: uppercase;
-    }
-
     // ── Plus Code ────────────────────────────────────────────────────────
     .pos-card__plus-wrap {
       display:         flex;
       align-items:     center;
       justify-content: space-between;
       gap:             8px;
-      min-height:      80px;
     }
 
     .pos-card__plus-value {
       font-family:    var(--app-font-mono);
-      font-size:      clamp(1.1rem, 4.2vw, 1.45rem);
+      font-size:      var(--app-type-code-size, clamp(1.6rem, 6.5vw, 2.2rem));
       font-weight:    400;
       color:          var(--ham-amber);
       letter-spacing: 0.04em;
@@ -255,17 +239,17 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       display:         flex;
       align-items:     center;
       justify-content: center;
-      width:           44px;
-      height:          44px;
+      width:           36px;
+      height:          36px;
       background:      var(--ham-surface2);
-      border:          1px solid var(--ham-border-hi);
+      border:          1px solid var(--ham-muted);
       border-radius:   var(--app-radius-ctrl, 4px);
       color:           var(--ham-text);
       cursor:          pointer;
       transition:      all 0.15s ease;
       -webkit-tap-highlight-color: transparent;
 
-      ion-icon { font-size: 1.15rem; }
+      ion-icon { font-size: 1rem; }
 
       &:focus-visible {
         outline: 2px solid rgba(var(--ham-glow-rgb), 0.55);
@@ -326,6 +310,21 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       text-transform: uppercase;
       margin-top:     8px;
     }
+
+    // ── Mobile: fuente compacta para priorizar el mapa ───────────────────
+    @media (max-width: 600px) {
+      .pos-card__grid-value,
+      .pos-card__plus-value {
+        font-size: 1.25rem;
+      }
+      .pos-card__section {
+        padding: 6px 12px 4px;
+      }
+      .pos-card__section-label {
+        margin-bottom: 2px;
+      }
+    }
+
   `],
   imports: [
     CommonModule,
