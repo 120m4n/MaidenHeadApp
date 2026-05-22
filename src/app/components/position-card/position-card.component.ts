@@ -21,7 +21,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
             <span class="pos-card__status-label">GPS LOCKED</span>
           </div>
           <span class="pos-card__accuracy">
-            {{ latDisplay }}&nbsp;{{ lonDisplay }}&ensp;·&ensp;±&thinsp;{{ position.accuracy | number:'1.0-0' }}&thinsp;m
+            {{ latDisplay }},&nbsp;{{ lonDisplay }}&ensp;·&ensp;±&thinsp;{{ position.accuracy | number:'1.0-0' }}&thinsp;m
           </span>
         </div>
 
@@ -358,14 +358,12 @@ export class PositionCardComponent {
 
   get latDisplay(): string {
     if (!this.position) return '';
-    const abs = Math.abs(this.position.lat).toFixed(3);
-    return `${abs}°${this.position.lat >= 0 ? 'N' : 'S'}`;
+    return `lat:${this.position.lat.toFixed(4)}`;
   }
 
   get lonDisplay(): string {
     if (!this.position) return '';
-    const abs = Math.abs(this.position.lon).toFixed(3);
-    return `${abs}°${this.position.lon < 0 ? 'W' : 'E'}`;
+    return `lon:${this.position.lon.toFixed(4)}`;
   }
 
   get gridDisplay(): string {
