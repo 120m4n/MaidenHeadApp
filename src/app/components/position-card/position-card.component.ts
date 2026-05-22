@@ -28,7 +28,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
         <div class="pos-card__divider"></div>
 
         <!-- ── QTH Locator — hero display ─────────────────────────── -->
-        <div class="pos-card__section">
+        <div class="pos-card__section pos-card__section--paired">
           <div class="pos-card__section-label">QTH LOCATOR · MAIDENHEAD</div>
           <div class="pos-card__grid-wrap">
             <div class="pos-card__grid-value">{{ gridDisplay }}</div>
@@ -45,7 +45,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
         <div class="pos-card__divider"></div>
 
         <!-- ── Plus Code ───────────────────────────────────────────── -->
-        <div class="pos-card__section">
+        <div class="pos-card__section pos-card__section--paired">
           <div class="pos-card__section-label">PLUS CODE</div>
           <div class="pos-card__plus-wrap">
             <div class="pos-card__plus-value">{{ position.plusCode }}</div>
@@ -132,9 +132,9 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     .pos-card__status-label {
       font-family:    var(--app-font-ui);
-      font-size:      0.66rem;
+      font-size:      var(--app-type-label-size, 0.66rem);
       font-weight:    700;
-      letter-spacing: 0.13em;
+      letter-spacing: var(--app-type-label-tracking, 0.12em);
       text-transform: uppercase;
       color:          var(--ham-muted);
     }
@@ -161,9 +161,9 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     .pos-card__accuracy {
       font-family:    var(--app-font-mono);
-      font-size:      0.70rem;
+      font-size:      var(--app-type-meta-size, 0.72rem);
       color:          var(--ham-muted);
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
     }
 
     // ── Divider ─────────────────────────────────────────────────────────
@@ -177,11 +177,15 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       padding: 11px 14px 9px;
     }
 
+    .pos-card__section--paired {
+      min-height: 126px;
+    }
+
     .pos-card__section-label {
       font-family:    var(--app-font-ui);
-      font-size:      0.62rem;
+      font-size:      var(--app-type-label-size, 0.66rem);
       font-weight:    700;
-      letter-spacing: 0.14em;
+      letter-spacing: var(--app-type-label-tracking, 0.12em);
       text-transform: uppercase;
       color:          var(--ham-muted);
       margin-bottom:  5px;
@@ -193,6 +197,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       align-items:     center;
       justify-content: space-between;
       gap:             8px;
+      min-height:      80px;
     }
 
     .pos-card__grid-value {
@@ -213,10 +218,11 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     .pos-card__grid-sub {
       font-family:    var(--app-font-ui);
-      font-size:      0.68rem;
+      font-size:      var(--app-type-meta-size, 0.72rem);
       color:          var(--ham-muted);
-      letter-spacing: 0.07em;
+      letter-spacing: 0.06em;
       margin-top:     3px;
+      text-transform: uppercase;
     }
 
     // ── Plus Code ────────────────────────────────────────────────────────
@@ -225,6 +231,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       align-items:     center;
       justify-content: space-between;
       gap:             8px;
+      min-height:      80px;
     }
 
     .pos-card__plus-value {
@@ -248,17 +255,22 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       display:         flex;
       align-items:     center;
       justify-content: center;
-      width:           42px;
-      height:          42px;
-      background:      transparent;
-      border:          1px solid var(--ham-border);
+      width:           44px;
+      height:          44px;
+      background:      var(--ham-surface2);
+      border:          1px solid var(--ham-border-hi);
       border-radius:   var(--app-radius-ctrl, 4px);
-      color:           var(--ham-muted);
+      color:           var(--ham-text);
       cursor:          pointer;
       transition:      all 0.15s ease;
       -webkit-tap-highlight-color: transparent;
 
       ion-icon { font-size: 1.15rem; }
+
+      &:focus-visible {
+        outline: 2px solid rgba(var(--ham-glow-rgb), 0.55);
+        outline-offset: 1px;
+      }
 
       &:active {
         background:   var(--ham-glow-dim);
@@ -284,9 +296,9 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
     .pos-card__coord-value {
       font-family:    var(--app-font-mono);
-      font-size:      0.80rem;
+      font-size:      var(--app-type-meta-size, 0.72rem);
       color:          var(--ham-muted);
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
       overflow:       hidden;
       white-space:    nowrap;
       text-overflow:  ellipsis;

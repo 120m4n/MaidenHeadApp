@@ -10,9 +10,9 @@
   align-items:    center;
   gap:            7px;
   font-family:    var(--app-font-ui);
-  font-size:      0.65rem;
+  font-size:      var(--app-type-label-size, 0.66rem);
   font-weight:    700;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--app-type-label-tracking, 0.12em);
   text-transform: uppercase;
   color:          var(--ham-glow);
   margin-bottom:  7px;
@@ -49,9 +49,9 @@
 
 .settings-field__label {
   font-family:    var(--app-font-ui);
-  font-size:      0.62rem;
+  font-size:      var(--app-type-label-size, 0.66rem);
   font-weight:    700;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--app-type-label-tracking, 0.12em);
   text-transform: uppercase;
   color:          var(--ham-muted);
   margin-bottom:  5px;

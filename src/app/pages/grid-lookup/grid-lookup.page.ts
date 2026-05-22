@@ -53,6 +53,7 @@ export class GridLookupPage {
   plusInput = signal('');
 
   resultCenter    = signal<LatLon | null>(null);
+  showResultCard  = signal(false);
   /** Bounds del grid Maidenhead del resultado */
   resultBounds    = signal<GridBounds | null>(null);
   /** Bounds del Plus Code del resultado */
@@ -95,6 +96,7 @@ export class GridLookupPage {
     this.resultBounds.set(bounds);
     this.resultPlusBounds.set(plusDecoded ? { sw: plusDecoded.sw, ne: plusDecoded.ne } : null);
     this.resultCenter.set(center);
+    this.showResultCard.set(true);
     this.resolvedGrid.set(raw);
     this.resolvedPlus.set(plusCode);
     this.calcBearing(center);
@@ -116,6 +118,7 @@ export class GridLookupPage {
     this.resultCenter.set(center);
     this.resultBounds.set(this.maidenhead.toBounds(grid));       // Maidenhead
     this.resultPlusBounds.set({ sw: decoded.sw, ne: decoded.ne }); // Plus Code
+    this.showResultCard.set(true);
     this.resolvedPlus.set(raw);
     this.resolvedGrid.set(grid);
     this.calcBearing(center);
@@ -138,6 +141,7 @@ export class GridLookupPage {
     this.resultCenter.set(center);
     this.resultBounds.set(this.maidenhead.toBounds(grid));
     this.resultPlusBounds.set(plusDec ? { sw: plusDec.sw, ne: plusDec.ne } : null);
+    this.showResultCard.set(true);
     this.resolvedGrid.set(grid);
     this.resolvedPlus.set(plus);
     this.gridInput.set(grid);
@@ -158,6 +162,7 @@ export class GridLookupPage {
     modal.onDidDismiss().then(async (result) => {
       const data = result?.data;
       if (data) {
+        this.showResultCard.set(false);
         await this.qsoLog.add({ ...data, distanceKm: this.bearingResult()?.km });
         this.toast('QSO guardado');
       }

@@ -22,15 +22,20 @@ import { copyOutline, checkmarkOutline } from 'ionicons/icons';
       justify-content: center;
       width:           44px;
       height:          44px;
-      background:      transparent;
-      border:          1px solid var(--ham-border);
-      border-radius:   var(--app-card-radius);
-      color:           var(--ham-muted);
+      background:      var(--ham-surface2);
+      border:          1px solid var(--ham-border-hi);
+      border-radius:   var(--app-radius-ctrl, 4px);
+      color:           var(--ham-text);
       cursor:          pointer;
       transition:      all 0.15s ease;
       -webkit-tap-highlight-color: transparent;
 
       ion-icon { font-size: 1.15rem; }
+
+      &:focus-visible {
+        outline: 2px solid rgba(var(--ham-glow-rgb), 0.55);
+        outline-offset: 1px;
+      }
 
       &:active {
         transform: scale(0.93);

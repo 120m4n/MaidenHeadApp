@@ -48,9 +48,9 @@ import {
 
     ion-tab-button {
       font-family:      var(--app-font-ui, 'Barlow Condensed', sans-serif);
-      font-size:        0.63rem;
+      font-size:        var(--app-type-label-size, 0.66rem);
       font-weight:      600;
-      letter-spacing:   0.10em;
+      letter-spacing:   var(--app-type-label-tracking, 0.12em);
       text-transform:   uppercase;
       --color:          var(--ham-muted);
       --color-selected: var(--ham-glow);

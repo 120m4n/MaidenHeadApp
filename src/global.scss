@@ -314,9 +314,9 @@ ion-alert {
 // Micro-label — etiqueta de campo o sección
 .label-micro {
   font-family:    var(--app-font-ui);
-  font-size:      0.66rem;
+  font-size:      var(--app-type-label-size, 0.66rem);
   font-weight:    600;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--app-type-label-tracking, 0.12em);
   text-transform: uppercase;
   color:          var(--ham-muted);
 }
@@ -395,9 +395,9 @@ ion-alert {
   padding:        7px 12px;
   border-radius:  var(--app-card-radius);
   font-family:    var(--app-font-ui);
-  font-size:      0.73rem;
+  font-size:      var(--app-type-label-size, 0.66rem);
   font-weight:    600;
-  letter-spacing: 0.09em;
+  letter-spacing: var(--app-type-label-tracking, 0.12em);
   text-transform: uppercase;
   margin:         8px 12px 0;
   width:          calc(100% - 24px);
@@ -498,15 +498,15 @@ ion-alert {
   align-items:     center;
   gap:             5px;
   padding:         0 9px;
-  height:          30px;
+  height:          36px;
   background:      var(--ham-surface);
   border:          1px solid var(--ham-border);
   border-radius:   var(--app-radius-ctrl, 4px);
   color:           var(--ham-muted);
   font-family:     var(--app-font-ui);
-  font-size:       0.64rem;
+  font-size:       var(--app-type-label-size, 0.66rem);
   font-weight:     700;
-  letter-spacing:  0.10em;
+  letter-spacing:  var(--app-type-label-tracking, 0.12em);
   text-transform:  uppercase;
   cursor:          pointer;
   white-space:     nowrap;
@@ -523,6 +523,11 @@ ion-alert {
   }
 
   &:active { transform: scale(0.94); }
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--ham-glow-rgb), 0.55);
+    outline-offset: 1px;
+  }
 
   &--active {
     color:        var(--ham-text);
@@ -552,8 +557,8 @@ ion-alert {
   display:         flex;
   align-items:     center;
   justify-content: center;
-  width:           36px;
-  height:          36px;
+  width:           44px;
+  height:          44px;
   background:      var(--ham-surface);
   border:          1px solid var(--ham-border);
   border-radius:   var(--app-radius-ctrl, 4px);
@@ -603,6 +608,9 @@ ion-alert {
 
 // Leaflet zoom — tema instrumento
 .leaflet-control-zoom a {
+  width:        44px !important;
+  height:       44px !important;
+  line-height:  44px !important;
   background:   var(--ham-surface) !important;
   border-color: var(--ham-border) !important;
   color:        var(--ham-text) !important;

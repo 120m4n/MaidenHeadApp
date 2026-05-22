@@ -1,3 +1,15 @@
+ion-content::part(scroll) {
+  display:        flex;
+  flex-direction: column;
+}
+
+.lookup-page-body {
+  display:        flex;
+  flex-direction: column;
+  flex:           1;
+  min-height:     100%;
+}
+
 // ── Selector de modo ─────────────────────────────────────────────────────────
 .lookup-segment-wrap {
   padding: 12px 12px 0;
@@ -33,9 +45,9 @@
 
 .lookup-field__label {
   font-family:    var(--app-font-ui);
-  font-size:      0.62rem;
+  font-size:      var(--app-type-label-size, 0.66rem);
   font-weight:    700;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--app-type-label-tracking, 0.12em);
   text-transform: uppercase;
   color:          var(--ham-muted);
   margin-bottom:  6px;
@@ -95,9 +107,9 @@
 
 .result-card__title {
   font-family:    var(--app-font-ui);
-  font-size:      0.62rem;
+  font-size:      var(--app-type-label-size, 0.66rem);
   font-weight:    700;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--app-type-label-tracking, 0.12em);
   text-transform: uppercase;
   color:          var(--ham-muted);
 }
@@ -123,9 +135,9 @@
 
 .result-label {
   font-family:    var(--app-font-ui);
-  font-size:      0.60rem;
+  font-size:      var(--app-type-label-size, 0.66rem);
   font-weight:    700;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--app-type-label-tracking, 0.12em);
   text-transform: uppercase;
   color:          var(--ham-muted);
 }
@@ -165,11 +177,19 @@
 }
 
 // ── Sección de mapa ───────────────────────────────────────────────────────────
+.lookup-map-block {
+  display:        flex;
+  flex-direction: column;
+  flex:           1;
+  min-height:     260px;
+}
+
 .map-section-label {
   padding: 10px 14px 5px;
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 
   &::after {
     content:    '';
@@ -181,8 +201,10 @@
 
 app-map-view {
   display:       block;
+  flex:          1;
+  min-height:    0;
   margin:        0 12px 12px;
-  --map-height:  clamp(260px, 38vh, 380px);
+  --map-height:  100%;
   border:        1px solid var(--ham-border);
   border-radius: var(--app-card-radius);
   overflow:      hidden;

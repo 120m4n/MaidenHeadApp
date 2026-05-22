@@ -6,6 +6,8 @@
 
 <ion-content>
 
+  <div class="lookup-page-body">
+
   <!-- Mode selector -->
   <div class="lookup-segment-wrap">
     <ion-segment
@@ -60,7 +62,7 @@
   </div>
 
   <!-- Result -->
-  @if (resultCenter()) {
+  @if (showResultCard()) {
     <div class="result-card">
 
       <div class="result-card__header">
@@ -105,16 +107,20 @@
   }
 
   <!-- Map -->
-  <div class="map-section-label">
-    <span class="label-micro">MAPA · toca cualquier punto para resolver grid</span>
+  <div class="lookup-map-block">
+    <div class="map-section-label">
+      <span class="label-micro">MAPA · toca cualquier punto para resolver grid</span>
+    </div>
+    <app-map-view
+      [center]="resultCenter()"
+      [gridBounds]="resultBounds()"
+      [gridLabel]="resolvedGrid()"
+      [plusBounds]="resultPlusBounds()"
+      [plusLabel]="resolvedPlus()"
+      (mapTap)="onMapTap($event)" />
   </div>
-  <app-map-view
-    [center]="resultCenter()"
-    [gridBounds]="resultBounds()"
-    [gridLabel]="resolvedGrid()"
-    [plusBounds]="resultPlusBounds()"
-    [plusLabel]="resolvedPlus()"
-    (mapTap)="onMapTap($event)" />
+
+  </div>
 
 </ion-content>
 
