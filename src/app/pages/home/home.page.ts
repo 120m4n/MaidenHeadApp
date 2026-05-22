@@ -8,6 +8,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline } from 'ionicons/icons';
+import { Clipboard } from '@capacitor/clipboard';
 
 import { GeolocationService } from '../../services/geolocation.service';
 import { MaidenheadService } from '../../services/maidenhead.service';
@@ -113,14 +114,20 @@ export class HomePage implements OnInit, OnDestroy {
     this.geo.stopWatch();
   }
 
-  /** Tap en mapa → dibuja grid azul temporal + muestra toast */
-  onMapTap(evt: MapTapEvent): void {
+  /** Tap en mapa → dibuja grid azul temporal + copia al portapapeles + muestra toast */
+  async onMapTap(evt: MapTapEvent): Promise<void> {
     const grid   = this.maidenhead.toGrid(evt.lat, evt.lon, this.settings.gridPrecision());
     const bounds = this.maidenhead.toBounds(grid);
     // Muestra el rectángulo azul; se borra en onToastDismiss (mismo instante que el toast)
     this.tapGridBounds.set(bounds);
     this.tapGridLabel.set(grid);
-    this.toast(`Grid: ${grid} (${evt.lat.toFixed(4)}, ${evt.lon.toFixed(4)})`);
+    try {
+      await Clipboard.write({ string: grid });
+      this.toast(`Grid: ${grid} · copiado`);
+    } catch {
+      // Portapapeles no disponible — muestra toast sin indicador de copia
+      this.toast(`Grid: ${grid} (${evt.lat.toFixed(4)}, ${evt.lon.toFixed(4)})`);
+    }
   }
 
   /** Cierra el toast Y borra el grid de tap al mismo tiempo */
