@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, signal, inject } from '@angular/core';
+import { Component, Input, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
@@ -13,8 +13,6 @@ import { Clipboard } from '@capacitor/clipboard';
 import { QsoEntry, QsoMode, QsoBand, DEFAULT_RST } from '../../models/qso-entry.model';
 import { SettingsService } from '../../services/settings.service';
 import { MaidenheadService } from '../../services/maidenhead.service';
-
-const CLIPBOARD_TIMER_S = 8;
 
 @Component({
   selector: 'app-qso-form-modal',
@@ -108,11 +106,7 @@ const CLIPBOARD_TIMER_S = 8;
           @if (fromClipboard()) {
             <div class="clipboard-badge">
               <ion-icon name="clipboard-outline" />
-              <span>Portapapeles · {{ clipboardCountdown() }}s</span>
-              <div class="clipboard-badge__bar">
-                <div class="clipboard-badge__fill"
-                     [style.width.%]="clipboardCountdown() / TIMER * 100"></div>
-              </div>
+              <span>Desde portapapeles</span>
             </div>
           }
         </div>
@@ -254,7 +248,8 @@ const CLIPBOARD_TIMER_S = 8;
       --placeholder-color: var(--ham-border-hi) !important;
     }
 
-    // ── Badge de portapapeles ────────────────────────────────────────
+    // ── Badge informacional de portapapeles ──────────────────────────
+    // Indica origen del valor; desaparece al editar el campo
     .clipboard-badge {
       display:     flex;
       align-items: center;
@@ -265,24 +260,6 @@ const CLIPBOARD_TIMER_S = 8;
       color:       var(--ham-muted);
 
       ion-icon { font-size: 0.85rem; flex-shrink: 0; }
-
-      span { white-space: nowrap; }
-
-      &__bar {
-        flex:          1;
-        height:        2px;
-        background:    var(--ham-border);
-        border-radius: 1px;
-        overflow:      hidden;
-      }
-
-      &__fill {
-        height:        100%;
-        background:    var(--ham-glow);
-        opacity:       0.55;
-        border-radius: 1px;
-        transition:    width 0.9s linear;
-      }
     }
 
     // ── Botón guardar ────────────────────────────────────────────────
@@ -298,7 +275,7 @@ const CLIPBOARD_TIMER_S = 8;
     IonSelectOption, IonIcon,
   ],
 })
-export class QsoFormModalComponent implements OnInit, OnDestroy {
+export class QsoFormModalComponent implements OnInit {
   @Input() myGrid = '';
   @Input() myPlusCode = '';
   @Input() prefillDxGrid = '';
@@ -323,11 +300,9 @@ export class QsoFormModalComponent implements OnInit, OnDestroy {
     comment: '',
   });
 
-  // ── Estado del timer de portapapeles ─────────────────────────────
-  readonly fromClipboard    = signal(false);
-  readonly clipboardCountdown = signal(0);
-  readonly TIMER = CLIPBOARD_TIMER_S;
-  private _clipboardTimer: ReturnType<typeof setInterval> | null = null;
+  // Badge informacional: visible mientras el valor viene del portapapeles
+  // Desaparece en cuanto el usuario edita o borra el campo
+  readonly fromClipboard = signal(false);
 
   constructor() {
     addIcons({ closeOutline, saveOutline, radioOutline, clipboardOutline });
@@ -340,7 +315,7 @@ export class QsoFormModalComponent implements OnInit, OnDestroy {
       const candidate = value?.trim().toUpperCase() ?? '';
       if (candidate && this.maidenhead.isValid(candidate)) {
         this.form.update(f => ({ ...f, dxGrid: candidate }));
-        this._startClipboardTimer();
+        this.fromClipboard.set(true);
         return;
       }
     } catch {
@@ -353,16 +328,11 @@ export class QsoFormModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this._clearClipboardTimer();
-  }
-
   /** Gestiona cambios en el campo DX grid.
-   *  Si el timer de portapapeles está activo, el primer cambio del usuario
-   *  lo cancela (el valor del usuario queda intacto). */
+   *  El primer cambio del usuario descarta el badge de portapapeles. */
   onDxGridChange(value: string): void {
     if (this.fromClipboard()) {
-      this._clearClipboardTimer();
+      this.fromClipboard.set(false);
     }
     this.updateForm('dxGrid', value);
   }
@@ -410,30 +380,5 @@ export class QsoFormModalComponent implements OnInit, OnDestroy {
       comment:         f.comment,
     };
     await this.modalCtrl.dismiss(entry, 'confirm');
-  }
-
-  // ── Timer privado ────────────────────────────────────────────────
-
-  private _startClipboardTimer(): void {
-    this.fromClipboard.set(true);
-    this.clipboardCountdown.set(CLIPBOARD_TIMER_S);
-    this._clipboardTimer = setInterval(() => {
-      const remaining = this.clipboardCountdown() - 1;
-      if (remaining <= 0) {
-        this._clearClipboardTimer();
-        this.form.update(f => ({ ...f, dxGrid: '' }));
-      } else {
-        this.clipboardCountdown.set(remaining);
-      }
-    }, 1000);
-  }
-
-  private _clearClipboardTimer(): void {
-    if (this._clipboardTimer) {
-      clearInterval(this._clipboardTimer);
-      this._clipboardTimer = null;
-    }
-    this.fromClipboard.set(false);
-    this.clipboardCountdown.set(0);
   }
 }
