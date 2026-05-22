@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal, inject } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
@@ -8,9 +8,13 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeOutline, saveOutline, radioOutline } from 'ionicons/icons';
+import { closeOutline, saveOutline, radioOutline, clipboardOutline } from 'ionicons/icons';
+import { Clipboard } from '@capacitor/clipboard';
 import { QsoEntry, QsoMode, QsoBand, DEFAULT_RST } from '../../models/qso-entry.model';
 import { SettingsService } from '../../services/settings.service';
+import { MaidenheadService } from '../../services/maidenhead.service';
+
+const CLIPBOARD_TIMER_S = 8;
 
 @Component({
   selector: 'app-qso-form-modal',
@@ -96,11 +100,21 @@ import { SettingsService } from '../../services/settings.service';
         <!-- DX Grid -->
         <div class="qso-form__field qso-form__field--full">
           <div class="qso-form__label">GRID CORRESPONSAL (opcional)</div>
-          <ion-input [(ngModel)]="form().dxGrid" (ngModelChange)="updateForm('dxGrid', $event)"
+          <ion-input [(ngModel)]="form().dxGrid" (ngModelChange)="onDxGridChange($event)"
                      placeholder="FN20" autocapitalize="characters"
                      [style.text-transform]="'uppercase'"
                      clearInput="true"
                      class="qso-form__input--grid" />
+          @if (fromClipboard()) {
+            <div class="clipboard-badge">
+              <ion-icon name="clipboard-outline" />
+              <span>Portapapeles · {{ clipboardCountdown() }}s</span>
+              <div class="clipboard-badge__bar">
+                <div class="clipboard-badge__fill"
+                     [style.width.%]="clipboardCountdown() / TIMER * 100"></div>
+              </div>
+            </div>
+          }
         </div>
 
         <div class="qso-form__divider"></div>
@@ -240,6 +254,37 @@ import { SettingsService } from '../../services/settings.service';
       --placeholder-color: var(--ham-border-hi) !important;
     }
 
+    // ── Badge de portapapeles ────────────────────────────────────────
+    .clipboard-badge {
+      display:     flex;
+      align-items: center;
+      gap:         5px;
+      margin-top:  7px;
+      font-family: var(--app-font-ui);
+      font-size:   0.72rem;
+      color:       var(--ham-muted);
+
+      ion-icon { font-size: 0.85rem; flex-shrink: 0; }
+
+      span { white-space: nowrap; }
+
+      &__bar {
+        flex:          1;
+        height:        2px;
+        background:    var(--ham-border);
+        border-radius: 1px;
+        overflow:      hidden;
+      }
+
+      &__fill {
+        height:        100%;
+        background:    var(--ham-glow);
+        opacity:       0.55;
+        border-radius: 1px;
+        transition:    width 0.9s linear;
+      }
+    }
+
     // ── Botón guardar ────────────────────────────────────────────────
     .qso-form__save {
       padding:    16px;
@@ -253,7 +298,7 @@ import { SettingsService } from '../../services/settings.service';
     IonSelectOption, IonIcon,
   ],
 })
-export class QsoFormModalComponent implements OnInit {
+export class QsoFormModalComponent implements OnInit, OnDestroy {
   @Input() myGrid = '';
   @Input() myPlusCode = '';
   @Input() prefillDxGrid = '';
@@ -261,7 +306,8 @@ export class QsoFormModalComponent implements OnInit {
   // Comunicación con el padre SÓLO vía ModalController.dismiss():
   //   dismiss(null, 'cancel')  → canceló
   //   dismiss(entry, 'confirm') → QSO guardado, data = QsoEntry sin id
-  private settings  = inject(SettingsService);
+  private settings   = inject(SettingsService);
+  private maidenhead = inject(MaidenheadService);
   private modalCtrl  = inject(ModalController);
 
   bands: QsoBand[] = ['160M','80M','40M','30M','20M','17M','15M','12M','10M','6M','4M','2M','70CM','23CM','OTHER'];
@@ -277,14 +323,48 @@ export class QsoFormModalComponent implements OnInit {
     comment: '',
   });
 
+  // ── Estado del timer de portapapeles ─────────────────────────────
+  readonly fromClipboard    = signal(false);
+  readonly clipboardCountdown = signal(0);
+  readonly TIMER = CLIPBOARD_TIMER_S;
+  private _clipboardTimer: ReturnType<typeof setInterval> | null = null;
+
   constructor() {
-    addIcons({ closeOutline, saveOutline, radioOutline });
+    addIcons({ closeOutline, saveOutline, radioOutline, clipboardOutline });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    // Prioridad 1: portapapeles — si contiene un grid válido, gana siempre
+    try {
+      const { value } = await Clipboard.read();
+      const candidate = value?.trim().toUpperCase() ?? '';
+      if (candidate && this.maidenhead.isValid(candidate)) {
+        this.form.update(f => ({ ...f, dxGrid: candidate }));
+        this._startClipboardTimer();
+        return;
+      }
+    } catch {
+      // Portapapeles no disponible o sin permiso — silencioso
+    }
+
+    // Prioridad 2: prefillDxGrid (GPS desde home / resultado de lookup)
     if (this.prefillDxGrid) {
       this.form.update(f => ({ ...f, dxGrid: this.prefillDxGrid.toUpperCase() }));
     }
+  }
+
+  ngOnDestroy(): void {
+    this._clearClipboardTimer();
+  }
+
+  /** Gestiona cambios en el campo DX grid.
+   *  Si el timer de portapapeles está activo, el primer cambio del usuario
+   *  lo cancela (el valor del usuario queda intacto). */
+  onDxGridChange(value: string): void {
+    if (this.fromClipboard()) {
+      this._clearClipboardTimer();
+    }
+    this.updateForm('dxGrid', value);
   }
 
   updateForm(key: keyof QsoEntry, value: any): void {
@@ -330,5 +410,30 @@ export class QsoFormModalComponent implements OnInit {
       comment:         f.comment,
     };
     await this.modalCtrl.dismiss(entry, 'confirm');
+  }
+
+  // ── Timer privado ────────────────────────────────────────────────
+
+  private _startClipboardTimer(): void {
+    this.fromClipboard.set(true);
+    this.clipboardCountdown.set(CLIPBOARD_TIMER_S);
+    this._clipboardTimer = setInterval(() => {
+      const remaining = this.clipboardCountdown() - 1;
+      if (remaining <= 0) {
+        this._clearClipboardTimer();
+        this.form.update(f => ({ ...f, dxGrid: '' }));
+      } else {
+        this.clipboardCountdown.set(remaining);
+      }
+    }, 1000);
+  }
+
+  private _clearClipboardTimer(): void {
+    if (this._clipboardTimer) {
+      clearInterval(this._clipboardTimer);
+      this._clipboardTimer = null;
+    }
+    this.fromClipboard.set(false);
+    this.clipboardCountdown.set(0);
   }
 }
