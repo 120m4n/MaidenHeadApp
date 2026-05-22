@@ -101,6 +101,33 @@ ion-header ion-toolbar {
   }
 }
 
+// Header brand — logo + nombre app
+.app-header-brand {
+  display:     flex;
+  align-items: center;
+  gap:         7px;
+  padding:     0 0 0 2px;
+}
+
+.app-header-logo {
+  font-family:    var(--app-font-mono);
+  font-size:      1.05rem;
+  font-weight:    700;
+  color:          var(--ham-glow);
+  letter-spacing: 0.08em;
+  line-height:    1;
+}
+
+.app-header-name {
+  font-family:    var(--app-font-ui);
+  font-size:      0.62rem;
+  font-weight:    700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color:          var(--ham-muted);
+  line-height:    1;
+}
+
 // Tab bar — barra de navegación de instrumento
 ion-tab-bar {
   --background:      var(--ion-tab-bar-background);
@@ -330,6 +357,38 @@ ion-alert {
 .value-sky {
   color:       var(--ham-sky) !important;
   font-family: var(--app-font-mono);
+}
+
+@media (max-width: 600px) {
+  app-position-card .pos-card__section {
+    padding: 9px 12px 7px;
+  }
+
+  app-position-card .pos-card__section--paired {
+    min-height: 58px;
+  }
+
+  app-position-card .pos-card__grid-wrap,
+  app-position-card .pos-card__plus-wrap {
+    min-height: 66px;
+  }
+
+  app-position-card .pos-card__coords {
+    display: none;
+  }
+
+  app-position-card .pos-card__status {
+    padding: 8px 12px 7px;
+  }
+
+  app-position-card .pos-card__actions {
+    gap: 3px;
+  }
+
+  app-position-card .pos-action-btn {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 // Divisor de sección — línea con acento cartográfico
