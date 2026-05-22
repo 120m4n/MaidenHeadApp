@@ -1,30 +1,15 @@
-// ── Topbar compacto ───────────────────────────────────────────────────────────
-.qso-topbar {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  padding:         calc(env(safe-area-inset-top, 0px) + 10px) 14px 9px;
-  border-bottom:   1px solid var(--ham-border);
-  gap:             10px;
-  background:      var(--ham-bg);
-  flex-shrink:     0;
+// ── Padding de contenido (safe-area + espacio inferior) ───────────────────────
+ion-content {
+  --padding-top:    max(env(safe-area-inset-top, 0px), 8px);
+  --padding-bottom: 24px;
 }
 
-.qso-topbar__title {
-  font-family:    var(--app-font-ui);
-  font-size:      var(--app-type-label-size, 0.66rem);
-  font-weight:    700;
-  letter-spacing: var(--app-type-label-tracking, 0.12em);
-  text-transform: uppercase;
-  color:          var(--ham-muted);
-  display:        flex;
-  align-items:    center;
-  gap:            6px;
-}
-
-.qso-topbar__actions {
-  display: flex;
-  gap:     6px;
+// ── Acciones del header (toolbar) ────────────────────────────────────────────
+.qso-header-actions {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+  padding:     0 8px 0 0;
 }
 
 .qso-action-btn {
