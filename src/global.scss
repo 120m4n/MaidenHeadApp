@@ -594,10 +594,9 @@ ion-alert {
     background:   var(--ham-surface2);
   }
 
-  // Acento izquierdo por tipo de capa
+  // Acento izquierdo por tipo de capa (ALL sin acento — los dos dots lo identifican)
   &[data-layer="mh"].mlc-btn--active  { border-left: 3px solid var(--ham-glow); }
   &[data-layer="olc"].mlc-btn--active { border-left: 3px solid var(--ham-amber); }
-  &[data-layer="both"].mlc-btn--active { border-left: 3px solid var(--ham-sky); }
 }
 
 // Posicionamiento controles top-left y top-right
