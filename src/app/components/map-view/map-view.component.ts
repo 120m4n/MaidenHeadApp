@@ -60,6 +60,10 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('mapContainer') mapContainer!: ElementRef<HTMLDivElement>;
 
   // ── Inputs ──────────────────────────────────────────────────────────────
+  /** Vista inicial del mapa (antes de cualquier GPS fix o resultado de búsqueda) */
+  @Input() initialCenter: LatLon | null = null;
+  @Input() initialZoom:   number = 2;
+
   @Input() center:      LatLon | null  = null;
   @Input() accuracy:    number | null  = null;
 
@@ -259,8 +263,12 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     // Si el contenedor aún tiene height=0 en este momento (iOS / WKWebView), el
     // ResizeObserver llamará invalidateSize() en cuanto el layout se establezca.
 
+    const initLat  = this.initialCenter?.lat  ?? 0;
+    const initLon  = this.initialCenter?.lon  ?? 0;
+    const initZoom = this.initialCenter ? this.initialZoom : 2;
+
     this.map = L.map(el, { zoomControl: true, attributionControl: true })
-      .setView([0, 0], 2);
+      .setView([initLat, initLon], initZoom);
 
     this.map.zoomControl.setPosition('topright');
 

@@ -116,6 +116,8 @@
       <span class="label-micro">MAPA · toca cualquier punto para resolver grid</span>
     </div>
     <app-map-view
+      [initialCenter]="{ lat: 7.1307, lon: -73.1220 }"
+      [initialZoom]="11"
       [center]="resultCenter()"
       [gridBounds]="resultBounds()"
       [gridLabel]="resolvedGrid()"
