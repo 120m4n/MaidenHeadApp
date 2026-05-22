@@ -1,37 +1,6 @@
-// ── Topbar compacto: safe-area + botón refresh ──────────────────────────────
-.page-topbar {
-  display:     flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding:     env(safe-area-inset-top, 0px) 8px 0;
-  flex-shrink: 0;
-}
-
-.topbar-refresh-btn {
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  width:           40px;
-  height:          40px;
-  background:      transparent;
-  border:          none;
-  color:           var(--ham-muted);
-  cursor:          pointer;
-  border-radius:   var(--app-radius-ctrl, 4px);
-  -webkit-tap-highlight-color: transparent;
-
-  ion-icon { font-size: 1.1rem; }
-
-  &:active {
-    color:      var(--ham-glow);
-    background: rgba(var(--ham-glow-rgb), 0.08);
-    border-radius: var(--app-radius-ctrl, 4px);
-  }
-
-  &:focus-visible {
-    outline:        2px solid rgba(var(--ham-glow-rgb), 0.55);
-    outline-offset: 1px;
-  }
+// ── Safe-area superior + respiro visual mínimo ───────────────────────────────
+ion-content {
+  --padding-top: max(env(safe-area-inset-top, 0px), 8px);
 }
 
 // ── Scrollcontainer de ion-content → columna flex ────────────────────────────
@@ -164,7 +133,6 @@ app-map-view {
   }
 
   app-map-view {
-    min-height: calc(50vh - 56px);
     margin: 0 12px 10px;
   }
 }
