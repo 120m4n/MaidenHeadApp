@@ -87,3 +87,8 @@ Thumbs.db
 .agents/*
 .claude/*
 diseno/*
+
+# Infraestructura / deploy (contiene datos del servidor, no va a repo)
+portainer-stack.yml
+.env.prod
+.env.local
