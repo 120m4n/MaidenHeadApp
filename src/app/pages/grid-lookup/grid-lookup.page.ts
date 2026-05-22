@@ -71,6 +71,14 @@ export class GridLookupPage {
     addIcons({ searchOutline, addCircleOutline });
   }
 
+  /** Ionic lifecycle: se dispara cada vez que la página entra en pantalla.
+   *  Oculta la card de resultado para que el mapa arranque limpio en cada visita. */
+  ionViewWillEnter(): void {
+    this.showResultCard.set(false);
+    this.validationError.set('');
+    this.showToast.set(false);
+  }
+
   lookup(): void {
     this.validationError.set('');
     if (this.inputMode() === 'grid') {
