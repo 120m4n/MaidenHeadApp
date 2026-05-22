@@ -52,17 +52,22 @@ ion-fab[vertical='bottom'][horizontal='end'] {
   z-index: 1001;
 }
 
-// ── FAB "nuevo QSO" — pill con icono + etiqueta ────────────────────────────
+// ── FAB "nuevo QSO" — pill ámbar con borde negro ───────────────────────────
 ion-fab-button.fab-qso {
-  --border-radius: 14px;   // pill en lugar de círculo
-  width: auto;             // se expande para acomodar el texto
+  --background:    var(--ham-amber);
+  --box-shadow:    var(--app-shadow-ctrl), 0 0 12px rgba(var(--ham-amber-rgb), 0.35);
+  --border-radius: 14px;
+  --border-width:  2px;
+  --border-style:  solid;
+  --border-color:  #000000;
+  width: auto;
 
   &::part(native) {
-    width:       auto;
-    min-width:   56px;
-    min-height:  56px;
-    padding:     0 14px;
-    gap:         6px;
+    width:          auto;
+    min-width:      56px;
+    min-height:     56px;
+    padding:        0 14px;
+    gap:            6px;
     flex-direction: row;
   }
 }
