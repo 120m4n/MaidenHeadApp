@@ -8,7 +8,8 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeOutline, saveOutline, radioOutline, clipboardOutline } from 'ionicons/icons';
+import { closeOutline, saveOutline, radioOutline, clipboardOutline, helpCircleOutline } from 'ionicons/icons';
+import { HamRefModalComponent } from '../ham-ref-modal/ham-ref-modal.component';
 import { Clipboard } from '@capacitor/clipboard';
 import { QsoEntry, QsoMode, QsoBand, DEFAULT_RST } from '../../models/qso-entry.model';
 import { SettingsService } from '../../services/settings.service';
@@ -78,7 +79,13 @@ import { MaidenheadService } from '../../services/maidenhead.service';
         <div class="qso-form__row2">
 
           <div class="qso-form__field">
-            <div class="qso-form__label">RST ENVIADO</div>
+            <div class="qso-form__label-row">
+              <span>RST ENVIADO</span>
+              <ion-button fill="clear" size="small" class="rst-help-btn"
+                          (click)="openRefModal()" aria-label="Abrir chuleta RST y modos">
+                <ion-icon slot="icon-only" name="help-circle-outline" />
+              </ion-button>
+            </div>
             <ion-input [(ngModel)]="form().rstSent" (ngModelChange)="updateForm('rstSent', $event)"
                        placeholder="59" inputmode="numeric"
                        class="qso-form__input--small" />
@@ -212,6 +219,39 @@ import { MaidenheadService } from '../../services/maidenhead.service';
       margin-bottom:  6px;
     }
 
+    // Label con botón de ayuda inline (RST)
+    .qso-form__label-row {
+      display:     flex;
+      align-items: center;
+      gap:         2px;
+      margin-bottom: 6px;
+
+      span {
+        font-family:    var(--app-font-ui);
+        font-size:      var(--app-type-label-size, 0.66rem);
+        font-weight:    700;
+        letter-spacing: var(--app-type-label-tracking, 0.12em);
+        text-transform: uppercase;
+        color:          var(--ham-muted);
+      }
+    }
+
+    // Botón ? — acceso rápido a chuleta RST/modos
+    .rst-help-btn {
+      --padding-start: 2px;
+      --padding-end:   2px;
+      --padding-top:   0;
+      --padding-bottom:0;
+      --color:         var(--ham-muted);
+      height:          16px;
+      margin:          0;
+      opacity:         0.7;
+
+      ion-icon { font-size: 13px; }
+
+      &:hover, &:focus { opacity: 1; --color: var(--ham-glow); }
+    }
+
     // Select de banda/modo — ámbar (lectura de frecuencia)
     .qso-form__select {
       font-family: var(--app-font-mono) !important;
@@ -305,7 +345,7 @@ export class QsoFormModalComponent implements OnInit {
   readonly fromClipboard = signal(false);
 
   constructor() {
-    addIcons({ closeOutline, saveOutline, radioOutline, clipboardOutline });
+    addIcons({ closeOutline, saveOutline, radioOutline, clipboardOutline, helpCircleOutline });
   }
 
   async ngOnInit(): Promise<void> {
@@ -353,6 +393,15 @@ export class QsoFormModalComponent implements OnInit {
   isValid(): boolean {
     const f = this.form();
     return !!(f.call?.trim() && f.band && f.mode);
+  }
+
+  /** Abre la chuleta de modos y RST */
+  async openRefModal(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: HamRefModalComponent,
+      cssClass:  'ham-ref-modal',
+    });
+    await modal.present();
   }
 
   /** Cierra el modal sin guardar (botón ✕ o swipe) */
