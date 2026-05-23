@@ -8,7 +8,7 @@ import {
 import { addIcons } from 'ionicons';
 import {
   radioOutline, locationOutline, contrastOutline,
-  informationCircleOutline, mapOutline,
+  informationCircleOutline, mapOutline, logoGithub, codeSlashOutline,
 } from 'ionicons/icons';
 
 import { SettingsService, ThemeMode, DistanceUnit } from '../../services/settings.service';
@@ -30,7 +30,7 @@ export class SettingsPage implements OnInit {
   private themeService = inject(ThemeService);
 
   constructor() {
-    addIcons({ radioOutline, locationOutline, contrastOutline, informationCircleOutline, mapOutline });
+    addIcons({ radioOutline, locationOutline, contrastOutline, informationCircleOutline, mapOutline, logoGithub, codeSlashOutline });
   }
 
   // Valores locales enlazados a ngModel
@@ -64,4 +64,8 @@ export class SettingsPage implements OnInit {
   }
 
   get version(): string { return '1.0.0'; }
+
+  openRepo(): void {
+    window.open('https://github.com/120m4n/MaidenHeadApp', '_system');
+  }
 }
