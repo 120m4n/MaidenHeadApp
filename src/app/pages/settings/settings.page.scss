@@ -199,6 +199,28 @@
   }
 }
 
+// ── Referencia rápida ─────────────────────────────────────────────────────────
+.ref-field {
+  display:        flex;
+  flex-direction: column;
+  gap:            10px;
+}
+
+.ref-field__desc {
+  font-family:  var(--app-font-ui);
+  font-size:    0.84rem;
+  color:        var(--ham-muted);
+  line-height:  1.45;
+}
+
+.ref-open-btn {
+  --border-radius: var(--app-card-radius, 6px);
+  font-family:     var(--app-font-ui);
+  font-weight:     600;
+  letter-spacing:  0.06em;
+  text-transform:  uppercase;
+}
+
 // ── Padding de contenido (safe-area superior + inferior) ──────────────────────
 ion-content {
   --padding-top:    max(env(safe-area-inset-top, 0px), 8px);

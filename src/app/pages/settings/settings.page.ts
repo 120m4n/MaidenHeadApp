@@ -3,13 +3,16 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonTitle,
-  IonContent, IonInput, IonSelect, IonSelectOption, IonIcon,
+  IonContent, IonInput, IonSelect, IonSelectOption, IonIcon, IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   radioOutline, locationOutline, contrastOutline,
   informationCircleOutline, mapOutline, logoGithub, codeSlashOutline,
+  bookOutline,
 } from 'ionicons/icons';
+import { HamRefModalComponent } from '../../components/ham-ref-modal/ham-ref-modal.component';
 
 import { SettingsService, ThemeMode, DistanceUnit } from '../../services/settings.service';
 import { ThemeService } from '../../services/theme.service';
@@ -22,15 +25,16 @@ import { GridPrecision } from '../../services/maidenhead.service';
   imports: [
     CommonModule, FormsModule,
     IonHeader, IonToolbar, IonTitle,
-    IonContent, IonInput, IonSelect, IonSelectOption, IonIcon,
+    IonContent, IonInput, IonSelect, IonSelectOption, IonIcon, IonButton,
   ],
 })
 export class SettingsPage implements OnInit {
   private settingsService = inject(SettingsService);
-  private themeService = inject(ThemeService);
+  private themeService    = inject(ThemeService);
+  private modalCtrl       = inject(ModalController);
 
   constructor() {
-    addIcons({ radioOutline, locationOutline, contrastOutline, informationCircleOutline, mapOutline, logoGithub, codeSlashOutline });
+    addIcons({ radioOutline, locationOutline, contrastOutline, informationCircleOutline, mapOutline, logoGithub, codeSlashOutline, bookOutline });
   }
 
   // Valores locales enlazados a ngModel
@@ -61,6 +65,14 @@ export class SettingsPage implements OnInit {
 
   async onDistanceChange(value: DistanceUnit): Promise<void> {
     await this.settingsService.update({ distanceUnit: value });
+  }
+
+  async openRefModal(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: HamRefModalComponent,
+      cssClass:  'ham-ref-modal',
+    });
+    await modal.present();
   }
 
   get version(): string { return '1.0.0'; }
