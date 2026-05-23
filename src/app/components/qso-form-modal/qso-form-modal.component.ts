@@ -316,6 +316,7 @@ export class QsoFormModalComponent implements OnInit {
       if (candidate && this.maidenhead.isValid(candidate)) {
         this.form.update(f => ({ ...f, dxGrid: candidate }));
         this.fromClipboard.set(true);
+        await Clipboard.write({ string: '' }); // consumido → limpiar
         return;
       }
     } catch {
