@@ -175,10 +175,12 @@ ion-content {
   margin-top: 12px;
 }
 
-// ── Sección de mapa — altura fija (página con scroll) ────────────────────────
+// ── Sección de mapa — altura viewport-fija, scrolleable con el resto de la página ─
 .lookup-map-block {
-  height:     45vh;
-  min-height: 240px;
+  height:     calc(100svh - 56px);
+  min-height: 260px;
+  display:    flex;
+  flex-direction: column;
 }
 
 .map-section-label {
@@ -198,6 +200,8 @@ ion-content {
 
 app-map-view {
   display:       block;
+  flex:          1;
+  min-height:    0;
   height:        100%;
   margin:        0 12px 12px;
   --map-height:  100%;
@@ -248,11 +252,6 @@ app-map-view {
 
   .result-qso-btn {
     margin-top: 8px;
-  }
-
-  .lookup-map-block {
-    height:     38vh;
-    min-height: 200px;
   }
 
   app-map-view {
