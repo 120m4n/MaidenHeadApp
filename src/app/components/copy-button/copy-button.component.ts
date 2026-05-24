@@ -20,8 +20,8 @@ import { copyOutline, checkmarkOutline } from 'ionicons/icons';
       display:         flex;
       align-items:     center;
       justify-content: center;
-      width:           44px;
-      height:          44px;
+      width:           32px;
+      height:          32px;
       background:      var(--ham-surface2);
       border:          1px solid var(--ham-muted);
       border-radius:   var(--app-radius-ctrl, 4px);
@@ -30,7 +30,7 @@ import { copyOutline, checkmarkOutline } from 'ionicons/icons';
       transition:      all 0.15s ease;
       -webkit-tap-highlight-color: transparent;
 
-      ion-icon { font-size: 1.15rem; }
+      ion-icon { font-size: 0.85rem; }
 
       &:focus-visible {
         outline: 2px solid rgba(var(--ham-glow-rgb), 0.55);
@@ -48,11 +48,6 @@ import { copyOutline, checkmarkOutline } from 'ionicons/icons';
         box-shadow:   0 0 8px rgba(var(--ham-glow-rgb), 0.25);
       }
 
-      @media (max-width: 600px) {
-        width:  32px;
-        height: 32px;
-        ion-icon { font-size: 0.85rem; }
-      }
     }
   `],
   imports: [IonIcon],

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
 import { Share } from '@capacitor/share';
 import { addIcons } from 'ionicons';
-import { shareOutline, locationOutline, locateOutline, flashOutline } from 'ionicons/icons';
+import { shareOutline } from 'ionicons/icons';
 import { Position } from '../../models/position.model';
 import { SettingsService } from '../../services/settings.service';
 import { CopyButtonComponent } from '../copy-button/copy-button.component';
@@ -20,51 +20,61 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
             <span class="pos-lock-dot"></span>
             <span class="pos-card__status-label">GPS LOCKED</span>
           </div>
-          <span class="pos-card__accuracy">
-            {{ latDisplay }},&nbsp;{{ lonDisplay }}&ensp;·&ensp;±&thinsp;{{ position.accuracy | number:'1.0-0' }}&thinsp;m
-          </span>
-        </div>
-
-        <div class="pos-card__divider"></div>
-
-        <!-- ── QTH Locator — hero display ─────────────────────────── -->
-        <div class="pos-card__section pos-card__section--paired">
-          <div class="pos-card__section-label">QTH LOCATOR</div>
-          <div class="pos-card__grid-wrap">
-            <div class="pos-card__grid-value">{{ gridDisplay }}</div>
-            <div class="pos-card__actions">
-              <app-copy-button [value]="gridDisplay" label="QTH Locator" color="primary" fill="clear" />
-              <button class="pos-action-btn" (click)="share('grid')" aria-label="Compartir QTH Locator">
-                <ion-icon name="share-outline" />
-              </button>
-            </div>
+          <div class="pos-card__status-right">
+            <span class="pos-card__accuracy pos-card__accuracy--mobile">
+              {{ latDisplay }},&nbsp;{{ lonDisplay }}&ensp;·&ensp;±&thinsp;{{ position.accuracy | number:'1.0-0' }}&thinsp;m
+            </span>
+            <span class="pos-card__accuracy pos-card__accuracy--desktop">
+              ±&thinsp;{{ position.accuracy | number:'1.0-0' }}&thinsp;m
+            </span>
+            <app-copy-button class="pos-card__status-copy" [value]="coordsCsv" label="coordenadas GPS lat,lon" />
           </div>
         </div>
 
         <div class="pos-card__divider"></div>
 
-        <!-- ── Plus Code ───────────────────────────────────────────── -->
-        <div class="pos-card__section pos-card__section--paired">
-          <div class="pos-card__section-label">PLUS CODE</div>
-          <div class="pos-card__plus-wrap">
-            <div class="pos-card__plus-value">{{ position.plusCode }}</div>
-            <div class="pos-card__actions">
-              <app-copy-button [value]="position.plusCode" label="Plus Code" color="primary" fill="clear" />
-              <button class="pos-action-btn" (click)="share('plus')" aria-label="Compartir Plus Code">
-                <ion-icon name="share-outline" />
-              </button>
+        <div class="pos-card__content-grid">
+          <!-- ── QTH Locator card ───────────────────────────────────── -->
+          <div class="pos-data-card">
+            <div class="pos-data-card__label">QTH LOCATOR</div>
+            <div class="pos-data-card__row">
+              <div class="pos-data-card__value pos-data-card__value--qth">{{ gridDisplay }}</div>
+              <div class="pos-card__actions">
+                <app-copy-button [value]="gridDisplay" label="QTH Locator" color="primary" fill="clear" />
+                <button class="pos-action-btn" (click)="share('grid')" aria-label="Compartir QTH Locator">
+                  <ion-icon name="share-outline" />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="pos-card__divider"></div>
+          <!-- ── Plus Code card ─────────────────────────────────────── -->
+          <div class="pos-data-card">
+            <div class="pos-data-card__label">PLUS CODE</div>
+            <div class="pos-data-card__row">
+              <div class="pos-data-card__value pos-data-card__value--plus">{{ position.plusCode }}</div>
+              <div class="pos-card__actions">
+                <app-copy-button [value]="position.plusCode" label="Plus Code" color="primary" fill="clear" />
+                <button class="pos-action-btn" (click)="share('plus')" aria-label="Compartir Plus Code">
+                  <ion-icon name="share-outline" />
+                </button>
+              </div>
+            </div>
+          </div>
 
-        <!-- ── Coordinates ─────────────────────────────────────────── -->
-        <div class="pos-card__coords">
-          <ion-icon name="locate-outline" class="pos-card__coord-icon" />
-          <span class="pos-card__coord-value">
-            {{ position.lat | number:'1.5-5' }}°N&nbsp;&nbsp;{{ position.lon | number:'1.5-5' }}°{{ position.lon < 0 ? 'W' : 'E' }}
-          </span>
+          <!-- ── GPS card (desktop) ─────────────────────────────────── -->
+          <div class="pos-data-card pos-data-card--desktop-only">
+            <div class="pos-data-card__label">GPS LAT,LON</div>
+            <div class="pos-data-card__row">
+              <div class="pos-data-card__value pos-data-card__value--gps">{{ coordsCsv }}</div>
+              <div class="pos-card__actions">
+                <app-copy-button [value]="coordsCsv" label="coordenadas GPS lat,lon" color="primary" fill="clear" />
+                <button class="pos-action-btn" (click)="share('gps')" aria-label="Compartir coordenadas GPS lat,lon">
+                  <ion-icon name="share-outline" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -129,6 +139,25 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       gap:         7px;
     }
 
+    .pos-card__status-right {
+      display:     flex;
+      align-items: center;
+      gap:         4px;
+      min-width:   0;
+    }
+
+    .pos-card__status-copy {
+      display: none;
+    }
+
+    .pos-card__accuracy--desktop {
+      display: inline;
+    }
+
+    .pos-card__accuracy--mobile {
+      display: none;
+    }
+
     .pos-card__status-label {
       font-family:    var(--app-font-ui);
       font-size:      var(--app-type-label-size, 0.66rem);
@@ -173,11 +202,25 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
     }
 
     // ── Section ─────────────────────────────────────────────────────────
-    .pos-card__section {
-      padding: 5px 12px 4px;
+    .pos-card__content-grid {
+      display:        flex;
+      flex-direction: column;
     }
 
-    .pos-card__section-label {
+    .pos-data-card {
+      padding:    5px 12px 4px;
+      min-width:  0;
+    }
+
+    .pos-data-card + .pos-data-card {
+      border-top: 1px solid var(--ham-border);
+    }
+
+    .pos-data-card--desktop-only {
+      display: none;
+    }
+
+    .pos-data-card__label {
       font-family:    var(--app-font-ui);
       font-size:      var(--app-type-label-size, 0.66rem);
       font-weight:    700;
@@ -187,23 +230,19 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       margin-bottom:  3px;
     }
 
-    // ── Valor de grid (hero) — lectura operativa principal ───────────────
-    .pos-card__grid-wrap {
+    .pos-data-card__row {
       display:         flex;
       align-items:     center;
       justify-content: space-between;
       gap:             8px;
     }
 
-    .pos-card__grid-value {
+    .pos-data-card__value {
       font-family:    var(--app-font-mono);
       font-size:      var(--app-type-code-size, clamp(1.6rem, 6.5vw, 2.2rem));
       font-weight:    400;
-      color:          var(--ham-glow);
       line-height:    1.0;
       letter-spacing: 0.04em;
-      // Glow selectivo en el dato operativo — no en UI chrome
-      text-shadow:    0 0 18px rgba(var(--ham-glow-rgb), 0.30);
       flex:           1;
       min-width:      0;
       overflow:       hidden;
@@ -211,21 +250,18 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       white-space:    nowrap;
     }
 
-    // ── Plus Code ────────────────────────────────────────────────────────
-    .pos-card__plus-wrap {
-      display:         flex;
-      align-items:     center;
-      justify-content: space-between;
-      gap:             8px;
+    .pos-data-card__value--qth {
+      color:       var(--ham-glow);
+      text-shadow: 0 0 18px rgba(var(--ham-glow-rgb), 0.30);
     }
 
-    .pos-card__plus-value {
-      font-family:    var(--app-font-mono);
-      font-size:      var(--app-type-code-size, clamp(1.6rem, 6.5vw, 2.2rem));
-      font-weight:    400;
+    .pos-data-card__value--plus {
       color:          var(--ham-amber);
-      letter-spacing: 0.04em;
-      flex:           1;
+    }
+
+    .pos-data-card__value--gps {
+      color:     var(--ham-sky);
+      font-size: clamp(1.15rem, 2.2vw, 1.5rem);
     }
 
     // ── Botones de acción ──────────────────────────────────────────────
@@ -240,8 +276,8 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       display:         flex;
       align-items:     center;
       justify-content: center;
-      width:           36px;
-      height:          36px;
+      width:           32px;
+      height:          32px;
       background:      var(--ham-surface2);
       border:          1px solid var(--ham-muted);
       border-radius:   var(--app-radius-ctrl, 4px);
@@ -250,7 +286,7 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       transition:      all 0.15s ease;
       -webkit-tap-highlight-color: transparent;
 
-      ion-icon { font-size: 1rem; }
+      ion-icon { font-size: 0.85rem; }
 
       &:focus-visible {
         outline: 2px solid rgba(var(--ham-glow-rgb), 0.55);
@@ -263,30 +299,6 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
         color:        var(--ham-glow);
         transform:    scale(0.95);
       }
-    }
-
-    // ── Coordenadas ───────────────────────────────────────────────────────
-    .pos-card__coords {
-      display:     flex;
-      align-items: center;
-      gap:         8px;
-      padding:     4px 12px 5px;
-    }
-
-    .pos-card__coord-icon {
-      font-size:   0.88rem;
-      color:       var(--ham-muted);
-      flex-shrink: 0;
-    }
-
-    .pos-card__coord-value {
-      font-family:    var(--app-font-mono);
-      font-size:      var(--app-type-meta-size, 0.72rem);
-      color:          var(--ham-muted);
-      letter-spacing: 0.04em;
-      overflow:       hidden;
-      white-space:    nowrap;
-      text-overflow:  ellipsis;
     }
 
     // ── Sin fix GPS ──────────────────────────────────────────────────────
@@ -320,24 +332,57 @@ import { CopyButtonComponent } from '../copy-button/copy-button.component';
       .pos-card__status {
         padding: 2px 10px 2px;
       }
-      .pos-card__coords {
+      .pos-card__status-copy {
+        display: block;
+      }
+      .pos-card__accuracy--desktop {
         display: none;
       }
-      .pos-card__section {
+      .pos-card__accuracy--mobile {
+        display: inline;
+      }
+      .pos-data-card {
         padding: 1px 10px 1px;
       }
-      // .pos-card__section-label visible — ocupa espacio ya reservado por min-height: 58px
-      .pos-card__grid-value,
-      .pos-card__plus-value {
+      // .pos-data-card__label visible — ocupa espacio ya reservado por min-height: 58px
+      .pos-data-card__value {
         font-size: 2.25rem;
+      }
+      .pos-data-card--desktop-only {
+        display: none;
       }
       .pos-card__actions {
         gap: 2px;
       }
       .pos-action-btn {
-        width: 28px;
-        height: 28px;
-        ion-icon { font-size: 0.82rem; }
+        width: 32px;
+        height: 32px;
+        ion-icon { font-size: 0.85rem; }
+      }
+    }
+
+    @media (min-width: 992px) {
+      .pos-card__content-grid {
+        display:               grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap:                  8px;
+        padding:              5px 12px 6px;
+      }
+
+      .pos-data-card {
+        padding:       5px 10px 6px;
+        border:        1px solid var(--ham-border);
+        border-radius: calc(var(--app-card-radius) - 4px);
+        box-shadow:    var(--app-shadow-card);
+        background:    var(--ham-surface2);
+      }
+
+      .pos-data-card + .pos-data-card {
+        border-top: none;
+      }
+
+      .pos-data-card--desktop-only {
+        display: block;
       }
     }
 
@@ -353,7 +398,7 @@ export class PositionCardComponent {
   private settings = inject(SettingsService);
 
   constructor() {
-    addIcons({ shareOutline, locationOutline, locateOutline, flashOutline });
+    addIcons({ shareOutline });
   }
 
   get latDisplay(): string {
@@ -384,14 +429,24 @@ export class PositionCardComponent {
     return labels[p] ?? '';
   }
 
-  async share(type: 'grid' | 'plus'): Promise<void> {
+  get coordsCsv(): string {
+    if (!this.position) return '';
+    return `${this.position.lat.toFixed(5)},${this.position.lon.toFixed(5)}`;
+  }
+
+  async share(type: 'grid' | 'plus' | 'gps'): Promise<void> {
     if (!this.position) return;
-    const value = type === 'grid' ? this.gridDisplay : this.position.plusCode;
-    const label = type === 'grid' ? 'QTH Locator' : 'Plus Code';
+    const value = type === 'grid' ? this.gridDisplay
+      : type === 'plus' ? this.position.plusCode
+      : this.coordsCsv;
+    const label = type === 'grid' ? 'QTH Locator'
+      : type === 'plus' ? 'Plus Code'
+      : 'GPS lat,lon';
     await Share.share({
       title: label,
       text: `Mi ${label}: ${value}`,
       dialogTitle: `Compartir ${label}`,
     });
   }
+
 }

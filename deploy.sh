@@ -93,14 +93,14 @@ log "4/4 Autenticando y subiendo a ${REGISTRY}…"
 if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
     gh auth token | docker login "${REGISTRY}" -u "${GITHUB_USER}" --password-stdin
     ok "Autenticado con gh CLI"
-elif [[ -n "${GITHUB_TOKEN:-}" ]]; then
-    echo "${GITHUB_TOKEN}" | docker login "${REGISTRY}" -u "${GITHUB_USER}" --password-stdin
-    ok "Autenticado con GITHUB_TOKEN"
+elif [[ -n "${GH_TOKEN:-}" ]]; then
+    echo "${GH_TOKEN}" | docker login "${REGISTRY}" -u "${GITHUB_USER}" --password-stdin
+    ok "Autenticado con GH_TOKEN"
 else
-    warn "gh CLI no disponible y GITHUB_TOKEN no definido."
+    warn "gh CLI no disponible y GH_TOKEN no definido."
     warn "Opciones para autenticar:"
     warn "  a) gh auth login  (recomendado)"
-    warn "  b) export GITHUB_TOKEN=<tu_token_classic_con_write:packages>"
+    warn "  b) export GH_TOKEN=<tu_token_classic_con_write:packages>"
     fail "No se puede autenticar contra ${REGISTRY}"
 fi
 
