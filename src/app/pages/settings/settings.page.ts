@@ -17,6 +17,7 @@ import { HamRefModalComponent } from '../../components/ham-ref-modal/ham-ref-mod
 import { SettingsService, ThemeMode, DistanceUnit } from '../../services/settings.service';
 import { ThemeService } from '../../services/theme.service';
 import { GridPrecision } from '../../services/maidenhead.service';
+import packageJson from '../../../../package.json';
 
 @Component({
   selector: 'app-settings',
@@ -75,7 +76,7 @@ export class SettingsPage implements OnInit {
     await modal.present();
   }
 
-  get version(): string { return '1.0.0'; }
+  get version(): string { return packageJson.version; }
 
   openRepo(): void {
     window.open('https://github.com/120m4n/MaidenHeadApp', '_system');

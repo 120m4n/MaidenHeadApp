@@ -1,6 +1,9 @@
 services:
   maidenheadapp:
     image: ghcr.io/120m4n/maidenheadapp:${APP_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: maidenheadapp
     platform: linux/amd64
     ports:

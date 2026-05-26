@@ -1,0 +1,31 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Repetidora Moras"
+      },
+      "geometry": {
+        "coordinates": [
+          -72.981911,
+          6.922430
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Repetidora El Picacho"
+      },
+      "geometry": {
+        "coordinates": [
+          -72.9718,
+          7.1095
+        ],
+        "type": "Point"
+      }
+    }
+  ]
+}

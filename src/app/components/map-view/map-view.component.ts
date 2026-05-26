@@ -80,6 +80,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() tapGridLabel:  string = '';
 
   @Input() savedMarkers: Array<{ pos: LatLon; label: string }> = [];
+  @Input() geoJsonUrl: string | null = null;
 
   // ── Outputs ─────────────────────────────────────────────────────────────
   @Output() mapTap       = new EventEmitter<MapTapEvent>();
@@ -96,6 +97,15 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private tapRect?:      L.Rectangle;   // Grid temporal de tap (azul)
   private tapLabelTip?:  L.Tooltip;     // Label del tap grid
   private savedLayers:   L.Marker[] = [];
+  private geoJsonLayer?: L.GeoJSON;
+
+  private readonly geoJsonPointIcon = L.icon({
+    iconUrl: '/icons/antenna.png',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    tooltipAnchor: [0, -12],
+    popupAnchor: [0, -12],
+  });
 
   // ── Estado del selector de capas ─────────────────────────────────────────
   private activeLayer: GridLayer = 'both';
@@ -143,6 +153,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     if (changes['savedMarkers'])
       this.updateSavedMarkers();
+
+    if (changes['geoJsonUrl'])
+      void this.loadGeoJsonLayer();
   }
 
   ngOnDestroy(): void {
@@ -286,8 +299,28 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (this.plusBounds)          this.updateOlcRect();
     if (this.tapGridBounds)       this.updateTapRect();
     if (this.savedMarkers.length) this.updateSavedMarkers();
+    void this.loadGeoJsonLayer();
 
     this.initTimer = setTimeout(() => this.map.invalidateSize(), 200);
+  }
+
+  private async loadGeoJsonLayer(): Promise<void> {
+    this.geoJsonLayer?.remove();
+    this.geoJsonLayer = undefined;
+
+    if (!this.map || !this.geoJsonUrl) return;
+
+    try {
+      const response = await fetch(this.geoJsonUrl);
+      if (!response.ok) return;
+
+      const geoJson = await response.json();
+      this.geoJsonLayer = L.geoJSON(geoJson, {
+        pointToLayer: (_feature, latlng) => L.marker(latlng, { icon: this.geoJsonPointIcon }),
+      }).addTo(this.map);
+    } catch {
+      // Si falla la carga del archivo, el mapa sigue funcionando sin esta capa.
+    }
   }
 
   // ── ResizeObserver: sincroniza Leaflet con el tamaño real del contenedor ──
