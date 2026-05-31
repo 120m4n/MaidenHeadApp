@@ -20,7 +20,7 @@ const DEFAULTS: AppSettings = {
   themeMode: 'auto',
   distanceUnit: 'km',
   locationSharing: false,
-  natsUrl: 'ws://localhost:4223',
+  natsUrl: 'auto',   // 'auto' → ws://<same-host>/nats-ws (nginx gateway)
 };
 
 const KEY = 'app_settings';

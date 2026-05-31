@@ -20,10 +20,18 @@ export class PresenceService {
   private watcher?:  AsyncIterable<any>;
   private ownCall?:  string;
 
+  private resolveUrl(url: string): string {
+    if (url !== 'auto') return url;
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    return `${proto}://${location.host}/nats-ws`;
+  }
+
   async connect(natsWsUrl: string): Promise<void> {
     if (this.nc) return;
+    const url = this.resolveUrl(natsWsUrl);
+    console.info('[PresenceService] connecting to', url);
     try {
-      this.nc = await connect({ servers: natsWsUrl });
+      this.nc = await connect({ servers: url });
       this.online.set(true);
       const js  = this.nc.jetstream();
       this.kv   = await js.views.kv(BUCKET, { ttl: STALE_MS });
