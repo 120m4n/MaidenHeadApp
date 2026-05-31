@@ -313,7 +313,10 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.addLayerToggleControl();
     this.addLocateControl();
     this.addMapEventHandlers();
-    this.map.on('zoomend', () => this.refreshArrowLabel());
+    this.map.on('zoomend', () => {
+      this.refreshArrowLabel();
+      this.syncGeoJsonLabelVisibility();
+    });
 
     if (this.center)              this.updateUserMarker();
     if (this.gridBounds)          this.updateMhRect();
@@ -358,6 +361,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
           return marker;
         },
       }).addTo(this.map);
+      this.syncGeoJsonLabelVisibility();
     } catch {
       // Si falla la carga del archivo, el mapa sigue funcionando sin esta capa.
     }
@@ -706,6 +710,16 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   // ── Flecha distancia/rumbo a feature GeoJSON ─────────────────────────────
+
+  private syncGeoJsonLabelVisibility(): void {
+    if (!this.geoJsonLayer) return;
+    const show = this.map.getZoom() >= 11;
+    this.geoJsonLayer.getLayers().forEach(layer => {
+      const marker = layer as L.Marker;
+      if (!marker.getTooltip()) return;
+      show ? marker.openTooltip() : marker.closeTooltip();
+    });
+  }
 
   private emitNearbyGeoJsonFeature(tapLatLng: L.LatLng): void {
     const THRESHOLD_PX = 50;
