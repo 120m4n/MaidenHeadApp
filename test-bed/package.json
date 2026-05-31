@@ -1,0 +1,12 @@
+{
+  "name": "maidenhead-presence-testbed",
+  "version": "1.0.0",
+  "description": "Simula usuarios publicando posición en NATS KV",
+  "main": "simulate-user.js",
+  "scripts": {
+    "start": "node simulate-user.js"
+  },
+  "dependencies": {
+    "nats": "^2.29.3"
+  }
+}
