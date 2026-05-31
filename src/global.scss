@@ -562,12 +562,15 @@ ion-alert {
   pointer-events: none;
 
   // Anillo pulsante — se expande desde el dot hacia afuera
+  // will-change promueve el elemento a capa GPU para que transform/opacity
+  // no repinte el resto del DOM en cada frame de animación
   &__ring {
-    position:      absolute;
-    inset:         0;
+    position:    absolute;
+    inset:       0;
     border-radius: 50%;
-    background:    rgba(204, 0, 0, 0.40);
-    animation:     peer-pulse 2s ease-out infinite;
+    background:  rgba(204, 0, 0, 0.40);
+    animation:   peer-pulse 2s ease-out infinite;
+    will-change: transform, opacity;
   }
 
   // Punto sólido rojo
@@ -601,10 +604,25 @@ ion-alert {
 
   // Estado stale: sin animación, colores apagados
   &--stale {
-    .peer-marker__ring { background: rgba(120, 120, 120, 0.30); animation: none; }
+    .peer-marker__ring { background: rgba(120, 120, 120, 0.30); animation: none; will-change: auto; }
     .peer-marker__dot  { background: #888; }
     .peer-marker__call { color: #888; border-color: rgba(120, 120, 120, 0.40); }
   }
+}
+
+// Modo denso (> 50 peers): desactiva animaciones para proteger la GPU
+// La clase se añade/quita en updatePeerMarkers() según el conteo
+.peer-dense .peer-marker:not(.peer-marker--stale) .peer-marker__ring {
+  animation:   none;
+  will-change: auto;
+  opacity:     0.45;
+}
+
+// Stale en modo denso: mantiene el color gris propio del estado stale
+.peer-dense .peer-marker--stale .peer-marker__ring {
+  animation:   none;
+  will-change: auto;
+  opacity:     0.30;
 }
 
 // ─── Labels de features GeoJSON (nombre + conexion) ──────────────────────

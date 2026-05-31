@@ -11,6 +11,23 @@ import {
   arrowLabelMode, formatArrowLabel,
 } from '../../utils/geojson-arrow.utils';
 
+// ── Peer marker icon — función pura para evitar recreación inline ────────────
+const PEER_DENSE_THRESHOLD = 50;
+
+function buildPeerIcon(callsign: string, stale: boolean): L.DivIcon {
+  const cls = stale ? ' peer-marker--stale' : '';
+  return L.divIcon({
+    html: `<div class="peer-marker${cls}">
+             <div class="peer-marker__ring"></div>
+             <div class="peer-marker__dot"></div>
+             <span class="peer-marker__call">${callsign}</span>
+           </div>`,
+    className: 'peer-icon-container',
+    iconSize:   [14, 14],
+    iconAnchor: [7, 7],
+  });
+}
+
 // Fix leaflet marker icons para Angular + Capacitor
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -722,39 +739,42 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   // ── Marcadores de peers (otros usuarios en la red) ───────────────────────
 
   private updatePeerMarkers(): void {
-    const active = new Set(this.peerMarkers.map(p => p.callsign));
+    const container = this.mapContainer?.nativeElement;
 
-    // Elimina markers de peers que ya no están
-    for (const [call, marker] of this.peerLayers) {
-      if (!active.has(call)) { marker.remove(); this.peerLayers.delete(call); }
+    // Fast path: sin peers → limpiar todo y salir
+    if (this.peerMarkers.length === 0) {
+      this.peerLayers.forEach(m => m.remove());
+      this.peerLayers.clear();
+      container?.classList.remove('peer-dense');
+      return;
     }
 
-    // Crea o actualiza
-    for (const peer of this.peerMarkers) {
-      const ll  = L.latLng(peer.pos.lat, peer.pos.lon);
-      const tip = `${peer.callsign} · ${peer.grid}`;
-      const opacity = peer.stale ? 0.45 : 1;
+    const active = new Set(this.peerMarkers.map(p => p.callsign));
 
-      const staleClass = peer.stale ? ' peer-marker--stale' : '';
-      const icon = L.divIcon({
-        html: `<div class="peer-marker${staleClass}">
-                 <div class="peer-marker__ring"></div>
-                 <div class="peer-marker__dot"></div>
-                 <span class="peer-marker__call">${peer.callsign}</span>
-               </div>`,
-        className: 'peer-icon-container',
-        iconSize:   [14, 14],
-        iconAnchor: [7, 7],
-      });
+    // Recolecta y elimina markers de peers que ya no están (evita mutación durante iteración)
+    const toRemove: string[] = [];
+    for (const [call, marker] of this.peerLayers) {
+      if (!active.has(call)) { marker.remove(); toRemove.push(call); }
+    }
+    toRemove.forEach(c => this.peerLayers.delete(c));
+
+    // Modo denso: deshabilita animación CSS cuando hay más de 50 peers
+    const dense = this.peerMarkers.length > PEER_DENSE_THRESHOLD;
+    container?.classList.toggle('peer-dense', dense);
+
+    for (const peer of this.peerMarkers) {
+      const ll   = L.latLng(peer.pos.lat, peer.pos.lon);
+      const icon = buildPeerIcon(peer.callsign, peer.stale);
 
       const existing = this.peerLayers.get(peer.callsign);
       if (existing) {
         existing.setLatLng(ll);
         existing.setIcon(icon);
       } else {
-        const marker = L.marker(ll, { icon, interactive: false })
-          .addTo(this.map);
-        this.peerLayers.set(peer.callsign, marker);
+        this.peerLayers.set(
+          peer.callsign,
+          L.marker(ll, { icon, interactive: false }).addTo(this.map),
+        );
       }
     }
   }
