@@ -56,6 +56,9 @@ export class HomePage implements OnInit, OnDestroy {
   readonly tapGridBounds = signal<GridBounds | null>(null);
   readonly tapGridLabel  = signal<string>('');
 
+  /** Destino de la flecha distancia/rumbo (null = sin flecha) */
+  readonly arrowTarget = signal<LatLon | null>(null);
+
   // ── Computed map inputs ───────────────────────────────────────────────────
   // IMPORTANTE: computed() memoiza por referencia — se re-ejecutan solo cuando
   // el string del grid o el plus-code cambian (cruce de cuadrícula), NO en cada
@@ -161,6 +164,11 @@ export class HomePage implements OnInit, OnDestroy {
       if (data) await this.qsoLog.add(data);
     });
     await modal.present();
+  }
+
+  /** Recibe el feature GeoJSON más cercano al tap (o null si ninguno en rango) */
+  onGeoJsonFeatureTap(pos: LatLon | null): void {
+    this.arrowTarget.set(pos);
   }
 
   private toast(msg: string): void {

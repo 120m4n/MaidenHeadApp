@@ -542,6 +542,48 @@ ion-alert {
   }
 }
 
+// ─── Flecha distancia/rumbo a feature GeoJSON ────────────────────────────
+
+// dashArray '6 4' → período = 10 px; dashoffset 0→-10 hace fluir los trazos hacia el destino
+@keyframes arrow-flow {
+  0%   { stroke-dashoffset:   0; }
+  25%  { stroke-dashoffset:  -2.5; }
+  50%  { stroke-dashoffset:  -5; }
+  100% { stroke-dashoffset: -10; }
+}
+
+.arrow-line {
+  animation: arrow-flow 1.0s linear infinite;
+}
+
+.map-arrow-label {
+  box-shadow:     none !important;
+  pointer-events: none;
+  white-space:    nowrap;
+  font-family:    var(--app-font-mono, 'Share Tech Mono', monospace) !important;
+  font-size:      0.68rem !important;
+  font-weight:    600 !important;
+  letter-spacing: 0.04em !important;
+  color:          #cc0000 !important;
+  background:     rgba(255, 255, 255, 0.88) !important;
+  border:         1.5px solid #cc0000 !important;
+  padding:        2px 6px !important;
+  border-radius:  var(--app-radius-badge, 3px) !important;
+
+  &::before,
+  &::after { display: none !important; }
+}
+
+.arrow-head {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       14px;
+  color:           #cc0000;
+  line-height:     1;
+  transform-origin: center center;
+}
+
 // ─── Control de capas del mapa ────────────────────────────────────────────
 .map-layer-ctrl {
   display:        flex;

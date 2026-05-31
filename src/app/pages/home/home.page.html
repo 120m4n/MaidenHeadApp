@@ -54,9 +54,11 @@
       [tapGridBounds]="tapGridBounds()"
       [tapGridLabel]="tapGridLabel()"
       [savedMarkers]="savedPins()"
+      [arrowTarget]="arrowTarget()"
       geoJsonUrl="/geojson.json"
       (mapTap)="onMapTap($event)"
-      (mapLongPress)="onMapLongPress($event)" />
+      (mapLongPress)="onMapLongPress($event)"
+      (geoJsonFeatureTap)="onGeoJsonFeatureTap($event)" />
 
   </div>
 

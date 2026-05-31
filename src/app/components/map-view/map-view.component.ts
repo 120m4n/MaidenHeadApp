@@ -3,7 +3,12 @@ import {
   AfterViewInit, ElementRef, ViewChild, OnChanges, SimpleChanges,
 } from '@angular/core';
 import * as L from 'leaflet';
+import type * as GeoJSON from 'geojson';
 import { LatLon, GridBounds } from '../../models/position.model';
+import {
+  haversineMeters, bearingDecimal, geoJsonPointLatLon,
+  arrowLabelMode, formatArrowLabel,
+} from '../../utils/geojson-arrow.utils';
 
 // Fix leaflet marker icons para Angular + Capacitor
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -82,9 +87,14 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() savedMarkers: Array<{ pos: LatLon; label: string }> = [];
   @Input() geoJsonUrl: string | null = null;
 
+  /** Punto de destino para la flecha distancia/rumbo (null = sin flecha) */
+  @Input() arrowTarget: LatLon | null = null;
+
   // ── Outputs ─────────────────────────────────────────────────────────────
-  @Output() mapTap       = new EventEmitter<MapTapEvent>();
-  @Output() mapLongPress = new EventEmitter<MapTapEvent>();
+  @Output() mapTap          = new EventEmitter<MapTapEvent>();
+  @Output() mapLongPress    = new EventEmitter<MapTapEvent>();
+  /** Emite el LatLon de la feature GeoJSON más cercana al tap (50 px), o null si no hay. */
+  @Output() geoJsonFeatureTap = new EventEmitter<LatLon | null>();
 
   // ── Capas internas ───────────────────────────────────────────────────────
   private map!: L.Map;
@@ -98,6 +108,12 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private tapLabelTip?:  L.Tooltip;     // Label del tap grid
   private savedLayers:   L.Marker[] = [];
   private geoJsonLayer?: L.GeoJSON;
+  private geoJsonFeatures: GeoJSON.Feature[] = [];
+
+  // ── Capas de la flecha distancia/rumbo ───────────────────────────────────
+  private arrowPolyline?:    L.Polyline;
+  private arrowHeadMarker?:  L.Marker;
+  private arrowTooltip?:     L.Tooltip;
 
   private readonly geoJsonPointIcon = L.icon({
     iconUrl: '/icons/antenna.png',
@@ -156,6 +172,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     if (changes['geoJsonUrl'])
       void this.loadGeoJsonLayer();
+
+    if (changes['arrowTarget'])
+      this.updateArrow();
   }
 
   ngOnDestroy(): void {
@@ -166,6 +185,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.resizeObserver?.disconnect();
     clearTimeout(this.initTimer);
     clearTimeout(this.invalidateTimer);
+    this.clearArrow();
     this.map?.remove();
   }
 
@@ -293,6 +313,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.addLayerToggleControl();
     this.addLocateControl();
     this.addMapEventHandlers();
+    this.map.on('zoomend', () => this.refreshArrowLabel());
 
     if (this.center)              this.updateUserMarker();
     if (this.gridBounds)          this.updateMhRect();
@@ -307,6 +328,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private async loadGeoJsonLayer(): Promise<void> {
     this.geoJsonLayer?.remove();
     this.geoJsonLayer = undefined;
+    this.geoJsonFeatures = [];
 
     if (!this.map || !this.geoJsonUrl) return;
 
@@ -314,7 +336,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       const response = await fetch(this.geoJsonUrl);
       if (!response.ok) return;
 
-      const geoJson = await response.json();
+      const geoJson: GeoJSON.FeatureCollection = await response.json();
+      this.geoJsonFeatures = geoJson.features ?? [];
       this.geoJsonLayer = L.geoJSON(geoJson, {
         pointToLayer: (_feature, latlng) => L.marker(latlng, { icon: this.geoJsonPointIcon }),
       }).addTo(this.map);
@@ -466,6 +489,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private addMapEventHandlers(): void {
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       this.mapTap.emit({ lat: e.latlng.lat, lon: e.latlng.lng });
+      this.emitNearbyGeoJsonFeature(e.latlng);
     });
 
     let pressTimer: ReturnType<typeof setTimeout>;
@@ -662,6 +686,91 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         .addTo(this.map);
       this.savedLayers.push(m);
     });
+  }
+
+  // ── Flecha distancia/rumbo a feature GeoJSON ─────────────────────────────
+
+  private emitNearbyGeoJsonFeature(tapLatLng: L.LatLng): void {
+    const THRESHOLD_PX = 50;
+    const tapPt = this.map.latLngToContainerPoint(tapLatLng);
+    let nearest: GeoJSON.Feature | null = null;
+    let minDist = Infinity;
+
+    for (const feature of this.geoJsonFeatures) {
+      const coords = geoJsonPointLatLon(feature);
+      if (!coords) continue;
+      const pt = this.map.latLngToContainerPoint(L.latLng(coords.lat, coords.lon));
+      const dist = Math.hypot(tapPt.x - pt.x, tapPt.y - pt.y);
+      if (dist < THRESHOLD_PX && dist < minDist) {
+        minDist = dist;
+        nearest = feature;
+      }
+    }
+
+    this.geoJsonFeatureTap.emit(nearest ? geoJsonPointLatLon(nearest) : null);
+  }
+
+  private updateArrow(): void {
+    this.clearArrow();
+    if (!this.arrowTarget || !this.center) return;
+
+    const from = L.latLng(this.center.lat, this.center.lon);
+    const to   = L.latLng(this.arrowTarget.lat, this.arrowTarget.lon);
+    const bearing = bearingDecimal(this.center, this.arrowTarget);
+    const distM   = haversineMeters(this.center, this.arrowTarget);
+
+    this.arrowPolyline = L.polyline([from, to], {
+      color: '#cc0000', weight: 2.5, dashArray: '6 4',
+      interactive: false, className: 'arrow-line',
+    }).addTo(this.map);
+
+    this.arrowHeadMarker = L.marker(to, {
+      icon: L.divIcon({
+        html: `<div class="arrow-head" style="transform:rotate(${bearing}deg)">&#9658;</div>`,
+        className: '',
+        iconSize:   [20, 20],
+        iconAnchor: [10, 10],
+      }),
+      interactive: false,
+    }).addTo(this.map);
+
+    const mid: L.LatLngExpression = [
+      (this.center.lat  + this.arrowTarget.lat) / 2,
+      (this.center.lon  + this.arrowTarget.lon) / 2,
+    ];
+    const mode  = arrowLabelMode(this.map.getZoom());
+    const label = formatArrowLabel(distM, bearing, mode);
+
+    this.arrowTooltip = L.tooltip({
+      permanent: true, direction: 'center',
+      className: 'map-arrow-label', interactive: false,
+    }).setLatLng(mid).setContent(label || '&nbsp;');
+
+    if (mode !== 'none') this.arrowTooltip.addTo(this.map);
+  }
+
+  private refreshArrowLabel(): void {
+    if (!this.arrowTarget || !this.center || !this.arrowTooltip) return;
+    const distM   = haversineMeters(this.center, this.arrowTarget);
+    const bearing = bearingDecimal(this.center, this.arrowTarget);
+    const mode    = arrowLabelMode(this.map.getZoom());
+    const label   = formatArrowLabel(distM, bearing, mode);
+
+    if (mode === 'none') {
+      this.arrowTooltip.remove();
+    } else {
+      this.arrowTooltip.setContent(label);
+      if (!this.map.hasLayer(this.arrowTooltip)) this.arrowTooltip.addTo(this.map);
+    }
+  }
+
+  private clearArrow(): void {
+    this.arrowPolyline?.remove();
+    this.arrowHeadMarker?.remove();
+    this.arrowTooltip?.remove();
+    this.arrowPolyline    = undefined;
+    this.arrowHeadMarker  = undefined;
+    this.arrowTooltip     = undefined;
   }
 
   // ── API pública ──────────────────────────────────────────────────────────
