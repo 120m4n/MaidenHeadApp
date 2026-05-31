@@ -17,3 +17,18 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  nats:
+    image: nats:2.10-alpine
+    container_name: nats-mh
+    command: ["--config", "/etc/nats/nats.conf"]
+    volumes:
+      - ./presence/nats.conf:/etc/nats/nats.conf:ro
+      - nats-data:/data
+    ports:
+      - "4222:4222"
+      - "4223:4223"
+    restart: unless-stopped
+
+volumes:
+  nats-data:
