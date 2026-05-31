@@ -1,0 +1,33 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "RAU Moras",
+        "conexion": "147.925 -600 TX/RX CTCSS 100.0"
+      },
+      "geometry": {
+        "coordinates": [
+          -72.981911,
+          6.922430
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "FRACOL Picacho",
+        "conexion": "147.030 +600 TX/RX CTCSS 85.4"
+      },
+      "geometry": {
+        "coordinates": [
+          -72.9718,
+          7.1095
+        ],
+        "type": "Point"
+      }
+    }
+  ]
+}

@@ -9,6 +9,8 @@ services:
     ports:
       - "8087:80"
     restart: unless-stopped
+    volumes:
+      - ./geojson.json:/usr/share/nginx/html/geojson.json:ro
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
       interval: 30s
