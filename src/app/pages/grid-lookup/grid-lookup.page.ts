@@ -67,6 +67,9 @@ export class GridLookupPage {
 
   distanceUnit = computed(() => this.settings.distanceUnit());
 
+  /** Destino de la flecha distancia/rumbo (null = sin flecha) */
+  arrowTarget = signal<LatLon | null>(null);
+
   constructor() {
     addIcons({ searchOutline, addCircleOutline });
   }
@@ -176,6 +179,10 @@ export class GridLookupPage {
       }
     });
     await modal.present();
+  }
+
+  onGeoJsonFeatureTap(pos: LatLon | null): void {
+    this.arrowTarget.set(pos);
   }
 
   private toast(msg: string): void {

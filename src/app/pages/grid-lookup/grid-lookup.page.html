@@ -126,8 +126,10 @@
       [gridLabel]="resolvedGrid()"
       [plusBounds]="resultPlusBounds()"
       [plusLabel]="resolvedPlus()"
+      [arrowTarget]="arrowTarget()"
       geoJsonUrl="/geojson.json"
-      (mapTap)="onMapTap($event)" />
+      (mapTap)="onMapTap($event)"
+      (geoJsonFeatureTap)="onGeoJsonFeatureTap($event)" />
   </div>
 
   </div>
