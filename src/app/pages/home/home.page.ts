@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, OnDestroy, ViewChild, inject, signal, computed,
+  Component, OnInit, OnDestroy, ViewChild, inject, signal, computed, effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -16,7 +16,9 @@ import { PluscodeService } from '../../services/pluscode.service';
 import { SettingsService } from '../../services/settings.service';
 import { QsoLogService } from '../../services/qso-log.service';
 import { BearingService } from '../../services/bearing.service';
+import { PresenceService } from '../../services/presence.service';
 import { LatLon, GridBounds } from '../../models/position.model';
+import { PeerMarker } from '../../models/presence.model';
 import { MapViewComponent, MapTapEvent } from '../../components/map-view/map-view.component';
 import { PositionCardComponent } from '../../components/position-card/position-card.component';
 import { QsoFormModalComponent } from '../../components/qso-form-modal/qso-form-modal.component';
@@ -47,6 +49,7 @@ export class HomePage implements OnInit, OnDestroy {
   private qsoLog     = inject(QsoLogService);
   private bearingService = inject(BearingService);
   private modalCtrl  = inject(ModalController);
+  readonly presence  = inject(PresenceService);
 
   savedPins = signal<SavedPin[]>([]);
   toastMsg  = signal('');
@@ -58,6 +61,9 @@ export class HomePage implements OnInit, OnDestroy {
 
   /** Destino de la flecha distancia/rumbo (null = sin flecha) */
   readonly arrowTarget = signal<LatLon | null>(null);
+
+  /** Posiciones de otros usuarios en la red (alias del signal del servicio) */
+  readonly peerMarkers = computed<PeerMarker[]>(() => this.presence.peers());
 
   // ── Computed map inputs ───────────────────────────────────────────────────
   // IMPORTANTE: computed() memoiza por referencia — se re-ejecutan solo cuando
@@ -107,6 +113,24 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor() {
     addIcons({ addOutline });
+
+    // Conecta al servidor NATS al arrancar la página
+    void this.presence.connect(this.settings.natsUrl());
+
+    // Reactiva/desactiva la publicación según el toggle de ajustes
+    effect(() => {
+      const sharing  = this.settings.locationSharing();
+      const callsign = this.settings.callsign();
+      if (sharing && callsign) {
+        void this.presence.startSharing(callsign, () => {
+          const p = this.geo.position();
+          if (!p) return null;
+          return { v: 1, call: callsign, lat: p.lat, lon: p.lon, grid: p.grid6, acc: p.accuracy, ts: p.ts };
+        });
+      } else {
+        void this.presence.stopSharing();
+      }
+    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -115,6 +139,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.geo.stopWatch();
+    void this.presence.disconnect();
   }
 
   /** Tap en mapa → dibuja grid azul temporal + copia al portapapeles + muestra toast */

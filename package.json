@@ -1,6 +1,9 @@
 {
   "name": "maidenhead-app",
   "version": "1.1.0",
+  "browser": {
+    "crypto": false
+  },
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -44,6 +47,7 @@
     "@mr_uu/maidenhead-grid": "^0.5.10",
     "ionicons": "^7.0.0",
     "leaflet": "^1.9.4",
+    "nats.ws": "^1.30.3",
     "open-location-code": "^1.0.3",
     "qth-locator": "^2.1.0",
     "rxjs": "~7.8.0",
