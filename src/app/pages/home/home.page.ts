@@ -42,6 +42,8 @@ interface SavedPin {
 export class HomePage implements OnInit, OnDestroy {
   @ViewChild(MapViewComponent) mapView?: MapViewComponent;
 
+  private destroyed = false;
+
   geo = inject(GeolocationService);
   private maidenhead = inject(MaidenheadService);
   private pluscode   = inject(PluscodeService);
@@ -121,6 +123,7 @@ export class HomePage implements OnInit, OnDestroy {
     effect(() => {
       const sharing  = this.settings.locationSharing();
       const callsign = this.settings.callsign();
+      if (this.destroyed) return;
       if (sharing && callsign) {
         void this.presence.startSharing(callsign, () => {
           const p = this.geo.position();
@@ -138,6 +141,7 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.geo.stopWatch();
     void this.presence.disconnect();
   }
