@@ -119,12 +119,15 @@ export class HomePage implements OnInit, OnDestroy {
     // Conecta al servidor NATS al arrancar la página
     void this.presence.connect(this.settings.natsUrl());
 
-    // Reactiva/desactiva la publicación según el toggle de ajustes
+    // Reactiva/desactiva la publicación según el toggle de ajustes.
+    // Lee presence.online() para re-disparar cuando la conexión NATS esté lista,
+    // evitando la race condition donde startSharing() se llama con kv aún null.
     effect(() => {
       const sharing  = this.settings.locationSharing();
       const callsign = this.settings.callsign();
+      const online   = this.presence.online();
       if (this.destroyed) return;
-      if (sharing && callsign) {
+      if (online && sharing && callsign) {
         void this.presence.startSharing(callsign, () => {
           const p = this.geo.position();
           if (!p) return null;

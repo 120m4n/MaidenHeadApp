@@ -41,9 +41,11 @@ export class PresenceService {
     try {
       this.nc = await connect({ servers: url });
       this.retryCount = 0;
-      this.online.set(true);
       const js = this.nc.jetstream();
       this.kv  = await js.views.kv(BUCKET, { ttl: STALE_MS });
+      // online se emite DESPUÉS de que kv esté listo para que el effect
+      // en HomePage pueda llamar startSharing() sin encontrar kv null
+      this.online.set(true);
       void this.startWatching();
     } catch (e) {
       console.warn('[PresenceService] connect error:', e);
