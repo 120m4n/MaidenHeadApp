@@ -8,6 +8,8 @@ services:
     platform: linux/amd64
     ports:
       - "8087:80"
+    depends_on:
+      - nats
     restart: unless-stopped
     volumes:
       - ./geojson.json:/usr/share/nginx/html/geojson.json:ro
@@ -26,8 +28,8 @@ services:
       - ./presence/nats.conf:/etc/nats/nats.conf:ro
       - nats-data:/data
     ports:
-      - "4222:4222"
-      - "4223:4223"
+      - "4222:4222"   # TCP: test-bed / CLI debug
+      # 4223 (WS) solo accesible internamente vía nginx /nats-ws
     restart: unless-stopped
 
 volumes:
