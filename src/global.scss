@@ -542,6 +542,38 @@ ion-alert {
   }
 }
 
+// ─── Labels de features GeoJSON (nombre + conexion) ──────────────────────
+// Mobile-first: fuente compacta; desktop amplía tamaño y padding
+.map-geojson-label {
+  box-shadow:     none !important;
+  pointer-events: none;
+  white-space:    nowrap;
+  line-height:    1.45 !important;
+  font-family:    var(--app-font-mono, 'Share Tech Mono', monospace) !important;
+  letter-spacing: 0.03em !important;
+  color:          var(--ham-amber) !important;
+  background:     var(--map-label-bg) !important;
+  border:         1px solid rgba(var(--ham-amber-rgb), 0.45) !important;
+  border-radius:  var(--app-radius-badge, 3px) !important;
+
+  // Mobile
+  font-size:   0.60rem !important;
+  font-weight: 400 !important;
+  padding:     2px 5px !important;
+
+  &::before,
+  &::after { display: none !important; }
+}
+
+// Desktop (≥ 768 px): más espacio y tipo más legible
+@media (min-width: 768px) {
+  .map-geojson-label {
+    font-size:   0.72rem !important;
+    font-weight: 500 !important;
+    padding:     3px 8px !important;
+  }
+}
+
 // ─── Flecha distancia/rumbo a feature GeoJSON ────────────────────────────
 
 // dashArray '6 4' → período = 10 px; dashoffset 0→-10 hace fluir los trazos hacia el destino

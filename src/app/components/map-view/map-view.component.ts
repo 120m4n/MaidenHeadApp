@@ -339,7 +339,24 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       const geoJson: GeoJSON.FeatureCollection = await response.json();
       this.geoJsonFeatures = geoJson.features ?? [];
       this.geoJsonLayer = L.geoJSON(geoJson, {
-        pointToLayer: (_feature, latlng) => L.marker(latlng, { icon: this.geoJsonPointIcon }),
+        pointToLayer: (feature, latlng) => {
+          const props = (feature.properties ?? {}) as Record<string, string>;
+          const nombre   = props['nombre']   ?? '';
+          const conexion = props['conexion'] ?? '';
+          const html = [nombre, conexion].filter(Boolean).join('<br>');
+
+          const marker = L.marker(latlng, { icon: this.geoJsonPointIcon });
+          if (html) {
+            marker.bindTooltip(html, {
+              permanent:   true,
+              direction:   'right',
+              className:   'map-geojson-label',
+              interactive: false,
+              offset:      [4, 0],
+            });
+          }
+          return marker;
+        },
       }).addTo(this.map);
     } catch {
       // Si falla la carga del archivo, el mapa sigue funcionando sin esta capa.
