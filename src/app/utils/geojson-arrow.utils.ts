@@ -33,8 +33,8 @@ export function geoJsonPointLatLon(feature: GeoJSON.Feature): LatLon | null {
 }
 
 export function arrowLabelMode(zoom: number): LabelMode {
-  if (zoom >= 13) return 'full';
-  if (zoom >= 10) return 'dist-only';
+  if (zoom >= 11) return 'full';
+  if (zoom >= 8)  return 'dist-only';
   return 'none';
 }
 
