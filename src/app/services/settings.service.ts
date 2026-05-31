@@ -41,7 +41,13 @@ export class SettingsService {
     const { value } = await Preferences.get({ key: KEY });
     if (value) {
       try {
-        this._settings.set({ ...DEFAULTS, ...JSON.parse(value) });
+        const parsed = JSON.parse(value) as Partial<AppSettings>;
+        // Migración: el valor antiguo 'ws://localhost:4223' (pre-nginx-gateway)
+        // se reemplaza por 'auto' para que use el proxy nginx del mismo host
+        if (!parsed.natsUrl || parsed.natsUrl === 'ws://localhost:4223') {
+          parsed.natsUrl = 'auto';
+        }
+        this._settings.set({ ...DEFAULTS, ...parsed });
       } catch { /* usa defaults */ }
     }
   }

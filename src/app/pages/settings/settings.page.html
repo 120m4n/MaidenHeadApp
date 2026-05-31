@@ -100,6 +100,23 @@
           (ionChange)="onLocationSharingChange($event.detail.checked)"
           class="settings-toggle" />
       </div>
+
+      <div class="settings-divider"></div>
+
+      <div class="settings-field">
+        <div class="settings-field__label">SERVIDOR NATS (URL)</div>
+        <ion-input
+          [(ngModel)]="natsUrl"
+          (ionBlur)="onNatsUrlChange(natsUrl)"
+          placeholder="auto"
+          autocorrect="off"
+          autocapitalize="none"
+          inputmode="url"
+          class="settings-input settings-input--url" />
+        <div class="settings-field__hint">
+          <code>auto</code> usa el gateway del mismo servidor · ej: <code>ws://192.168.1.x:8087/nats-ws</code>
+        </div>
+      </div>
     </div>
   </div>
 

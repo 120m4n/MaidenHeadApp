@@ -74,6 +74,11 @@
   color:       var(--ham-glow) !important;
   --placeholder-color: var(--ham-border-hi) !important;
   padding:     0 !important;
+
+  &--url {
+    font-size: 0.78rem !important;
+    color:     var(--ham-text) !important;
+  }
 }
 
 // Select de configuración

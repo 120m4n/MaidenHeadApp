@@ -46,6 +46,7 @@ export class SettingsPage implements OnInit {
   themeMode: ThemeMode = 'auto';
   distanceUnit: DistanceUnit = 'km';
   locationSharing = false;
+  natsUrl         = 'auto';
 
   async ngOnInit(): Promise<void> {
     const s = this.settingsService.settings();
@@ -54,6 +55,7 @@ export class SettingsPage implements OnInit {
     this.themeMode       = s.themeMode;
     this.distanceUnit    = s.distanceUnit;
     this.locationSharing = s.locationSharing;
+    this.natsUrl         = s.natsUrl;
   }
 
   async onCallsignChange(value: string): Promise<void> {
@@ -70,6 +72,12 @@ export class SettingsPage implements OnInit {
 
   async onDistanceChange(value: DistanceUnit): Promise<void> {
     await this.settingsService.update({ distanceUnit: value });
+  }
+
+  async onNatsUrlChange(value: string): Promise<void> {
+    const trimmed = value.trim() || 'auto';
+    this.natsUrl = trimmed;
+    await this.settingsService.update({ natsUrl: trimmed });
   }
 
   async onLocationSharingChange(newValue: boolean): Promise<void> {
