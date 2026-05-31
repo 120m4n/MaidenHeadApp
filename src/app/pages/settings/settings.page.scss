@@ -199,6 +199,29 @@
   }
 }
 
+// ── Toggle de ajuste (label+hint a la izquierda, toggle a la derecha) ────────
+.settings-field--toggle {
+  display:     flex;
+  align-items: center;
+  gap:         12px;
+}
+
+.settings-field__info {
+  flex:      1;
+  min-width: 0;
+}
+
+// Aviso bloqueante inline — callsign vacío
+.settings-field__warn {
+  color:      var(--ham-amber);
+  font-style: normal;
+}
+
+.settings-toggle {
+  --track-background-checked: var(--ham-glow);
+  flex-shrink: 0;
+}
+
 // ── Referencia rápida ─────────────────────────────────────────────────────────
 .ref-field {
   display:        flex;

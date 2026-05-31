@@ -10,6 +10,8 @@ export interface AppSettings {
   gridPrecision: GridPrecision;
   themeMode: ThemeMode;
   distanceUnit: DistanceUnit;
+  locationSharing: boolean;
+  natsUrl: string;
 }
 
 const DEFAULTS: AppSettings = {
@@ -17,6 +19,8 @@ const DEFAULTS: AppSettings = {
   gridPrecision: 6,
   themeMode: 'auto',
   distanceUnit: 'km',
+  locationSharing: false,
+  natsUrl: 'ws://localhost:4223',
 };
 
 const KEY = 'app_settings';
@@ -26,10 +30,12 @@ export class SettingsService {
   private _settings = signal<AppSettings>({ ...DEFAULTS });
 
   readonly settings = this._settings.asReadonly();
-  readonly callsign = computed(() => this._settings().callsign);
-  readonly gridPrecision = computed(() => this._settings().gridPrecision);
-  readonly themeMode = computed(() => this._settings().themeMode);
-  readonly distanceUnit = computed(() => this._settings().distanceUnit);
+  readonly callsign        = computed(() => this._settings().callsign);
+  readonly gridPrecision   = computed(() => this._settings().gridPrecision);
+  readonly themeMode       = computed(() => this._settings().themeMode);
+  readonly distanceUnit    = computed(() => this._settings().distanceUnit);
+  readonly locationSharing = computed(() => this._settings().locationSharing);
+  readonly natsUrl         = computed(() => this._settings().natsUrl);
 
   async init(): Promise<void> {
     const { value } = await Preferences.get({ key: KEY });

@@ -73,6 +73,36 @@
     </div>
   </div>
 
+  <!-- ── Red HAM / Presencia ─────────────────────────────────────────── -->
+  <div class="settings-section">
+    <div class="settings-section__header">
+      <ion-icon name="wifi-outline" />
+      <span>RED HAM</span>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-field settings-field--toggle">
+        <div class="settings-field__info">
+          <div class="settings-field__label">PUBLICAR MI UBICACIÓN</div>
+          <div class="settings-field__hint">
+            @if (locationSharing) {
+              Activo · visible en la red como <strong>{{ callsign }}</strong>
+            } @else if (callsign) {
+              Desactivado · tu posición es privada
+            } @else {
+              <span class="settings-field__warn">Configura tu indicativo para activar</span>
+            }
+          </div>
+        </div>
+        <ion-toggle
+          [checked]="locationSharing"
+          [disabled]="!callsign && !locationSharing"
+          (ionChange)="onLocationSharingChange($event.detail.checked)"
+          class="settings-toggle" />
+      </div>
+    </div>
+  </div>
+
   <!-- ── Apariencia ────────────────────────────────────────────────────── -->
   <div class="settings-section">
     <div class="settings-section__header">
