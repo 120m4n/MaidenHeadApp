@@ -6,19 +6,25 @@ import { PeerMarker, PeerPosition } from '../models/presence.model';
 const BUCKET      = 'MH_POSITIONS';
 const PUBLISH_MS  = 15_000;
 const STALE_MS    = 5 * 60_000;
+const RETRY_MS    = 10_000;
+const MAX_RETRIES = 3;
 const sc          = StringCodec();
 
 @Injectable({ providedIn: 'root' })
 export class PresenceService {
-  readonly peers    = signal<PeerMarker[]>([]);
-  readonly online   = signal(false);
-  readonly sharing  = signal(false);
+  readonly peers   = signal<PeerMarker[]>([]);
+  readonly online  = signal(false);
+  readonly sharing = signal(false);
 
-  private nc?:       NatsConnection;
-  private kv?:       KV;
-  private timer?:    ReturnType<typeof setInterval>;
-  private watcher?:  AsyncIterable<any>;
-  private ownCall?:  string;
+  private nc?:          NatsConnection;
+  private kv?:          KV;
+  private timer?:       ReturnType<typeof setInterval>;
+  private kvWatcher?:   { stop(): void };
+  private watching      = false;
+  private ownCall?:     string;
+  private retryTimer?:  ReturnType<typeof setTimeout>;
+  private retryCount    = 0;
+  private pendingUrl?:  string;
 
   private resolveUrl(url: string): string {
     if (url !== 'auto') return url;
@@ -28,22 +34,36 @@ export class PresenceService {
 
   async connect(natsWsUrl: string): Promise<void> {
     if (this.nc) return;
+    clearTimeout(this.retryTimer);
+    this.pendingUrl = natsWsUrl;
     const url = this.resolveUrl(natsWsUrl);
     console.info('[PresenceService] connecting to', url);
     try {
       this.nc = await connect({ servers: url });
+      this.retryCount = 0;
       this.online.set(true);
-      const js  = this.nc.jetstream();
-      this.kv   = await js.views.kv(BUCKET, { ttl: STALE_MS });
+      const js = this.nc.jetstream();
+      this.kv  = await js.views.kv(BUCKET, { ttl: STALE_MS });
       void this.startWatching();
     } catch (e) {
       console.warn('[PresenceService] connect error:', e);
+      this.nc = undefined;
       this.online.set(false);
+      if (this.retryCount < MAX_RETRIES) {
+        this.retryCount++;
+        console.info(`[PresenceService] retry ${this.retryCount}/${MAX_RETRIES} in ${RETRY_MS / 1000}s`);
+        this.retryTimer = setTimeout(() => void this.connect(natsWsUrl), RETRY_MS);
+      }
     }
   }
 
   async startSharing(callsign: string, getPosition: () => PeerPosition | null): Promise<void> {
-    if (!this.kv || this.sharing()) return;
+    if (!this.kv) return;
+    // Guard double-start: cancela timer anterior antes de crear uno nuevo
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = undefined;
+    }
     this.ownCall = callsign;
     this.sharing.set(true);
 
@@ -52,7 +72,7 @@ export class PresenceService {
       if (!pos || !this.kv) return;
       try {
         await this.kv.put(callsign, sc.encode(JSON.stringify(pos)));
-      } catch { /* red no disponible — se reintenta en el siguiente tick */ }
+      } catch { /* retried on next tick */ }
     };
 
     await publish();
@@ -70,7 +90,12 @@ export class PresenceService {
   }
 
   async disconnect(): Promise<void> {
+    clearTimeout(this.retryTimer);
+    this.retryTimer  = undefined;
+    this.pendingUrl  = undefined;
+    this.retryCount  = MAX_RETRIES; // evita nuevos reintentos tras disconnect intencional
     await this.stopSharing();
+    this.stopWatching();
     try { await this.nc?.drain(); } catch { /* ignore */ }
     this.nc = undefined;
     this.kv = undefined;
@@ -78,12 +103,20 @@ export class PresenceService {
     this.peers.set([]);
   }
 
+  private stopWatching(): void {
+    this.watching = false;
+    try { this.kvWatcher?.stop(); } catch { /* ignore */ }
+    this.kvWatcher = undefined;
+  }
+
   private async startWatching(): Promise<void> {
-    if (!this.kv) return;
+    if (!this.kv || this.watching) return;
+    this.watching = true;
     try {
       const watcher = await this.kv.watch();
+      this.kvWatcher = watcher as unknown as { stop(): void };
       for await (const entry of watcher) {
-        if (!this.nc) break;
+        if (!this.watching) break;
         if (entry.operation === 'DEL' || entry.operation === 'PURGE') {
           this.removePeer(entry.key);
         } else {
@@ -94,6 +127,7 @@ export class PresenceService {
         }
       }
     } catch { /* watcher cerrado al desconectar */ }
+    finally  { this.watching = false; }
   }
 
   private upsertPeer(pos: PeerPosition): void {
