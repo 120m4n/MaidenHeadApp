@@ -542,6 +542,71 @@ ion-alert {
   }
 }
 
+// ─── Marcadores de peers (otros usuarios en la red) ──────────────────────
+
+// Resetea el fondo blanco y borde que Leaflet añade por defecto a divIcon
+.peer-icon-container {
+  background: transparent !important;
+  border:     none !important;
+  overflow:   visible !important;
+}
+
+@keyframes peer-pulse {
+  0%   { transform: scale(1);   opacity: 0.75; }
+  100% { transform: scale(5.5); opacity: 0;    }
+}
+
+.peer-marker {
+  position:       absolute;
+  inset:          0;
+  pointer-events: none;
+
+  // Anillo pulsante — se expande desde el dot hacia afuera
+  &__ring {
+    position:      absolute;
+    inset:         0;
+    border-radius: 50%;
+    background:    rgba(204, 0, 0, 0.40);
+    animation:     peer-pulse 2s ease-out infinite;
+  }
+
+  // Punto sólido rojo
+  &__dot {
+    position:      absolute;
+    inset:         2px;
+    border-radius: 50%;
+    background:    #cc0000;
+    border:        2px solid #fff;
+    box-shadow:    0 1px 4px rgba(0, 0, 0, 0.35);
+    z-index:       1;
+  }
+
+  // Label callsign — a la derecha del punto
+  &__call {
+    position:       absolute;
+    left:           18px;
+    top:            -5px;
+    font-family:    var(--app-font-mono, 'Share Tech Mono', monospace);
+    font-size:      0.60rem;
+    font-weight:    700;
+    letter-spacing: 0.05em;
+    white-space:    nowrap;
+    color:          #cc0000;
+    background:     rgba(255, 255, 255, 0.92);
+    border:         1.5px solid rgba(204, 0, 0, 0.45);
+    border-radius:  3px;
+    padding:        0 4px;
+    box-shadow:     0 1px 3px rgba(0, 0, 0, 0.20);
+  }
+
+  // Estado stale: sin animación, colores apagados
+  &--stale {
+    .peer-marker__ring { background: rgba(120, 120, 120, 0.30); animation: none; }
+    .peer-marker__dot  { background: #888; }
+    .peer-marker__call { color: #888; border-color: rgba(120, 120, 120, 0.40); }
+  }
+}
+
 // ─── Labels de features GeoJSON (nombre + conexion) ──────────────────────
 // Mobile-first: fuente compacta; desktop amplía tamaño y padding
 .map-geojson-label {

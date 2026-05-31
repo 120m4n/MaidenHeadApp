@@ -5,6 +5,7 @@ import {
 import * as L from 'leaflet';
 import type * as GeoJSON from 'geojson';
 import { LatLon, GridBounds } from '../../models/position.model';
+import { PeerMarker } from '../../models/presence.model';
 import {
   haversineMeters, bearingDecimal, geoJsonPointLatLon,
   arrowLabelMode, formatArrowLabel,
@@ -90,6 +91,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   /** Punto de destino para la flecha distancia/rumbo (null = sin flecha) */
   @Input() arrowTarget: LatLon | null = null;
 
+  /** Posiciones de otros usuarios en la red */
+  @Input() peerMarkers: PeerMarker[] = [];
+
   // ── Outputs ─────────────────────────────────────────────────────────────
   @Output() mapTap          = new EventEmitter<MapTapEvent>();
   @Output() mapLongPress    = new EventEmitter<MapTapEvent>();
@@ -108,6 +112,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private tapLabelTip?:  L.Tooltip;     // Label del tap grid
   private savedLayers:   L.Marker[] = [];
   private geoJsonLayer?: L.GeoJSON;
+  private peerLayers: Map<string, L.Marker> = new Map();
   private geoJsonFeatures: GeoJSON.Feature[] = [];
 
   // ── Capas de la flecha distancia/rumbo ───────────────────────────────────
@@ -175,6 +180,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     if (changes['arrowTarget'])
       this.updateArrow();
+
+    if (changes['peerMarkers'])
+      this.updatePeerMarkers();
   }
 
   ngOnDestroy(): void {
@@ -186,6 +194,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     clearTimeout(this.initTimer);
     clearTimeout(this.invalidateTimer);
     this.clearArrow();
+    this.peerLayers.forEach(m => m.remove());
+    this.peerLayers.clear();
     this.map?.remove();
   }
 
@@ -707,6 +717,46 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         .addTo(this.map);
       this.savedLayers.push(m);
     });
+  }
+
+  // ── Marcadores de peers (otros usuarios en la red) ───────────────────────
+
+  private updatePeerMarkers(): void {
+    const active = new Set(this.peerMarkers.map(p => p.callsign));
+
+    // Elimina markers de peers que ya no están
+    for (const [call, marker] of this.peerLayers) {
+      if (!active.has(call)) { marker.remove(); this.peerLayers.delete(call); }
+    }
+
+    // Crea o actualiza
+    for (const peer of this.peerMarkers) {
+      const ll  = L.latLng(peer.pos.lat, peer.pos.lon);
+      const tip = `${peer.callsign} · ${peer.grid}`;
+      const opacity = peer.stale ? 0.45 : 1;
+
+      const staleClass = peer.stale ? ' peer-marker--stale' : '';
+      const icon = L.divIcon({
+        html: `<div class="peer-marker${staleClass}">
+                 <div class="peer-marker__ring"></div>
+                 <div class="peer-marker__dot"></div>
+                 <span class="peer-marker__call">${peer.callsign}</span>
+               </div>`,
+        className: 'peer-icon-container',
+        iconSize:   [14, 14],
+        iconAnchor: [7, 7],
+      });
+
+      const existing = this.peerLayers.get(peer.callsign);
+      if (existing) {
+        existing.setLatLng(ll);
+        existing.setIcon(icon);
+      } else {
+        const marker = L.marker(ll, { icon, interactive: false })
+          .addTo(this.map);
+        this.peerLayers.set(peer.callsign, marker);
+      }
+    }
   }
 
   // ── Flecha distancia/rumbo a feature GeoJSON ─────────────────────────────
