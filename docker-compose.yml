@@ -14,8 +14,13 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/app.conf:ro
       - ./geojson.json:/usr/share/nginx/html/geojson.json:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -32,6 +37,11 @@ services:
       - "4222:4222"   # TCP: test-bed / CLI debug
       # 4223 (WS) solo accesible internamente vía nginx /nats-ws
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   nats-data:
